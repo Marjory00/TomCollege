@@ -1,0 +1,79 @@
+<div class="students-container">
+    <div class="header-section">
+        <h1>👨‍🎓 Student Management</h1>
+        <button
+            *ngIf="currentUser?.role === 'admin'"
+            routerLink="/students/add"
+            class="btn btn-primary"
+        >
+            + Add New Student
+        </button>
+    </div>
+
+    <div class="search-section">
+        <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearch()"
+            placeholder="Search by Name, ID, or Grade..."
+            class="form-control"
+        >
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+        <p>Loading student data...</p>
+        <div class="spinner"></div>
+    </div>
+
+    <div *ngIf="!loading && filteredStudents.length === 0" class="empty-state">
+        <p>
+            No students found.
+            <span *ngIf="searchTerm">Try adjusting your search terms.</span>
+        </p>
+    </div>
+
+    <div *ngIf="!loading && filteredStudents.length > 0" class="table-responsive">
+        <table class="students-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Grade</th>
+                    <th>Major</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let student of filteredStudents">
+                    <td>**{{ student.studentId }}**</td>
+                    <td>{{ student.userId?.firstName }} {{ student.userId?.lastName }}</td>
+                    <td>{{ student.userId?.email }}</td>
+                    <td>{{ student.grade }}</td>
+                    <td>{{ student.major }}</td>
+                    <td>
+                        <span [ngClass]="getStatusClass(student.status)">
+                            {{ student.status }}
+                        </span>
+                    </td>
+                    <td class="action-buttons">
+                        <button
+                            routerLink="/students/edit/{{ student._id }}"
+                            class="btn btn-sm btn-info"
+                        >
+                            Edit
+                        </button>
+                        <button
+                            *ngIf="currentUser?.role === 'admin'"
+                            (click)="deleteStudent(student._id)"
+                            class="btn btn-sm btn-danger"
+                        >
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,4 +1,3 @@
-
 // src/app/interceptors/auth.interceptor.ts
 
 import { Injectable } from '@angular/core';
@@ -32,6 +31,7 @@ export class AuthInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
+          // Log out the user and redirect to login if unauthorized
           this.authService.logout();
         }
         return throwError(() => error);

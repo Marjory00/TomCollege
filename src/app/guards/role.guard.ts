@@ -1,10 +1,10 @@
-// src/app/guards/auth.guard.ts
+
+// src/app/guards/role.guard.ts
 
 import { Injectable } from '@angular/core';
 import {
   CanActivate,
   ActivatedRouteSnapshot,
-  RouterStateSnapshot,
   Router,
   UrlTree
 } from '@angular/router';
@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 
 @Injectable({ providedIn: 'root' })
-export class AuthGuard implements CanActivate {
+export class RoleGuard implements CanActivate {
 
   constructor(
     private authService: AuthService,
@@ -20,17 +20,17 @@ export class AuthGuard implements CanActivate {
   ) {}
 
   canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
+    route: ActivatedRouteSnapshot): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
 
+    const expectedRoles: string[] = route.data['roles'];
     const currentUser = this.authService.currentUserValue;
 
-    if (currentUser) {
+    if (currentUser && expectedRoles && expectedRoles.includes(currentUser.role)) {
       return true;
     }
 
-    // Redirect to the login page with the return URL
-    this.router.navigate(['/login'], { queryParams: { returnUrl: state.url }});
+    // Not authorized, redirect to dashboard
+    this.router.navigate(['/dashboard']);
     return false;
   }
 }

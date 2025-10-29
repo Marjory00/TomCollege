@@ -1,17 +1,16 @@
-
 // src/app/services/auth.service.ts
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { User, AuthResponse, LoginCredentials, RegisterData } from '../models/user.model';
+import { catchError } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root'
-})
+const API_URL = 'http://localhost:3000/api/auth';
+
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api/auth';
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
 
@@ -30,8 +29,12 @@ export class AuthService {
     return this.currentUserSubject.value;
   }
 
+  public getToken(): string | null {
+    return localStorage.getItem('token'); // Uses 'token' key, confirmed by login logic
+  }
+
   register(data: RegisterData): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, data)
+    return this.http.post<AuthResponse>(`${API_URL}/register`, data)
       .pipe(
         tap(response => {
           if (response.success && response.token) {
@@ -44,7 +47,7 @@ export class AuthService {
   }
 
   login(credentials: LoginCredentials): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials)
+    return this.http.post<AuthResponse>(`${API_URL}/login`, credentials)
       .pipe(
         tap(response => {
           if (response.success && response.token) {
@@ -52,6 +55,11 @@ export class AuthService {
             localStorage.setItem('currentUser', JSON.stringify(response.user));
             this.currentUserSubject.next(response.user);
           }
+        }),
+        catchError(error => {
+            console.error('Login error in service:', error);
+            // Propagate the error for component handling
+            return throwError(() => error);
         })
       );
   }
@@ -63,32 +71,8 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
-  getMe(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/me`);
-  }
-
-  updateProfile(data: Partial<User>): Observable<any> {
-    return this.http.put(`${this.apiUrl}/updateprofile`, data);
-  }
-
-  updatePassword(currentPassword: string, newPassword: string): Observable<any> {
-    return this.http.put(`${this.apiUrl}/updatepassword`, {
-      currentPassword,
-      newPassword
-    });
-  }
-
-  isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
   hasRole(roles: string[]): boolean {
     const user = this.currentUserValue;
     return user ? roles.includes(user.role) : false;
   }
 }
-

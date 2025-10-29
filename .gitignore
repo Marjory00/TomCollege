@@ -16,6 +16,7 @@ package-lock.json
 *.log
 *.gz
 .cache/
+backend/seed.js
 
 # Environment files
 .env

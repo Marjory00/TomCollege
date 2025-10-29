@@ -87,20 +87,22 @@ By replacing traditional paper-based methods with a **modern digital solution**,
 | Angular | 17+ | Frontend framework |
 | TypeScript | 5.0+ | Programming language |
 | RxJS | 7.8+ | Reactive programming |
+| HTML5 | — | Structure |
 | CSS3 | — | Styling |
-| HTML5 | — | Markup |
+| Angular CLI | 17+ | Project scaffolding and build tools |
 
 ### ⚙️ Backend
 | Technology | Version | Purpose |
 |-------------|----------|----------|
 | Node.js | 18+ | Runtime environment |
 | Express.js | 4.18+ | Web framework |
-| MongoDB | 6+ | NoSQL database |
+| MongoDB | 6+ | Database |
 | Mongoose | 8+ | ODM for MongoDB |
 | JWT | 9.0+ | Authentication |
 | bcryptjs | 2.4+ | Password hashing |
-| dotenv | 16.3+ | Environment variables |
-| CORS | 2.8+ | Cross-origin resource sharing |
+| dotenv | 16.3+ | Environment management |
+| CORS | 2.8+ | Cross-origin support |
+
 
 ### 🧰 Development Tools
 - Visual Studio Code – Code editor  

@@ -1,0 +1,63 @@
+<div class="classes-container">
+    <div class="header-section">
+        <h1>Classes & Courses</h1>
+        <button
+            *ngIf="currentUser?.role === 'admin' || currentUser?.role === 'teacher'"
+            routerLink="/classes/add"
+            class="btn btn-primary"
+        >
+            + Add New Class
+        </button>
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+        <p>Loading class data...</p>
+        <div class="spinner"></div>
+    </div>
+
+    <div *ngIf="!loading && classes.length === 0" class="empty-state">
+        <p>No classes or courses found. Start by adding one!</p>
+    </div>
+
+    <div *ngIf="!loading && classes.length > 0" class="table-responsive">
+        <table class="classes-table">
+            <thead>
+                <tr>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Teacher</th>
+                    <th>Enrollment</th>
+                    <th>Schedule</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let cls of classes">
+                    <td>**{{ cls.code }}**</td>
+                    <td>{{ cls.name }}</td>
+                    <td>{{ cls.teacherId?.userId?.firstName }} {{ cls.teacherId?.userId?.lastName }}</td>
+                    <td>{{ cls.enrolledStudents?.length || 0 }}</td>
+                    <td>{{ cls.schedule ? 'Scheduled' : 'TBD' }}</td>
+
+                    <td class="action-buttons">
+                        <button
+                            *ngIf="currentUser?.role === 'admin' || currentUser?.role === 'teacher'"
+                            routerLink="/classes/edit/{{ cls._id }}"
+                            class="btn btn-sm btn-info"
+                        >
+                            Edit
+                        </button>
+
+                        <button
+                            *ngIf="currentUser?.role === 'admin'"
+                            (click)="deleteClass(cls._id)"
+                            class="btn btn-sm btn-danger"
+                        >
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

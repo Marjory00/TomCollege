@@ -1,0 +1,7 @@
+// src/environments/environment.ts
+
+export const environment = {
+  production: true,
+  // 🚨 Replace with your actual production API URL
+  apiUrl: 'https://api.your-production-domain.com/v1',
+};

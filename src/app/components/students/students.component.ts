@@ -1,21 +1,21 @@
 // src/app/components/students/students.component.ts
 
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Required for *ngIf, *ngFor
-import { FormsModule } from '@angular/forms'; // Required for [(ngModel)] in the search input
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { StudentService } from '../../services/student.service';
 import { AuthService } from '../../services/auth.service';
 import { Student } from '../../models/student.model';
-import { Router, RouterLink } from '@angular/router'; // Required for navigation
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-students',
   templateUrl: './students.component.html',
   styleUrls: ['./students.component.css'],
-  standalone: true, // Assuming standalone is true
-  imports: [CommonModule, FormsModule, RouterLink], // Import necessary modules
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterLink],
 
-  // 🚨 FIX: Add StudentService to the component's providers array
+  // Providers necessary for this standalone component
   providers: [StudentService]
 })
 export class StudentsComponent implements OnInit {
@@ -27,7 +27,7 @@ export class StudentsComponent implements OnInit {
 
   // Constructor with dependency injection
   constructor(
-    private studentService: StudentService, // This now has a valid injection token
+    private studentService: StudentService,
     private authService: AuthService,
     private router: Router
   ) {}
@@ -42,7 +42,7 @@ export class StudentsComponent implements OnInit {
     this.studentService.getAllStudents().subscribe({
       next: (response) => {
         this.students = response.data || [];
-        this.filteredStudents = [...this.students]; // Initialize filtered list
+        this.filteredStudents = [...this.students];
         this.loading = false;
       },
       error: (error) => {
@@ -59,9 +59,10 @@ export class StudentsComponent implements OnInit {
       return;
     }
 
+    // 🚨 FIX: Removed redundant optional chaining (`?.`) from userId access
     this.filteredStudents = this.students.filter(student =>
-      student.userId?.firstName.toLowerCase().includes(term) ||
-      student.userId?.lastName.toLowerCase().includes(term) ||
+      student.userId.firstName.toLowerCase().includes(term) ||
+      student.userId.lastName.toLowerCase().includes(term) ||
       student.studentId.toLowerCase().includes(term) ||
       student.grade.toLowerCase().includes(term)
     );

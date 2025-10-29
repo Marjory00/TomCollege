@@ -1,8 +1,8 @@
 // src/app/components/classes/classes.component.ts
 
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // ⬅️ NEW: Required for *ngIf, *ngFor
-import { RouterLink } from '@angular/router'; // ⬅️ NEW: Required for links (e.g., Edit/Add button)
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { ClassService } from '../../services/class.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -11,13 +11,13 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './classes.component.html',
   styleUrls: ['./classes.component.css'],
 
-    // ⬅️ FIX 1: Component must be marked as standalone
+    // ✅ Correctly marked as standalone
     standalone: true,
 
-    // ⬅️ FIX 2: Explicitly import necessary modules and directives
+    // ✅ Correctly imports necessary directives
     imports: [CommonModule, RouterLink],
 
-    // ⬅️ FIX 3: Add services to the providers array for injection (if not provided in root)
+    // ✅ Correctly provides the local service (if not provided in root)
     providers: [ClassService]
 })
 export class ClassesComponent implements OnInit {
@@ -31,6 +31,7 @@ export class ClassesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Retrieves the current user for role-based access control
     this.currentUser = this.authService.currentUserValue;
     this.loadClasses();
   }
@@ -51,10 +52,10 @@ export class ClassesComponent implements OnInit {
 
   /**
    * Helper function to check if the user is authorized to delete.
-   * Only Admin should typically delete classes.
    */
   canDelete(): boolean {
-    return this.currentUser && this.currentUser.role === 'admin';
+    // Uses hasRole from AuthService for robust checking (better than direct property access)
+    return this.authService.hasRole(['admin']);
   }
 
   deleteClass(id: string): void {

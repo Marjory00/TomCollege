@@ -6,6 +6,9 @@ export interface User {
   lastName: string;
   email: string;
   role: 'admin' | 'teacher' | 'student';
+
+  // 🚨 FIX: Add optional token property to User to satisfy AuthService.getToken()
+  token?: string;
 }
 
 export interface LoginCredentials {
@@ -18,9 +21,12 @@ export interface RegisterData extends LoginCredentials {
     lastName: string;
 }
 
-export interface AuthResponse {
+// Renamed from AuthResponse to LoginResponse for clarity (matches AuthService usage)
+export interface LoginResponse {
     success: boolean;
+    // Assuming your API returns the token and user data at the top level:
     token: string;
-    user: User;
+    // We will keep 'data: User' to align with the response structure often used by APIs
+    data: User;
     message?: string;
 }

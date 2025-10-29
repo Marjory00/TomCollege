@@ -1,4 +1,4 @@
-# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+# See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # Compiled output
 /dist
@@ -8,8 +8,21 @@
 
 # Node
 /node_modules
+/frontend/node_modules
+/backend/node_modules
 npm-debug.log
 yarn-error.log
+package-lock.json
+*.log
+*.gz
+.cache/
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+/backend/.env
 
 # IDEs and editors
 .idea/
@@ -19,6 +32,7 @@ yarn-error.log
 *.launch
 .settings/
 *.sublime-workspace
+*.sublime-project
 
 # Visual Studio Code
 .vscode/*
@@ -36,8 +50,51 @@ yarn-error.log
 /libpeerconnection.log
 testem.log
 /typings
-__screenshots__/
 
-# System files
+# System Files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+Desktop.ini
+
+# Backend specific
+/backend/dist
+/backend/coverage
+/backend/logs
+/backend/*.log
+
+backend/package-lock.json
+backend/server.js/
+backend/node_modules/
+server.js
+
+# Frontend specific
+/frontend/dist
+/frontend/.angular
+/frontend/coverage
+/frontend/node_modules/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+/data
+
+# Build files
+build/
+*.tgz
+
+# Testing
+/coverage
+/.nyc_output
+
+# Temporary files
+*.tmp
+*.tempcd
+*.swp
+*.swo
+*~

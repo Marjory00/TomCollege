@@ -15,13 +15,12 @@
         "target": "ES2022",
         "module": "preserve",
 
-        "baseUrl": "./",
+        // 🚨 FIX 1: Ensure all paths are relative (start with ./) to avoid TS5090 error.
+        // 🚨 FIX 2: Changed '@environments/*' to '@env/*' to match the usage in auth.service.ts.
         "paths": {
-            "@env/*": ["environments/*"]
-        },
-
-        // 🚨 FIX: Add the required property to silence the deprecation warnings
-        "ignoreDeprecations": "6.0"
+            "@app/*": ["./src/app/*"],
+            "@env/*": ["./src/environments/*"]
+        }
     },
     "angularCompilerOptions": {
         "enableI18nLegacyMessageIdFormat": false,

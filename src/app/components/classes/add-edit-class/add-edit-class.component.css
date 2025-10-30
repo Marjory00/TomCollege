@@ -1,0 +1,106 @@
+/* Container for the entire component */
+.add-edit-class-container {
+    max-width: 800px;
+    margin: 40px auto; /* Center the card on the page */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Style for the header/title area */
+.card-header {
+    background-color: #007bff; /* Primary blue color */
+    color: white;
+    font-size: 1.5rem;
+    padding: 15px 20px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom: none;
+}
+
+/* Padding for the body section */
+.card-body {
+    padding: 25px 30px;
+}
+
+/* Spacing for form groups */
+.form-group {
+    margin-bottom: 20px;
+}
+
+/* Style for form labels */
+label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+    display: block; /* Ensures label takes up full width */
+}
+
+/* General input/textarea styling (assuming Bootstrap form-control class) */
+.form-control {
+    border-radius: 4px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Styling for invalid state (triggered by [ngClass]) */
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.invalid-feedback {
+    color: #dc3545;
+    font-size: 0.85rem;
+    margin-top: 5px;
+}
+
+/* Action button group spacing */
+.action-buttons {
+    display: flex;
+    gap: 10px; /* Space between buttons */
+}
+
+/* Primary button style */
+.btn-primary {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #007bff;
+    border-color: #007bff;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Secondary button style (Cancel) */
+.btn-secondary {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+    border-color: #545b62;
+}
+
+/* Loading state styling */
+button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+}

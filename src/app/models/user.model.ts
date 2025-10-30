@@ -1,32 +1,41 @@
-// src/app/models/user.model.ts
-
 export interface User {
-  _id: string;
+  _id?: string;
+  id?: string;
+  email: string;
+  password?: string;
+  role: 'admin' | 'teacher' | 'student';
   firstName: string;
   lastName: string;
-  email: string;
-  role: 'admin' | 'teacher' | 'student';
+  phone?: string;
+  isActive?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
-  // 🚨 FIX: Add optional token property to User to satisfy AuthService.getToken()
-  token?: string;
+export interface AuthResponse {
+  success: boolean;
+  token: string;
+  user: User;
+  message?: string;
 }
 
 export interface LoginCredentials {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
 
-export interface RegisterData extends LoginCredentials {
-    firstName: string;
-    lastName: string;
+export interface RegisterData {
+  email: string;
+  password: string;
+  role: 'admin' | 'teacher' | 'student';
+  firstName: string;
+  lastName: string;
+  phone?: string;
 }
 
-// Renamed from AuthResponse to LoginResponse for clarity (matches AuthService usage)
-export interface LoginResponse {
-    success: boolean;
-    // Assuming your API returns the token and user data at the top level:
-    token: string;
-    // We will keep 'data: User' to align with the response structure often used by APIs
-    data: User;
-    message?: string;
+export interface ApiResponse<T = any> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  count?: number;
 }

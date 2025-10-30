@@ -1,0 +1,86 @@
+/* --- Base Layout & Typography --- */
+.dashboard-container {
+    padding: 30px;
+    background-color: #f8f9fa; /* Light grey background */
+    min-height: calc(100vh - 60px); /* Fill the viewport height below the navbar */
+}
+
+.welcome-header {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #343a40;
+    margin-bottom: 5px;
+}
+
+.role-text {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+}
+
+.section-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #495057;
+    margin-top: 30px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 5px;
+}
+
+/* --- Stats Cards Layout --- */
+.stats-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px; /* Space between the stat columns */
+}
+
+.stat-card {
+    border: none;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card .card-body {
+    position: relative;
+    padding: 15px 20px;
+}
+
+/* --- Stat Card Content --- */
+.stat-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Icon placement (assuming Font Awesome classes) */
+.stat-icon {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    font-size: 3.5rem;
+    opacity: 0.2; /* Make the icon subtle */
+}
+
+/* --- Color Overrides (Standard Bootstrap Colors) --- */
+.bg-info { background-color: #17a2b8 !important; }
+.bg-success { background-color: #28a745 !important; }
+.bg-warning { background-color: #ffc107 !important; color: #343a40 !important; } /* Warning needs darker text */
+.bg-danger { background-color: #dc3545 !important; }

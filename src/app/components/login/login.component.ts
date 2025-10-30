@@ -1,8 +1,7 @@
 // src/app/components/login/login.component.ts
 
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute, RouterLink } from '@angular/router'; // Added RouterLink for template use
-// 🚨 FIX: Import ReactiveFormsModule (for formGroup) and CommonModule (for *ngIf)
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { first } from 'rxjs/operators';
@@ -13,10 +12,10 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 
-  // ⬅️ FIX 1: Component must be marked as standalone
+  //  STANDALONE: Correctly marked
   standalone: true,
 
-  // ⬅️ FIX 2: Explicitly import all necessary modules
+  // IMPORTS: Correctly imports all necessary modules/directives
   imports: [CommonModule, ReactiveFormsModule, RouterLink]
 })
 export class LoginComponent implements OnInit {
@@ -48,10 +47,9 @@ export class LoginComponent implements OnInit {
   }
 
   /**
-   * Helper getter to easily access form controls in the template.
-   * This is the fix for the 'f is undefined' error in the HTML.
+   * Helper getter to easily access form controls in the template (e.g., f.email).
    */
-  get f() {
+  get f(): typeof this.loginForm.controls {
     return this.loginForm.controls;
   }
 

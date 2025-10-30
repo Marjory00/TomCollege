@@ -1,36 +1,36 @@
-<div *ngIf="isLoggedIn; else loginLayout" class="main-app-container">
+@if (isLoggedIn) {
+    <div class="main-app-container">
 
-    <nav class="sidebar">
-        <div class="logo">
-            <h3>TomCollege TMS 🏫</h3>
-        </div>
+        <nav class="sidebar">
+            <div class="logo">
+                <h3>TomCollege TMS 🏫</h3>
+            </div>
 
-        <ul class="nav-links">
-            <li><a routerLink="/dashboard" routerLinkActive="active" title="Dashboard">Dashboard</a></li>
+            <ul class="nav-links">
+                <li><a routerLink="/dashboard" routerLinkActive="active" title="Dashboard">Dashboard</a></li>
 
-            <ng-container *ngIf="hasRole(['admin', 'teacher'])">
-                <li><a routerLink="/classes" routerLinkActive="active" title="Classes">Classes</a></li>
-                <li><a routerLink="/schedules" routerLinkActive="active" title="Schedules">Schedules</a></li>
-            </ng-container>
+                @if (hasRole(['admin', 'teacher'])) {
+                    <li><a routerLink="/classes" routerLinkActive="active" title="Classes">Classes</a></li>
+                    <li><a routerLink="/schedules" routerLinkActive="active" title="Schedules">Schedules</a></li>
+                }
 
-            <ng-container *ngIf="hasRole(['admin'])">
-                <li><a routerLink="/students" routerLinkActive="active" title="Students">Students</a></li>
-            </ng-container>
-        </ul>
+                @if (hasRole(['admin'])) {
+                    <li><a routerLink="/students" routerLinkActive="active" title="Students">Students</a></li>
+                }
+            </ul>
 
-        <div class="user-footer">
-            <p>Welcome, **{{ currentUser?.firstName }}**!</p>
-            <button (click)="logout()" class="btn btn-logout">Logout</button>
-        </div>
-    </nav>
+            <div class="user-footer">
+                <p>Welcome, **{{ currentUser?.firstName }}**!</p>
+                <button (click)="logout()" class="btn btn-logout">Logout</button>
+            </div>
+        </nav>
 
-    <main class="content-area">
-        <router-outlet></router-outlet>
-    </main>
-</div>
-
-<ng-template #loginLayout>
+        <main class="content-area">
+            <router-outlet></router-outlet>
+        </main>
+    </div>
+} @else {
     <div class="login-page-wrapper">
         <router-outlet></router-outlet>
     </div>
-</ng-template>
+}

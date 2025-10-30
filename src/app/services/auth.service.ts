@@ -1,95 +1,115 @@
-// src/app/services/auth.service.ts (Final SSR-Safe Version)
-
-import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core'; // <-- NEW IMPORTS: PLATFORM_ID, Inject
+import { isPlatformBrowser } from '@angular/common'; // <-- NEW IMPORT: isPlatformBrowser
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
-import { User, LoginResponse } from '../models/user.model';
-import { environment } from '@env/environment'; // Assuming @env/environment is correctly configured in tsconfig
+import { User, AuthResponse, LoginCredentials, RegisterData } from '../models/user.model';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
-    private currentUserSubject: BehaviorSubject<User | null>;
-    public currentUser: Observable<User | null>;
+  private apiUrl = 'http://localhost:3000/api/auth';
+  private currentUserSubject: BehaviorSubject<User | null>;
+  public currentUser: Observable<User | null>;
 
-    private isBrowser: boolean;
+  // Property to store the platform check result
+  private isBrowser: boolean;
 
-    constructor(
-        private http: HttpClient,
-        private router: Router,
-        // Injects the platform token
-        @Inject(PLATFORM_ID) private platformId: Object
-    ) {
-        // 🚨 CRITICAL SSR GUARD 1: Determine platform immediately
-        this.isBrowser = isPlatformBrowser(this.platformId);
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    @Inject(PLATFORM_ID) private platformId: Object // <-- Inject PLATFORM_ID
+  ) {
+    // Determine if the code is running in a browser
+    this.isBrowser = isPlatformBrowser(this.platformId);
 
-        let initialUser: User | null = null;
+    let initialUser: User | null = null;
 
-        // 🚨 CRITICAL SSR GUARD 2: Only access localStorage if in the browser
-        if (this.isBrowser) {
-            const storedUser = localStorage.getItem('currentUser');
-            if (storedUser) {
-                try {
-                    initialUser = JSON.parse(storedUser);
-                } catch (e) {
-                    console.error('Error parsing stored user:', e);
-                }
+    if (this.isBrowser) {
+        // Access localStorage ONLY if running in the browser
+        const storedUser = localStorage.getItem('currentUser');
+        initialUser = storedUser ? JSON.parse(storedUser) : null;
+    }
+
+    // Initialize BehaviorSubject safely
+    this.currentUserSubject = new BehaviorSubject<User | null>(initialUser);
+    this.currentUser = this.currentUserSubject.asObservable();
+  }
+
+  public get currentUserValue(): User | null {
+    return this.currentUserSubject.value;
+  }
+
+  register(data: RegisterData): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, data)
+      .pipe(
+        tap(response => {
+          if (response.success && response.token) {
+            // Conditional localStorage update
+            if (this.isBrowser) {
+                localStorage.setItem('token', response.token);
+                localStorage.setItem('currentUser', JSON.stringify(response.user));
             }
-        }
-        // If not a browser, initialUser remains null, preventing crash
+            this.currentUserSubject.next(response.user);
+          }
+        })
+      );
+  }
 
-        this.currentUserSubject = new BehaviorSubject<User | null>(initialUser);
-        this.currentUser = this.currentUserSubject.asObservable();
+  login(credentials: LoginCredentials): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials)
+      .pipe(
+        tap(response => {
+          if (response.success && response.token) {
+            // Conditional localStorage update
+            if (this.isBrowser) {
+                localStorage.setItem('token', response.token);
+                localStorage.setItem('currentUser', JSON.stringify(response.user));
+            }
+            this.currentUserSubject.next(response.user);
+          }
+        })
+      );
+  }
+
+  logout(): void {
+    // Conditional localStorage removal
+    if (this.isBrowser) {
+        localStorage.removeItem('token');
+        localStorage.removeItem('currentUser');
     }
+    this.currentUserSubject.next(null);
+    this.router.navigate(['/login']);
+  }
 
-    public get currentUserValue(): User | null {
-        return this.currentUserSubject.value;
-    }
+  getMe(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/me`);
+  }
 
-    login(credentials: any): Observable<User> {
-        return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, credentials)
-            .pipe(
-                map(response => {
-                    const user = response.data;
-                    // Note: This line depends on LoginResponse having 'token' property
-                    user.token = response.token;
+  updateProfile(data: Partial<User>): Observable<any> {
+    return this.http.put(`${this.apiUrl}/updateprofile`, data);
+  }
 
-                    // 🚨 SSR GUARD: Only save to localStorage in the browser
-                    if (this.isBrowser) {
-                        localStorage.setItem('currentUser', JSON.stringify(user));
-                    }
-                    this.currentUserSubject.next(user);
-                    return user;
-                }),
-                catchError(error => throwError(() => error))
-            );
-    }
+  updatePassword(currentPassword: string, newPassword: string): Observable<any> {
+    return this.http.put(`${this.apiUrl}/updatepassword`, {
+      currentPassword,
+      newPassword
+    });
+  }
 
-    logout(): void {
-        // 🚨 SSR GUARD: Only clear localStorage in the browser
-        if (this.isBrowser) {
-            localStorage.removeItem('currentUser');
-        }
-        this.currentUserSubject.next(null);
-        this.router.navigate(['/login']);
-    }
+  isAuthenticated(): boolean {
+    // Conditional check
+    return this.isBrowser ? !!localStorage.getItem('token') : !!this.currentUserSubject.value;
+  }
 
-    public getToken(): string | null {
-        // 🚨 SSR GUARD: Return null immediately on the server
-        if (!this.isBrowser) {
-            return null;
-        }
-        const user = this.currentUserSubject.value;
-        return user && user.token ? user.token : null;
-    }
+  getToken(): string | null {
+    // Conditional retrieval
+    return this.isBrowser ? localStorage.getItem('token') : null;
+  }
 
-    hasRole(roles: string[]): boolean {
-        const user = this.currentUserSubject.value;
-        if (!user || !user.role) {
-            return false;
-        }
-        return roles.includes(user.role);
-    }
+  hasRole(roles: string[]): boolean {
+    const user = this.currentUserValue;
+    return user ? roles.includes(user.role) : false;
+  }
 }

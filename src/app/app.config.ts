@@ -4,7 +4,7 @@ import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessC
 import { provideRouter } from '@angular/router';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-// 🚨 FIX: DELETE OR COMMENT OUT THE LINE BELOW
+// FIX: DELETE OR COMMENT OUT THE LINE BELOW
 // import { provideForms, withReactiveForms } from '@angular/forms';
 
 import { routes } from './app.routes';
@@ -27,6 +27,6 @@ export const appConfig: ApplicationConfig = {
       ])
     ),
 
-    // 3. 🚨 FIX: Forms Setup is NOW HANDLED by importing ReactiveFormsModule in the components.
+    // 3. FIX: Forms Setup is NOW HANDLED by importing ReactiveFormsModule in the components.
   ]
 };

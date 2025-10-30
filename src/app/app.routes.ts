@@ -2,68 +2,61 @@
 
 import { Routes } from '@angular/router';
 
-import { LoginComponent } from './components/login/login.component';
+// import { LoginComponent } from './components/login/login.component'; // Commented out the import, too
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-
-// --- Feature Components ---
+import { AddEditClassComponent } from './components/classes/add-edit-class/add-edit-class.component';
 import { ClassesComponent } from './components/classes/classes.component';
-import { AddEditClassComponent } from './components/classes/add-edit-class/add-edit-class.component'; // <-- NEW IMPORT
 import { StudentsComponent } from './components/students/students.component';
 import { SchedulesComponent } from './components/schedules/schedules.component';
 
-// --- Guards ---
-import { AuthGuard } from './guards/auth.guard';
-import { RoleGuard } from './guards/role.guard';
+// import { AuthGuard } from './guards/auth.guard'; // Commented out
+// import { RoleGuard } from './guards/role.guard'; // Commented out
 
 
 export const routes: Routes = [
-  // Public Route
-  { path: 'login', component: LoginComponent },
 
-  // --- Protected Routes ---
+  //  FIX 3: REMOVED the login route entry entirely.
+  // { path: 'login', component: LoginComponent },
+
+  // --- Main Application Routes (No Guards for Mockup) ---
   {
     path: 'dashboard',
     component: DashboardComponent,
-    canActivate: [AuthGuard]
+    // canActivate: [AuthGuard] // Commented out
   },
-
-  // 1. Class Management Routes
   {
     path: 'classes',
-    component: ClassesComponent, // Component to list all classes
-    canActivate: [AuthGuard, RoleGuard],
+    component: ClassesComponent,
+    // canActivate: [AuthGuard, RoleGuard], // Commented out
     data: { roles: ['admin', 'teacher'] }
   },
   {
-    path: 'classes/add', // Route for adding a new class
+    path: 'classes/add',
     component: AddEditClassComponent,
-    canActivate: [AuthGuard, RoleGuard],
+    // canActivate: [AuthGuard, RoleGuard], // Commented out
     data: { roles: ['admin', 'teacher'] }
   },
   {
-    path: 'classes/edit/:id', // Route for editing an existing class
+    path: 'classes/edit/:id',
     component: AddEditClassComponent,
-    canActivate: [AuthGuard, RoleGuard],
+    // canActivate: [AuthGuard, RoleGuard], // Commented out
     data: { roles: ['admin', 'teacher'] }
   },
-
-  // 2. Student Management Routes
   {
     path: 'students',
     component: StudentsComponent,
-    canActivate: [AuthGuard, RoleGuard],
+    // canActivate: [AuthGuard, RoleGuard], // Commented out
     data: { roles: ['admin'] }
   },
-
-  // 3. Schedule Management Routes
   {
     path: 'schedules',
     component: SchedulesComponent,
-    canActivate: [AuthGuard, RoleGuard],
+    // canActivate: [AuthGuard, RoleGuard], // Commented out
     data: { roles: ['admin', 'teacher'] }
   },
 
-  // Default Redirects
+  // --- Default Redirect ---
+  // FIX 4: Ensure the root path and any bad path goes directly to the dashboard.
   { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
   { path: '**', redirectTo: '/dashboard' }
 ];

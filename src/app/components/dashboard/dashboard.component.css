@@ -2,7 +2,11 @@
 .dashboard-container {
     padding: 30px;
     background-color: #f8f9fa; /* Light grey background */
-    min-height: calc(100vh - 60px); /* Fill the viewport height below the navbar */
+    min-height: 100%;
+
+    /* 🚨 FIX: Enforce boundary constraints to prevent content from stretching the viewport */
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .welcome-header {
@@ -28,59 +32,66 @@
     padding-bottom: 5px;
 }
 
-/* --- Stats Cards Layout --- */
-.stats-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px; /* Space between the stat columns */
-}
+/* --- Stats Cards Layout (Professional Styling) --- */
 
+/* The card relies on the parent Bootstrap column (col-lg-3, col-md-6) for width. */
 .stat-card {
     border: none;
     border-radius: 8px;
     overflow: hidden;
+    /* Subtle animation on hover */
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    min-height: 120px;
+
+    /* Fixed height for visual uniformity */
+    height: 130px;
+
+    /* Internal flex for aligning icon and text */
     display: flex;
     align-items: center;
+    /* We trust the Bootstrap column to manage the width */
 }
 
 .stat-card:hover {
+    /* Lifts card slightly and enhances shadow */
     transform: translateY(-5px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
 }
 
 .stat-card .card-body {
     position: relative;
     padding: 15px 20px;
+    flex-grow: 1;
 }
 
 /* --- Stat Card Content --- */
 .stat-value {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 700;
     line-height: 1;
     margin-bottom: 5px;
 }
 
 .stat-label {
-    font-size: 0.9rem;
-    opacity: 0.8;
+    font-size: 1rem;
+    opacity: 0.9;
 }
 
-/* Icon placement (assuming Font Awesome classes) */
+/* Icon placement (Font Awesome) */
 .stat-icon {
     position: absolute;
     top: 50%;
     right: 15px;
     transform: translateY(-50%);
-    font-size: 3.5rem;
-    opacity: 0.2; /* Make the icon subtle */
+    font-size: 4rem;
+    opacity: 0.25;
 }
 
 /* --- Color Overrides (Standard Bootstrap Colors) --- */
 .bg-info { background-color: #17a2b8 !important; }
 .bg-success { background-color: #28a745 !important; }
-.bg-warning { background-color: #ffc107 !important; color: #343a40 !important; } /* Warning needs darker text */
+.bg-warning {
+    background-color: #ffc107 !important;
+    color: #343a40 !important; /* Force dark text for contrast on yellow background */
+}
 .bg-danger { background-color: #dc3545 !important; }

@@ -31,12 +31,104 @@ a {
   color: inherit;
 }
 
+/* ---------------------------------------------------- */
+/* 🚨 FIX: CORE APPLICATION LAYOUT STYLES */
+/* These styles define the sidebar/content split and prevent horizontal overflow */
+/* ---------------------------------------------------- */
+
+.main-app-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background: #ffffff;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: fixed; /* Keep sidebar fixed */
+    height: 100vh;
+    z-index: 100;
+}
+
+.content-area {
+    /* 🚨 ESSENTIAL FIX: Pushes the content area past the fixed sidebar */
+    margin-left: 250px;
+
+    /* 🚨 CRITICAL FIX: Ensures the main content cannot overflow horizontally */
+    flex-grow: 1;
+    width: 100%; /* Ensure it occupies full remaining space */
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Sidebar specific styles */
+.sidebar .logo {
+    padding: 0 20px 20px;
+    color: #4CAF50;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.sidebar .nav-links {
+    list-style: none;
+    flex-grow: 1;
+}
+
+.sidebar .nav-links li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    color: #555;
+    transition: background 0.2s, color 0.2s;
+}
+
+.sidebar .nav-links li a:hover,
+.sidebar .nav-links li a.active {
+    background: #e6f0e6;
+    color: #4CAF50;
+    font-weight: 600;
+    border-left: 4px solid #4CAF50;
+}
+
+.sidebar .nav-links i {
+    margin-right: 10px;
+    width: 18px; /* Standardize icon width */
+    text-align: center;
+}
+
+.sidebar .user-footer {
+    padding: 20px;
+    border-top: 1px solid #eee;
+    text-align: center;
+}
+
+.sidebar .user-footer p {
+    font-size: 0.9rem;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.sidebar .btn-logout {
+    width: 100%;
+    background: #f44336;
+    color: white;
+}
+
+/* ---------------------------------------------------- */
+/* 💡 END CORE APPLICATION LAYOUT STYLES */
+/* ---------------------------------------------------- */
+
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
 }
-
+/* ... (rest of the original file content below this line) ... */
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
 }

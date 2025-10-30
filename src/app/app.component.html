@@ -1,36 +1,30 @@
-@if (isLoggedIn) {
-    <div class="main-app-container">
+<div class="main-app-container">
 
-        <nav class="sidebar">
-            <div class="logo">
-                <h3>TomCollege TMS 🏫</h3>
-            </div>
+    <nav class="sidebar">
+        <div class="logo">
+            <h3>TomCollege TMS <i class="fas fa-graduation-cap"></i></h3>
+        </div>
 
-            <ul class="nav-links">
-                <li><a routerLink="/dashboard" routerLinkActive="active" title="Dashboard">Dashboard</a></li>
+        <ul class="nav-links">
+            <li><a routerLink="/dashboard" routerLinkActive="active" title="Dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
 
-                @if (hasRole(['admin', 'teacher'])) {
-                    <li><a routerLink="/classes" routerLinkActive="active" title="Classes">Classes</a></li>
-                    <li><a routerLink="/schedules" routerLinkActive="active" title="Schedules">Schedules</a></li>
-                }
+            @if (hasRole(['admin', 'teacher'])) {
+                <li><a routerLink="/classes" routerLinkActive="active" title="Classes"><i class="fas fa-chalkboard"></i> Classes</a></li>
+                <li><a routerLink="/schedules" routerLinkActive="active" title="Schedules"><i class="fas fa-calendar-alt"></i> Schedules</a></li>
+            }
 
-                @if (hasRole(['admin'])) {
-                    <li><a routerLink="/students" routerLinkActive="active" title="Students">Students</a></li>
-                }
-            </ul>
+            @if (hasRole(['admin'])) {
+                <li><a routerLink="/students" routerLinkActive="active" title="Students"><i class="fas fa-user-graduate"></i> Students</a></li>
+            }
+        </ul>
 
-            <div class="user-footer">
-                <p>Welcome, **{{ currentUser?.firstName }}**!</p>
-                <button (click)="logout()" class="btn btn-logout">Logout</button>
-            </div>
-        </nav>
+        <div class="user-footer">
+            <p>Welcome, {{ currentUser?.firstName || 'Guest' }}!</p>
+            <button (click)="logout()" class="btn btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </nav>
 
-        <main class="content-area">
-            <router-outlet></router-outlet>
-        </main>
-    </div>
-} @else {
-    <div class="login-page-wrapper">
+    <main class="content-area">
         <router-outlet></router-outlet>
-    </div>
-}
+    </main>
+</div>

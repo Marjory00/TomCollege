@@ -1,19 +1,16 @@
-// src/app/app.config.ts (Final Fixed Configuration)
-
 import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-// FIX: DELETE OR COMMENT OUT THE LINE BELOW
-// import { provideForms, withReactiveForms } from '@angular/forms';
 
 import { routes } from './app.routes';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
+import { jwtInterceptor } from './interceptors/jwt.interceptor'; // Assuming the interceptor file is correctly defined
 
 export const appConfig: ApplicationConfig = {
   providers: [
     // Core/Advanced Providers
     provideBrowserGlobalErrorListeners(),
+    // NOTE: provideZonelessChangeDetection should only be used if intentionally adopting the zoneless architecture.
     provideZonelessChangeDetection(),
     provideClientHydration(withEventReplay()),
 
@@ -23,10 +20,12 @@ export const appConfig: ApplicationConfig = {
     // 2. HTTP Client and Functional Interceptor Setup
     provideHttpClient(
       withInterceptors([
-        AuthInterceptor
+        // Registers the functional JWT interceptor to attach the token to API requests.
+        jwtInterceptor
       ])
     ),
 
-    // 3. FIX: Forms Setup is NOW HANDLED by importing ReactiveFormsModule in the components.
+    // 3. Forms Setup is handled by importing ReactiveFormsModule in standalone components.
+    // No additional providers needed here.
   ]
 };

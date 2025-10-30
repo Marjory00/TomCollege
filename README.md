@@ -55,27 +55,27 @@ By replacing traditional paper-based methods with a **modern digital solution**,
 ## ✨ Features
 
 ### 👩‍💼 For Administrators
-- ✅ Complete **user management** (create, read, update, delete)
-- ✅ **Student registration** and profile management
-- ✅ **Class creation** and assignment
-- ✅ **Schedule management** and conflict detection
-- ✅ **Enrollment management**
-- ✅ **System configuration** and settings
-- ✅ Dashboard with **comprehensive statistics**
+-  Complete **user management** (create, read, update, delete)
+-  **Student registration** and profile management
+-  **Class creation** and assignment
+-  **Schedule management** and conflict detection
+-  **Enrollment management**
+-  **System configuration** and settings
+-  Dashboard with **comprehensive statistics**
 
 ### 👨‍🏫 For Teachers
-- ✅ View all **students** and their information
-- ✅ Access **class rosters**
-- ✅ View and **update assigned classes**
-- ✅ Check **class schedules**
-- ✅ Update **personal profile**
+-  View all **students** and their information
+-  Access **class rosters**
+-  View and **update assigned classes**
+-  Check **class schedules**
+-  Update **personal profile**
 
 ### 🎓 For Students
-- ✅ View **personal academic information**
-- ✅ Check **enrolled classes**
-- ✅ View **weekly class schedule**
-- ✅ Update **personal profile**
-- ✅ Track **GPA and enrollment status**
+-  View **personal academic information**
+-  Check **enrolled classes**
+-  View **weekly class schedule**
+-  Update **personal profile**
+-  Track **GPA and enrollment status**
 
 ---
 

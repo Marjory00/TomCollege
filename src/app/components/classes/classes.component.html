@@ -1,63 +1,88 @@
 <div class="classes-container">
-    <div class="header-section">
-        <h1>Classes & Courses</h1>
-        <button
-            *ngIf="currentUser?.role === 'admin' || currentUser?.role === 'teacher'"
-            routerLink="/classes/add"
-            class="btn btn-primary"
-        >
-            + Add New Class
-        </button>
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Class Management</h2>
+
+        @if (currentUserRole === 'admin' || currentUserRole === 'teacher') {
+            <button
+                class="btn btn-primary"
+                (click)="addClass()">
+                <i class="fas fa-plus me-2"></i> Add New Class
+            </button>
+        }
     </div>
 
-    <div *ngIf="loading" class="loading-state">
-        <p>Loading class data...</p>
-        <div class="spinner"></div>
-    </div>
+    <hr>
 
-    <div *ngIf="!loading && classes.length === 0" class="empty-state">
-        <p>No classes or courses found. Start by adding one!</p>
-    </div>
+    @if (loading) {
+        <div class="text-center my-5">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-3">Loading classes list...</p>
+        </div>
+    }
 
-    <div *ngIf="!loading && classes.length > 0" class="table-responsive">
-        <table class="classes-table">
-            <thead>
-                <tr>
-                    <th>Code</th>
-                    <th>Name</th>
-                    <th>Teacher</th>
-                    <th>Enrollment</th>
-                    <th>Schedule</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let cls of classes">
-                    <td>**{{ cls.code }}**</td>
-                    <td>{{ cls.name }}</td>
-                    <td>{{ cls.teacherId?.userId?.firstName }} {{ cls.teacherId?.userId?.lastName }}</td>
-                    <td>{{ cls.enrolledStudents?.length || 0 }}</td>
-                    <td>{{ cls.schedule ? 'Scheduled' : 'TBD' }}</td>
+    @if (errorMessage && !loading) {
+        <div class="alert alert-danger" role="alert">
+            <p class="mb-0">{{ errorMessage }}</p>
+        </div>
+    }
 
-                    <td class="action-buttons">
-                        <button
-                            *ngIf="currentUser?.role === 'admin' || currentUser?.role === 'teacher'"
-                            routerLink="/classes/edit/{{ cls._id }}"
-                            class="btn btn-sm btn-info"
-                        >
-                            Edit
-                        </button>
+    @if (!loading && classes.length === 0 && !errorMessage) {
+        <div class="alert alert-info" role="alert">
+            No classes have been created yet.
+        </div>
+    }
 
-                        <button
-                            *ngIf="currentUser?.role === 'admin'"
-                            (click)="deleteClass(cls._id)"
-                            class="btn btn-sm btn-danger"
-                        >
-                            Delete
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    @if (!loading && classes.length > 0) {
+        <div class="table-responsive">
+            <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Class Name</th>
+
+                        <th scope="col">Code ({{ 'classCode' }})</th>
+
+                        <th scope="col">Teacher</th>
+                        <th scope="col" class="text-center">Enrolled Students</th>
+                        <th scope="col" class="text-center">Active</th>
+
+                        @if (currentUserRole === 'admin' || currentUserRole === 'teacher') {
+                            <th scope="col" class="text-center">Actions</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (class of classes; track class.id) {
+                        <tr>
+                            <td>{{ class.name }}</td>
+                            <td>{{ class.classCode }}</td>
+                            <td>{{ class.teacherName }}</td>
+
+                            <td class="text-center">{{ class.enrolledStudentIds.length || 0 }}</td>
+
+                            <td class="text-center">
+                                <span class="badge"
+                                      [ngClass]="{'bg-success': class.isActive, 'bg-warning': !class.isActive}">
+                                    {{ class.isActive ? 'Yes' : 'No' }}
+                                </span>
+                            </td>
+
+                            @if (currentUserRole === 'admin' || currentUserRole === 'teacher') {
+                                <td class="text-center">
+                                    <button class="btn btn-sm btn-info me-2" (click)="editClass(class.id)">
+                                        <i class="fas fa-edit"></i> View/Edit
+                                    </button>
+                                    <button class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
 </div>

@@ -1,7 +1,6 @@
 // src/app/models/class.model.ts
 
 import { User } from './user.model';
-// Assuming you have a Student model, if not, it should be created next.
 import { Student } from './student.model';
 
 /**
@@ -14,22 +13,30 @@ export interface Class {
     /** The formal name of the class. Matches form control 'name'. */
     name: string;
 
-    /** The short, unique course code (e.g., 'MATH101'). Matches form control 'code'. */
-    code: string;
+    // 🚨 CRITICAL FIX: Ensure 'classCode' property is explicitly defined as a string,
+    // matching the property name used in classes.component.html.
+    /** The short, unique course code (e.g., 'MATH101'). */
+    classCode: string;
 
-    /** The ID of the teacher assigned to this class. Matches form control 'teacherId'. */
+    /** Boolean flag indicating if the class is currently running or open for enrollment. */
+    isActive: boolean;
+
+    /** The ID of the teacher assigned to this class. */
     teacherId: string;
 
-    /** A brief description of the class content. Matches form control 'description'. */
+    /** The full name of the teacher assigned to this class (for display). */
+    teacherName?: string;
+
+    /** A brief description of the class content. */
     description?: string;
 
     /** The maximum number of students allowed in the class. */
     maxStudents: number;
 
-    /** The IDs of the students enrolled in this class. Typically, only IDs are stored here. */
+    /** The IDs of the students enrolled in this class. */
     enrolledStudentIds: string[];
 
-    /** Optional: Full teacher object for frontend display (when populated by the API). */
+    /** Optional: Full teacher object for frontend display. */
     teacherDetails?: User;
 
     /** Optional: Array of student objects for frontend display. */
@@ -38,7 +45,7 @@ export interface Class {
     /** Optional: Identifier for a separate scheduling entity. */
     scheduleId?: string;
 
-    /** The current status of the class. */
+    /** The current status of the class (used internally or for complex state). */
     status: 'Open' | 'Closed' | 'Archived';
 
     /** Creation timestamp (optional, set by the server). */

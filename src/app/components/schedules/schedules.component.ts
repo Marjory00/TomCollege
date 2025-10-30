@@ -1,62 +1,103 @@
-
-// src/app/components/schedules/schedules.component.ts
-
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
+import { catchError, of, finalize } from 'rxjs';
+import { HttpClientModule } from '@angular/common/http';
+
+// Assuming these models and services exist
+import { User } from '../../models/user.model';
+import { Schedule } from '../../models/schedule.model'; // Assuming a Schedule model exists
 import { ScheduleService } from '../../services/schedule.service';
-import { Schedule } from '../../models/schedule.model';
 import { AuthService } from '../../services/auth.service';
+
+// Interface for API list response (used for all list data)
+interface ListResponse<T> {
+  data: T[];
+  count: number;
+}
 
 @Component({
   selector: 'app-schedules',
+  standalone: true,
+  // Add necessary modules for routing, directives, and services
+  imports: [CommonModule, RouterModule, HttpClientModule],
   templateUrl: './schedules.component.html',
   styleUrls: ['./schedules.component.css']
 })
 export class SchedulesComponent implements OnInit {
+
   schedules: Schedule[] = [];
-  loading = true;
-  currentUser: any;
+  loading: boolean = true;
+  errorMessage: string | null = null;
+  currentUserRole: string | undefined;
 
   constructor(
     private scheduleService: ScheduleService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    this.currentUser = this.authService.currentUserValue;
-    this.loadSchedules();
+    // Get the synchronous user object for immediate role check
+    const user: User | null = this.authService.currentUserValue;
+    this.currentUserRole = user?.role;
+
+    // Only Admin and Teacher roles are typically allowed to manage schedules
+    if (this.currentUserRole === 'admin' || this.currentUserRole === 'teacher') {
+      this.loadSchedules();
+    } else {
+      // Handle unauthorized access
+      this.errorMessage = 'You do not have permission to view or manage schedules.';
+      this.loading = false;
+    }
   }
 
+  /**
+   * Fetches the list of schedules from the service.
+   */
   loadSchedules(): void {
     this.loading = true;
-    this.scheduleService.getAllSchedules().subscribe({
-      next: (response) => {
-        this.schedules = response.data || [];
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Error loading schedules:', error);
-        this.loading = false;
-      }
-    });
-  }
+    this.errorMessage = null;
 
-  deleteSchedule(id: string): void {
-    if (!this.authService.hasRole(['admin'])) {
-        alert('You do not have permission to delete schedules.');
-        return;
-    }
-
-    if (confirm('Are you sure you want to delete this schedule?')) {
-      this.scheduleService.deleteSchedule(id).subscribe({
-        next: () => {
-          this.loadSchedules();
-          alert('Schedule deleted successfully');
+    this.scheduleService.getAllSchedules()
+      .pipe(
+        // Ensure loading state is turned off on completion or error
+        finalize(() => this.loading = false),
+        // Catch errors and return an empty list
+        catchError(error => {
+          console.error('Error fetching schedules:', error);
+          this.errorMessage = 'Failed to load schedule list. Please check the network.';
+          // Return a mock response to ensure the subscription completes successfully
+          return of({ data: [], count: 0 } as ListResponse<Schedule>);
+        })
+      )
+      .subscribe({
+        next: (response: ListResponse<Schedule>) => {
+          this.schedules = response.data;
         },
-        error: (error) => {
-          console.error('Error deleting schedule:', error);
-          alert('Failed to delete schedule');
+        error: (err) => {
+          console.error('Subscription error:', err);
         }
       });
+  }
+
+  /**
+   * Navigate to the form to add a new schedule.
+   */
+  addSchedule(): void {
+    this.router.navigate(['/schedules/new']);
+  }
+
+  /**
+   * Navigate to the detail/edit view for a specific schedule.
+   * @param scheduleId The ID of the schedule (can be string or undefined).
+   */
+  editSchedule(scheduleId: string | undefined): void {
+    // Type guard to ensure the ID is defined before navigating
+    if (scheduleId) {
+      this.router.navigate(['/schedules/edit', scheduleId]);
+    } else {
+      console.warn('Attempted to edit a schedule with no ID.');
     }
   }
 }

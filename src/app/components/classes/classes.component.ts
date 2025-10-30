@@ -1,80 +1,91 @@
-// src/app/components/classes/classes.component.ts
-
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { Observable, catchError, of, finalize } from 'rxjs';
+
+// Assuming these models and services exist
+import { Class } from '../../models/class.model';
 import { ClassService } from '../../services/class.service';
 import { AuthService } from '../../services/auth.service';
+import { User } from '../../models/user.model';
+
+// Interface for API list response
+interface ListResponse<T> {
+  data: T[];
+  count: number;
+}
 
 @Component({
   selector: 'app-classes',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './classes.component.html',
-  styleUrls: ['./classes.component.css'],
-
-    // ✅ Correctly marked as standalone
-    standalone: true,
-
-    // ✅ Correctly imports necessary directives
-    imports: [CommonModule, RouterLink],
-
-    // ✅ Correctly provides the local service (if not provided in root)
-    providers: [ClassService]
+  styleUrls: ['./classes.component.css']
 })
 export class ClassesComponent implements OnInit {
-  classes: any[] = [];
-  loading = true;
-  currentUser: any;
+
+  classes: Class[] = [];
+  loading: boolean = true;
+  errorMessage: string | null = null;
+  currentUserRole: string | undefined;
 
   constructor(
     private classService: ClassService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    // Retrieves the current user for role-based access control
-    this.currentUser = this.authService.currentUserValue;
-    this.loadClasses();
+    const user: User | null = this.authService.currentUserValue;
+
+    this.currentUserRole = user?.role;
+
+    if (this.currentUserRole === 'admin' || this.currentUserRole === 'teacher') {
+      this.loadClasses();
+    } else {
+      this.errorMessage = 'You do not have permission to view this page.';
+      this.loading = false;
+    }
   }
 
   loadClasses(): void {
     this.loading = true;
-    this.classService.getAllClasses().subscribe({
-      next: (response) => {
-        this.classes = response.data || [];
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Error loading classes:', error);
-        this.loading = false;
-      }
-    });
+    this.errorMessage = null;
+
+    this.classService.getAllClasses()
+      .pipe(
+        finalize(() => this.loading = false),
+        catchError(error => {
+          console.error('Error fetching classes:', error);
+          this.errorMessage = 'Failed to load class list. Please check the network.';
+          return of({ data: [], count: 0 } as ListResponse<Class>);
+        })
+      )
+      .subscribe({
+        next: (response: ListResponse<Class>) => {
+          this.classes = response.data;
+        },
+        error: (err) => {
+          console.error('Subscription error:', err);
+        }
+      });
+  }
+
+  addClass(): void {
+    this.router.navigate(['/classes/new']);
   }
 
   /**
-   * Helper function to check if the user is authorized to delete.
+   * Navigate to the detail/edit view for a specific class.
+   * FIX: Added type guard to ensure classId is a string before routing.
+   * @param classId The ID of the class to edit (can be string or undefined).
    */
-  canDelete(): boolean {
-    // Uses hasRole from AuthService for robust checking (better than direct property access)
-    return this.authService.hasRole(['admin']);
-  }
-
-  deleteClass(id: string): void {
-    if (!this.canDelete()) {
-        alert('You do not have permission to delete classes.');
-        return;
-    }
-
-    if (confirm('Are you sure you want to delete this class? This action cannot be undone.')) {
-      this.classService.deleteClass(id).subscribe({
-        next: () => {
-          this.loadClasses();
-          alert('Class deleted successfully');
-        },
-        error: (error) => {
-          console.error('Error deleting class:', error);
-          alert('Failed to delete class. Check server logs.');
-        }
-      });
+  editClass(classId: string | undefined): void { //  FIX 1: Change the parameter type to accept 'string | undefined'
+    if (classId) { // FIX 2: Check if classId exists before navigating
+      this.router.navigate(['/classes/edit', classId]);
+    } else {
+      console.warn('Attempted to edit a class with no ID.');
+      // Optionally show a user error message here
     }
   }
 }

@@ -1,97 +1,84 @@
-/* --- Base Layout & Typography --- */
 .dashboard-container {
     padding: 30px;
-    background-color: #f8f9fa; /* Light grey background */
-    min-height: 100%;
-
-    /* 🚨 FIX: Enforce boundary constraints to prevent content from stretching the viewport */
-    max-width: 100%;
-    overflow-x: hidden;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 60px);
 }
 
-.welcome-header {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #343a40;
-    margin-bottom: 5px;
+/* FIX 1: New style to constrain the total width of the cards row and center it */
+.narrow-stats-row {
+    max-width: 1000px; /* Adjust this value to control how wide the 4 cards are together */
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.role-text {
-    color: #6c757d;
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-}
-
-.section-header {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #495057;
-    margin-top: 30px;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 5px;
-}
-
-/* --- Stats Cards Layout (Professional Styling) --- */
-
-/* The card relies on the parent Bootstrap column (col-lg-3, col-md-6) for width. */
-.stat-card {
+/* --- Stat Card Styling --- */
+.stat-card.card {
+    border-radius: 0.5rem;
     border: none;
-    border-radius: 8px;
-    overflow: hidden;
-    /* Subtle animation on hover */
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 
-    /* Fixed height for visual uniformity */
-    height: 130px;
-
-    /* Internal flex for aligning icon and text */
-    display: flex;
-    align-items: center;
-    /* We trust the Bootstrap column to manage the width */
+    height: 100px;
+    /* FIX 2: Remove horizontal margin here since the row width is now constrained */
+    margin: 0;
 }
 
-.stat-card:hover {
-    /* Lifts card slightly and enhances shadow */
-    transform: translateY(-5px);
-    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.2);
+.stat-card.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
 }
 
 .stat-card .card-body {
-    position: relative;
-    padding: 15px 20px;
-    flex-grow: 1;
+    padding: 0.75rem 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
 }
 
-/* --- Stat Card Content --- */
+/* Text color fixed for light backgrounds */
 .stat-value {
-    font-size: 2.5rem;
+    font-size: 1.7rem;
     font-weight: 700;
     line-height: 1;
-    margin-bottom: 5px;
+    margin-bottom: 0.1rem;
+    color: #495057;
 }
 
+/* Label color fixed for light backgrounds */
 .stat-label {
-    font-size: 1rem;
-    opacity: 0.9;
+    font-size: 0.8em;
+    font-weight: 400;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
 }
 
-/* Icon placement (Font Awesome) */
+/* Icon color fixed for light backgrounds */
 .stat-icon {
     position: absolute;
-    top: 50%;
-    right: 15px;
-    transform: translateY(-50%);
-    font-size: 4rem;
-    opacity: 0.25;
+    bottom: 5px;
+    right: 10px;
+    font-size: 3rem;
+    color: rgba(73, 80, 87, 0.1);
+    opacity: 0.7;
+    pointer-events: none;
 }
 
-/* --- Color Overrides (Standard Bootstrap Colors) --- */
-.bg-info { background-color: #17a2b8 !important; }
-.bg-success { background-color: #28a745 !important; }
-.bg-warning {
-    background-color: #ffc107 !important;
-    color: #343a40 !important; /* Force dark text for contrast on yellow background */
+/* --- Light Grey Card Colors --- */
+.bg-info {
+    background: linear-gradient(135deg, #e0e0e0, #cccccc) !important;
 }
-.bg-danger { background-color: #dc3545 !important; }
+
+.bg-success {
+    background: linear-gradient(135deg, #e8e8e8, #d3d3d3) !important;
+}
+
+.bg-warning {
+    background: linear-gradient(135deg, #f0f0f0, #dbdbdb) !important;
+}
+
+.bg-danger {
+    background: linear-gradient(135deg, #f5f5f5, #e0e0e0) !important;
+}

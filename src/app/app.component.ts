@@ -1,64 +1,63 @@
-// src/app/app.component.ts
-
 import { Component, OnInit } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive, Router } from "@angular/router"; // ⬅️ FIX 1: Import Router
 import { CommonModule } from '@angular/common';
-import { AuthService } from './services/auth.service';
+import { Router, RouterModule } from '@angular/router';
+import { Observable, Subscription } from 'rxjs';
+import { HttpClientModule } from '@angular/common/http';
+
+// Assuming these models and services exist
 import { User } from './models/user.model';
-import { Subscription } from 'rxjs'; // For managing the subscription
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
   standalone: true,
-  imports: [
-    RouterOutlet,
-    RouterLink,
-    RouterLinkActive,
-    CommonModule
-  ]
+  // Add necessary modules for routing, directives, and services
+  imports: [CommonModule, RouterModule, HttpClientModule],
+  templateUrl: './app.component.html', // Links to the provided HTML
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  title = 'TomCollege School Management System';
-  isLoggedIn: boolean = false;
-  currentUser: User | null = null;
-  private userSubscription!: Subscription; // To manage cleanup
 
-  // ⬅️ FIX 2: Inject Router for navigation/redirection
+  // Expose currentUser directly as the synchronous value (or Observable if using async pipe)
+  currentUser: User | null = null;
+  private userSubscription!: Subscription;
+
   constructor(
     private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    // Subscribe to the BehaviorSubject in AuthService to reactively update the UI
+    // Subscribe to the currentUser Observable from AuthService to keep the template updated
     this.userSubscription = this.authService.currentUser.subscribe(user => {
       this.currentUser = user;
-      this.isLoggedIn = !!user; // true if user object exists, false otherwise
     });
   }
 
-  /**
-   * Checks if the current user has any of the required roles.
-   * Delegates the check to AuthService.
-   */
-  hasRole(roles: string[]): boolean {
-    return this.authService.hasRole(roles);
-  }
-
-  /**
-   * Calls the AuthService logout method to clear tokens and redirect.
-   */
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']); // Programmatically navigate after logout
-  }
-
   ngOnDestroy(): void {
-    // Cleanup the subscription when the component is destroyed
+    // Clean up subscription to prevent memory leaks
     if (this.userSubscription) {
       this.userSubscription.unsubscribe();
     }
+  }
+
+  /**
+   * Helper function used in the template to check if the user has one of the required roles.
+   * NOTE: This function is called frequently; for high-performance apps, consider using pipes or properties.
+   * @param roles An array of roles (e.g., ['admin', 'teacher']).
+   * @returns boolean
+   */
+  hasRole(roles: string[]): boolean {
+    const userRole = this.currentUser?.role;
+    // Check if the user is logged in AND their role is included in the required roles list
+    return !!userRole && roles.includes(userRole);
+  }
+
+  /**
+   * Logs the user out and navigates to the login page.
+   */
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

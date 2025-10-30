@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Required for *ngIf
-import { Router } from '@angular/router'; // Implicitly needed for logout/navigation
-import { forkJoin, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { forkJoin, of, Subscription, Observable } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
+import { HttpClientModule } from '@angular/common/http';
+import { TitleCasePipe, DecimalPipe } from '@angular/common'; // Import necessary pipes for the template
 
-// Assuming these models and services exist in the project structure
+// Assuming these models and services exist
 import { User } from '../../models/user.model';
 import { Class } from '../../models/class.model';
 import { AuthService } from '../../services/auth.service';
@@ -27,13 +29,14 @@ interface DashboardStats {
 
 @Component({
   selector: 'app-dashboard',
-  // FIX 1: Convert to Standalone Component
   standalone: true,
-  imports: [CommonModule], // Add CommonModule for directives like *ngIf
+  // Add pipes used in the template (TitleCasePipe, DecimalPipe for 'number' alias)
+  imports: [CommonModule, HttpClientModule, TitleCasePipe, DecimalPipe],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
+
   currentUser: User | null = null;
   stats: DashboardStats = {
     totalStudents: 0,
@@ -42,99 +45,117 @@ export class DashboardComponent implements OnInit {
     activeEnrollments: 0
   };
   loading = true;
-  errorMessage: string = ''; // New property for displaying load errors
+  errorMessage: string = '';
+
+  private userSubscription: Subscription = new Subscription();
+  private dataSubscription: Subscription = new Subscription();
 
   constructor(
     private authService: AuthService,
     private studentService: StudentService,
     private classService: ClassService,
     private scheduleService: ScheduleService,
-    private router: Router // Inject Router for logout redirection
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    // Check for user login status immediately
-    this.currentUser = this.authService.currentUserValue;
+    // 1. Subscribe to user status to handle login/logout and initial loading
+    this.userSubscription = this.authService.currentUser.subscribe(
+      (user: User | null) => {
+        this.currentUser = user;
 
-    if (!this.currentUser) {
-      // Redirect unauthenticated users if necessary
-      this.router.navigate(['/login']);
-      this.loading = false;
-      return;
-    }
+        if (!this.currentUser) {
+          this.router.navigate(['/login']);
+          this.loading = false;
+        } else {
+          // Load data only after the user has been confirmed
+          this.loadDashboardData();
+        }
+      }
+    );
+  }
 
-    this.loadDashboardData();
+  ngOnDestroy(): void {
+    // Clean up all subscriptions to prevent memory leaks
+    this.userSubscription.unsubscribe();
+    this.dataSubscription.unsubscribe();
   }
 
   /**
    * Loads all required statistics concurrently using forkJoin.
+   * Uses catchError to handle individual failures and finalize to reset loading state.
    */
   loadDashboardData(): void {
+    if (!this.currentUser) return;
+
     this.loading = true;
     this.errorMessage = '';
 
-    // Only load stats if the user is an admin or teacher
-    if (this.currentUser?.role === 'admin' || this.currentUser?.role === 'teacher') {
+    if (this.currentUser.role === 'admin' || this.currentUser.role === 'teacher') {
 
-      const studentObs$ = this.studentService.getAllStudents().pipe(
+      // Define observables with robust error handling (CRITICAL FIX)
+      const studentObs$: Observable<ListResponse<any>> = this.studentService.getAllStudents().pipe(
         catchError((error) => {
           console.error('Error loading students:', error);
-          // Return an observable of a partial response to prevent forkJoin from failing
-          return of({ data: [], count: 0 } as ListResponse<any>);
+          this.errorMessage = 'Some data failed to load.';
+          return of({ data: [], count: 0 }); // Returns a completed observable with empty data
         })
       );
 
-      const classObs$ = this.classService.getAllClasses().pipe(
+      const classObs$: Observable<ListResponse<Class>> = this.classService.getAllClasses().pipe(
         catchError((error) => {
           console.error('Error loading classes:', error);
-          return of({ data: [], count: 0 } as ListResponse<Class>);
+          this.errorMessage = 'Some data failed to load.';
+          return of({ data: [], count: 0 });
         })
       );
 
-      const scheduleObs$ = this.scheduleService.getAllSchedules().pipe(
+      const scheduleObs$: Observable<ListResponse<any>> = this.scheduleService.getAllSchedules().pipe(
         catchError((error) => {
           console.error('Error loading schedules:', error);
-          return of({ data: [], count: 0 } as ListResponse<any>);
+          this.errorMessage = 'Some data failed to load.';
+          return of({ data: [], count: 0 });
         })
       );
 
-      // FIX 2: Use forkJoin to manage concurrent data fetching and unified error handling
-      forkJoin({
+      // Subscribe to the concurrent data stream
+      this.dataSubscription = forkJoin({
         students: studentObs$,
         classes: classObs$,
         schedules: scheduleObs$
-      }).subscribe({
+      }).pipe(
+        // Finalize always runs, GUARANTEEING loading=false (CRITICAL FIX)
+        finalize(() => {
+             this.loading = false;
+        })
+      )
+      .subscribe({
         next: (results) => {
-          // Process Student Data
-          this.stats.totalStudents = results.students.count || 0;
+          // Process statistics counts
+          this.stats.totalStudents = results.students.count;
+          this.stats.totalClasses = results.classes.count;
+          this.stats.totalSchedules = results.schedules.count;
 
-          // Process Class Data
-          this.stats.totalClasses = results.classes.count || 0;
+          // Calculate active enrollments from class data
           this.stats.activeEnrollments = results.classes.data.reduce(
             (sum: number, cls: Class) => sum + (cls.enrolledStudentIds?.length || 0),
             0
           );
-
-          // Process Schedule Data
-          this.stats.totalSchedules = results.schedules.count || 0;
-
-          this.loading = false;
         },
         error: (err) => {
-          // This should ideally only catch errors from catchError() if implemented differently,
-          // but serves as a final fallback.
-          this.errorMessage = 'An error occurred while loading dashboard statistics.';
-          this.loading = false;
+          // This should only catch critical, non-HTTP errors
+          console.error('Critical Error in forkJoin stream:', err);
+          this.errorMessage = this.errorMessage || 'A critical error occurred while initializing the dashboard.';
         }
       });
     } else {
-      // For student role, data will be loaded via separate specialized components (not shown here)
+      // For student role, or any non-admin/teacher, stop loading immediately
       this.loading = false;
     }
   }
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/login']); // Navigate to login after logout
+    this.router.navigate(['/login']);
   }
 }

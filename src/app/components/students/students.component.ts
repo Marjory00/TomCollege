@@ -1,31 +1,36 @@
-// src/app/components/students/students.component.ts
-
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { catchError, of, finalize } from 'rxjs';
+import { HttpClientModule } from '@angular/common/http';
+
+// Assuming these models and services exist
+import { User } from '../../models/user.model';
+import { Student } from '../../models/student.model'; // Assuming a Student model exists
 import { StudentService } from '../../services/student.service';
 import { AuthService } from '../../services/auth.service';
-import { Student } from '../../models/student.model';
-import { Router, RouterLink } from '@angular/router';
+
+// Interface for API list response
+interface ListResponse<T> {
+  data: T[];
+  count: number;
+}
 
 @Component({
   selector: 'app-students',
-  templateUrl: './students.component.html',
-  styleUrls: ['./students.component.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
-
-  // Providers necessary for this standalone component
-  providers: [StudentService]
+  // Ensure necessary modules are imported
+  imports: [CommonModule, RouterModule, HttpClientModule],
+  templateUrl: './students.component.html',
+  styleUrls: ['./students.component.css']
 })
 export class StudentsComponent implements OnInit {
-  students: Student[] = [];
-  filteredStudents: Student[] = [];
-  loading = true;
-  searchTerm: string = '';
-  currentUser: any;
 
-  // Constructor with dependency injection
+  students: Student[] = [];
+  loading: boolean = true;
+  errorMessage: string | null = null;
+  currentUserRole: string | undefined;
+
   constructor(
     private studentService: StudentService,
     private authService: AuthService,
@@ -33,62 +38,67 @@ export class StudentsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.currentUser = this.authService.currentUserValue;
-    this.loadStudents();
+    // Get the synchronous user object for immediate role check
+    // Uses the established 'currentUserValue' property from AuthService
+    const user: User | null = this.authService.currentUserValue;
+    this.currentUserRole = user?.role;
+
+    // Only Admin and Teacher roles are typically allowed to view the full student roster
+    if (this.currentUserRole === 'admin' || this.currentUserRole === 'teacher') {
+      this.loadStudents();
+    } else {
+      // Handle unauthorized access
+      this.errorMessage = 'You do not have permission to view the full student roster.';
+      this.loading = false;
+    }
   }
 
+  /**
+   * Fetches the list of students from the service.
+   */
   loadStudents(): void {
     this.loading = true;
-    this.studentService.getAllStudents().subscribe({
-      next: (response) => {
-        this.students = response.data || [];
-        this.filteredStudents = [...this.students];
-        this.loading = false;
-      },
-      error: (error) => {
-        console.error('Error loading students:', error);
-        this.loading = false;
-      }
-    });
-  }
+    this.errorMessage = null;
 
-  onSearch(): void {
-    const term = this.searchTerm.toLowerCase().trim();
-    if (!term) {
-      this.filteredStudents = [...this.students];
-      return;
-    }
-
-    // 🚨 FIX: Removed redundant optional chaining (`?.`) from userId access
-    this.filteredStudents = this.students.filter(student =>
-      student.userId.firstName.toLowerCase().includes(term) ||
-      student.userId.lastName.toLowerCase().includes(term) ||
-      student.studentId.toLowerCase().includes(term) ||
-      student.grade.toLowerCase().includes(term)
-    );
-  }
-
-  deleteStudent(id: string): void {
-    if (!this.authService.hasRole(['admin'])) {
-        alert('You do not have permission to delete students.');
-        return;
-    }
-
-    if (confirm('Are you sure you want to delete this student?')) {
-      this.studentService.deleteStudent(id).subscribe({
-        next: () => {
-          alert('Student deleted successfully');
-          this.loadStudents();
+    this.studentService.getAllStudents()
+      .pipe(
+        // Ensure loading state is turned off on completion or error
+        finalize(() => this.loading = false),
+        // Catch errors and return an empty list to prevent stream breakage
+        catchError(error => {
+          console.error('Error fetching students:', error);
+          this.errorMessage = 'Failed to load student list. Please check the network.';
+          // Return a mock response to ensure the subscription completes successfully
+          return of({ data: [], count: 0 } as ListResponse<Student>);
+        })
+      )
+      .subscribe({
+        next: (response: ListResponse<Student>) => {
+          this.students = response.data;
         },
-        error: (error) => {
-          console.error('Error deleting student:', error);
-          alert('Failed to delete student');
+        error: (err) => {
+          console.error('Subscription error:', err);
         }
       });
-    }
   }
 
-  getStatusClass(status: string): string {
-    return status.toLowerCase().replace(' ', '-');
+  /**
+   * Navigate to the form to add a new student.
+   */
+  addStudent(): void {
+    this.router.navigate(['/students/new']);
+  }
+
+  /**
+   * Navigate to the detail/edit view for a specific student.
+   * Uses a type guard to safely handle optional IDs.
+   * @param studentId The ID of the student (can be string or undefined).
+   */
+  editStudent(studentId: string | undefined): void {
+    if (studentId) {
+      this.router.navigate(['/students/edit', studentId]);
+    } else {
+      console.warn('Attempted to edit a student with no ID.');
+    }
   }
 }

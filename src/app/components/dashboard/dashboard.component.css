@@ -1,12 +1,31 @@
+/* General Dashboard Layout */
 .dashboard-container {
     padding: 30px;
     background-color: #f8f9fa;
     min-height: calc(100vh - 60px);
 }
 
+.welcome-header {
+    font-weight: 300;
+    margin-bottom: 5px;
+}
+
+.role-text {
+    font-size: 1.1rem;
+    color: #6c757d;
+}
+
+.section-header {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 500;
+    border-left: 5px solid #007bff;
+    padding-left: 10px;
+}
+
 /* FIX 1: New style to constrain the total width of the cards row and center it */
 .narrow-stats-row {
-    max-width: 1000px; /* Adjust this value to control how wide the 4 cards are together */
+    max-width: 1200px; /* Adjusted slightly for better desktop visibility */
     margin-left: auto;
     margin-right: auto;
 }
@@ -20,7 +39,6 @@
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 
     height: 100px;
-    /* FIX 2: Remove horizontal margin here since the row width is now constrained */
     margin: 0;
 }
 
@@ -37,16 +55,15 @@
     height: 100%;
 }
 
-/* Text color fixed for light backgrounds */
+/* FIX: Text elements are explicitly styled for dark colors over light background */
 .stat-value {
     font-size: 1.7rem;
     font-weight: 700;
     line-height: 1;
     margin-bottom: 0.1rem;
-    color: #495057;
+    color: #343a40; /* Darker than original for better contrast */
 }
 
-/* Label color fixed for light backgrounds */
 .stat-label {
     font-size: 0.8em;
     font-weight: 400;
@@ -55,7 +72,6 @@
     letter-spacing: 0.08em;
 }
 
-/* Icon color fixed for light backgrounds */
 .stat-icon {
     position: absolute;
     bottom: 5px;
@@ -66,7 +82,7 @@
     pointer-events: none;
 }
 
-/* --- Light Grey Card Colors --- */
+/* --- Light Grey Card Colors --- (As provided by user) */
 .bg-info {
     background: linear-gradient(135deg, #e0e0e0, #cccccc) !important;
 }
@@ -81,4 +97,26 @@
 
 .bg-danger {
     background: linear-gradient(135deg, #f5f5f5, #e0e0e0) !important;
+}
+
+/* --- Navigation Cards (Quick Actions) --- */
+.dashboard-card {
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-radius: 0.5rem;
+    border: 1px solid #e9ecef;
+    background-color: #ffffff;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.dashboard-card .card-title {
+    font-weight: 600;
+}
+
+.text-primary {
+    color: #007bff !important;
 }

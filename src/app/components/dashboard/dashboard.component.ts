@@ -1,10 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { CommonModule, TitleCasePipe, DecimalPipe } from '@angular/common'; // Moved pipes here
+import { Router, RouterModule } from '@angular/router'; // FIX 1: Import RouterModule
 import { forkJoin, of, Subscription, Observable } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { HttpClientModule } from '@angular/common/http';
-import { TitleCasePipe, DecimalPipe } from '@angular/common'; // Import necessary pipes for the template
 
 // Assuming these models and services exist
 import { User } from '../../models/user.model';
@@ -24,20 +23,27 @@ interface DashboardStats {
   totalStudents: number;
   totalClasses: number;
   totalSchedules: number;
-  activeEnrollments: number;
+  activeEnrollments: number; // Sum of students across all classes (if linked)
 }
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  // Add pipes used in the template (TitleCasePipe, DecimalPipe for 'number' alias)
-  imports: [CommonModule, HttpClientModule, TitleCasePipe, DecimalPipe],
+  imports: [
+        CommonModule,
+        HttpClientModule,
+        TitleCasePipe,
+        DecimalPipe,
+        RouterModule // FIX 1: Added RouterModule for [routerLink]
+    ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
   currentUser: User | null = null;
+  userRole: string = 'guest'; // Added for convenience in HTML
+
   stats: DashboardStats = {
     totalStudents: 0,
     totalClasses: 0,
@@ -46,6 +52,18 @@ export class DashboardComponent implements OnInit, OnDestroy {
   };
   loading = true;
   errorMessage: string = '';
+
+    // Define quick links based on user roles (copied from previous HTML structure)
+    dashboardItems: { title: string, icon: string, link: string, roles: string[], statKey?: keyof DashboardStats }[] = [
+        { title: 'Total Students', icon: 'fas fa-user-graduate', link: '/students', roles: ['admin', 'teacher'], statKey: 'totalStudents' },
+        { title: 'Total Classes', icon: 'fas fa-book', link: '/classes', roles: ['admin', 'teacher'], statKey: 'totalClasses' },
+        { title: 'Total Schedules', icon: 'fas fa-clipboard-list', link: '/schedules', roles: ['admin', 'teacher'], statKey: 'totalSchedules' },
+        { title: 'Active Enrollments', icon: 'fas fa-users', link: '/classes', roles: ['admin'], statKey: 'activeEnrollments' },
+        { title: 'Teacher Roster', icon: 'fas fa-chalkboard-teacher', link: '/teachers', roles: ['admin'] },
+        // A placeholder for a student view
+        { title: 'View My Schedule', icon: 'fas fa-calendar-alt', link: '/schedules', roles: ['student'] },
+    ];
+
 
   private userSubscription: Subscription = new Subscription();
   private dataSubscription: Subscription = new Subscription();
@@ -59,16 +77,16 @@ export class DashboardComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    // 1. Subscribe to user status to handle login/logout and initial loading
+    // 1. Subscribe to user status
     this.userSubscription = this.authService.currentUser.subscribe(
       (user: User | null) => {
         this.currentUser = user;
+        this.userRole = user?.role || 'guest';
 
         if (!this.currentUser) {
           this.router.navigate(['/login']);
           this.loading = false;
         } else {
-          // Load data only after the user has been confirmed
           this.loadDashboardData();
         }
       }
@@ -76,14 +94,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Clean up all subscriptions to prevent memory leaks
+    // Clean up all subscriptions
     this.userSubscription.unsubscribe();
     this.dataSubscription.unsubscribe();
   }
 
   /**
    * Loads all required statistics concurrently using forkJoin.
-   * Uses catchError to handle individual failures and finalize to reset loading state.
    */
   loadDashboardData(): void {
     if (!this.currentUser) return;
@@ -93,12 +110,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     if (this.currentUser.role === 'admin' || this.currentUser.role === 'teacher') {
 
-      // Define observables with robust error handling (CRITICAL FIX)
+      // Define observables with robust error handling
       const studentObs$: Observable<ListResponse<any>> = this.studentService.getAllStudents().pipe(
         catchError((error) => {
           console.error('Error loading students:', error);
           this.errorMessage = 'Some data failed to load.';
-          return of({ data: [], count: 0 }); // Returns a completed observable with empty data
+          return of({ data: [], count: 0 });
         })
       );
 
@@ -124,7 +141,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         classes: classObs$,
         schedules: scheduleObs$
       }).pipe(
-        // Finalize always runs, GUARANTEEING loading=false (CRITICAL FIX)
+        // Finalize runs upon success or any error in the stream
         finalize(() => {
              this.loading = false;
         })
@@ -136,14 +153,14 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.stats.totalClasses = results.classes.count;
           this.stats.totalSchedules = results.schedules.count;
 
-          // Calculate active enrollments from class data
+          // Calculate active enrollments from class data (FIX 2: Safer access)
           this.stats.activeEnrollments = results.classes.data.reduce(
-            (sum: number, cls: Class) => sum + (cls.enrolledStudentIds?.length || 0),
+            (sum: number, cls: Class) => sum + ((cls as any).enrolledStudentIds?.length || 0), // Cast to 'any' for property not in strict Class model
             0
           );
         },
         error: (err) => {
-          // This should only catch critical, non-HTTP errors
+          // Catch for critical stream errors
           console.error('Critical Error in forkJoin stream:', err);
           this.errorMessage = this.errorMessage || 'A critical error occurred while initializing the dashboard.';
         }
@@ -152,6 +169,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
       // For student role, or any non-admin/teacher, stop loading immediately
       this.loading = false;
     }
+  }
+
+  /**
+   * Checks if a link should be visible to the current user. (Added for template utility)
+   * @param roles - Array of roles allowed to see the link.
+   * @returns boolean - True if the user's role is included.
+   */
+  canViewItem(roles: string[]): boolean {
+    return roles.includes(this.userRole);
   }
 
   logout(): void {

@@ -1,120 +1,143 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router'; // RouterLink added here
-import { first } from 'rxjs/operators';
-
-import { ClassService } from '../../../services/class.service';
+import { catchError, of, finalize, Observable } from 'rxjs';
 import { Class } from '../../../models/class.model';
+import { ClassService } from '../../../services/class.service';
 
 @Component({
   selector: 'app-add-edit-class',
   standalone: true,
-  // FIX: RouterLink is explicitly imported for use in the template
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './add-edit-class.component.html',
   styleUrls: ['./add-edit-class.component.css']
 })
 export class AddEditClassComponent implements OnInit {
+
   classForm!: FormGroup;
-  loading = false;
-  submitted = false;
-  isEditMode = false;
+  isEditMode: boolean = false;
   classId: string | null = null;
-  error = '';
+  loading: boolean = false;
+  submitting: boolean = false;
+  errorMessage: string | null = null;
+
+  // List of possible departments for a dropdown
+  readonly departments: string[] = ['Science', 'Mathematics', 'Humanities', 'Engineering', 'Arts', 'Business'];
 
   constructor(
-    private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
+    private fb: FormBuilder,
+    private classService: ClassService,
     private router: Router,
-    private classService: ClassService
-  ) {}
+    private route: ActivatedRoute
+  ) {
+    this.initForm();
+  }
 
   ngOnInit(): void {
-    // 1. Determine if we are adding or editing
+    // Check for an 'id' parameter to determine if we are in edit mode
     this.classId = this.route.snapshot.paramMap.get('id');
     this.isEditMode = !!this.classId;
 
-    // 2. Initialize the form with validation
-    this.classForm = this.formBuilder.group({
-      name: ['', [Validators.required, Validators.maxLength(100)]],
-      code: ['', [Validators.required, Validators.pattern('^[A-Z0-9]{3,10}$')]],
-      teacherId: ['', Validators.required],
-      description: ['', Validators.maxLength(500)]
-    });
-
-    // 3. Load existing class data if in edit mode
-    if (this.isEditMode) {
-      this.loading = true;
-      this.classService.getClassById(this.classId!)
-        .pipe(first())
-        .subscribe({
-          next: (classData) => {
-            this.classForm.patchValue(classData);
-            this.loading = false;
-          },
-          error: (err) => {
-            this.error = 'Failed to load class data.';
-            this.loading = false;
-            console.error(err);
-          }
-        });
+    if (this.isEditMode && this.classId) {
+      this.loadClassData(this.classId);
     }
   }
 
   /**
-   * Helper getter to easily access form controls in the template.
+   * Initializes the class form structure with validators.
    */
-  get f() {
-    return this.classForm.controls;
+  private initForm(): void {
+    this.classForm = this.fb.group({
+      name: ['', [Validators.required, Validators.maxLength(100)]],
+      courseCode: ['', [Validators.required, Validators.maxLength(10), Validators.pattern(/^[A-Z]{2,4}\d{3,5}$/)]], // e.g., CS101 or MATH2001
+      creditHours: [3, [Validators.required, Validators.min(1), Validators.max(6)]],
+      department: ['', Validators.required],
+      description: ['', Validators.maxLength(500)]
+    });
   }
 
-  onSubmit(): void {
-    this.submitted = true;
-    this.error = '';
+  /**
+   * Loads existing class data when in edit mode.
+   * @param id The ID of the class to load.
+   */
+  loadClassData(id: string): void {
+    this.loading = true;
+    this.errorMessage = null;
 
-    // Stop if form is invalid
+    this.classService.getClassById(id)
+      .pipe(
+        finalize(() => this.loading = false),
+        catchError(error => {
+          console.error('Error loading class:', error);
+          this.errorMessage = 'Failed to load class data.';
+          return of(null);
+        })
+      )
+      .subscribe((classData: Class | null) => {
+        if (classData) {
+          // Patch the form with the retrieved data
+          this.classForm.patchValue(classData);
+        } else {
+          // Navigate away if data failed to load
+          this.router.navigate(['/classes']);
+        }
+      });
+  }
+
+  /**
+   * Handles form submission: either creation or update.
+   */
+  onSubmit(): void {
     if (this.classForm.invalid) {
+      this.classForm.markAllAsTouched();
+      this.errorMessage = 'Please fix the highlighted errors in the form.';
       return;
     }
 
-    this.loading = true;
+    this.submitting = true;
+    this.errorMessage = null;
 
-    // Delegate to the appropriate save method
-    if (this.isEditMode) {
-      this.updateClass();
+    const formValue = this.classForm.value;
+
+    // The Class model includes ID, which is only present in edit mode
+    const classData: Class = {
+        id: this.classId, // null in create mode
+        ...formValue
+    };
+
+    let saveOperation: Observable<Class>;
+
+    if (this.isEditMode && this.classId) {
+      // Update existing class (full object with ID)
+      saveOperation = this.classService.updateClass(classData);
     } else {
-      this.createClass();
+      // Create new class (using Omit<Class, 'id'> which is handled by the service signature)
+      saveOperation = this.classService.createClass(formValue);
     }
-  }
 
-  private createClass(): void {
-    this.classService.createClass(this.classForm.value as Class)
-      .pipe(first())
-      .subscribe({
-        next: () => {
-          this.router.navigate(['/classes'], { state: { message: 'Class created successfully!' } });
-        },
-        error: (error) => {
-          this.error = error.error?.message || 'Failed to create class.';
-          this.loading = false;
+    saveOperation
+      .pipe(
+        finalize(() => this.submitting = false),
+        catchError(error => {
+          console.error('Save failed:', error);
+          this.errorMessage = `Failed to ${this.isEditMode ? 'update' : 'create'} class: ${error.message}`;
+          return of(null);
+        })
+      )
+      .subscribe((result) => {
+        if (result) {
+          console.log('Class saved successfully:', result);
+          // Navigate back to the class list upon success
+          this.router.navigate(['/classes']);
         }
       });
   }
 
-  private updateClass(): void {
-    const classToUpdate = { ...this.classForm.value, id: this.classId };
-
-    this.classService.updateClass(classToUpdate as Class)
-      .pipe(first())
-      .subscribe({
-        next: () => {
-          this.router.navigate(['/classes'], { state: { message: 'Class updated successfully!' } });
-        },
-        error: (error) => {
-          this.error = error.error?.message || 'Failed to update class.';
-          this.loading = false;
-        }
-      });
+  /**
+   * Navigates back to the class list.
+   */
+  cancel(): void {
+    this.router.navigate(['/classes']);
   }
 }

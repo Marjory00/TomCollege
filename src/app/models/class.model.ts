@@ -7,6 +7,9 @@ import { Student } from './student.model';
  * Defines the structure for a Class object in the TomCollege system.
  */
 export interface Class {
+department: any;
+creditHours: any;
+courseCode: any;
     /** The unique identifier for the class. Optional for creation. */
     id?: string;
 

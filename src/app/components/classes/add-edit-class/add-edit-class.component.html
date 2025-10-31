@@ -1,83 +1,110 @@
-<div class="card add-edit-class-container">
-
-    <h2 class="card-header">
-        {{ isEditMode ? 'Edit Class: ' + classForm.get('code')?.value : 'Create New Class' }}
-    </h2>
-
-    <div class="card-body">
-        <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
-
-        <div *ngIf="loading && isEditMode" class="text-center p-5">
-            <span class="spinner-border spinner-border-lg"></span>
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h1 class="h4 mb-0">
+                <i class="fas fa-book-open me-2"></i>
+                @if (isEditMode) {
+                    Edit Class Details
+                } @else {
+                    Add New Class
+                }
+            </h1>
         </div>
+        <div class="card-body">
 
-        <form [formGroup]="classForm" (ngSubmit)="onSubmit()" *ngIf="!loading || !isEditMode">
-
-            <div class="form-group">
-                <label for="name">Class Name</label>
-                <input
-                    type="text"
-                    formControlName="name"
-                    class="form-control"
-                    [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
-                />
-                <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
-                    <div *ngIf="f['name'].errors['required']">Class Name is required</div>
-                    <div *ngIf="f['name'].errors['maxlength']">Name cannot exceed 100 characters</div>
+            @if (loading) {
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Loading class data...</p>
                 </div>
-            </div>
+            }
 
-            <div class="form-group">
-                <label for="code">Course Code</label>
-                <input
-                    type="text"
-                    formControlName="code"
-                    class="form-control"
-                    [ngClass]="{ 'is-invalid': submitted && f['code'].errors }"
-                    placeholder="e.g., MATH101"
-                />
-                <div *ngIf="submitted && f['code'].errors" class="invalid-feedback">
-                    <div *ngIf="f['code'].errors['required']">Course Code is required</div>
-                    <div *ngIf="f['code'].errors['pattern']">Code must be 3-10 uppercase letters or numbers</div>
+            @if (errorMessage && !loading) {
+                <div class="alert alert-danger" role="alert">
+                    {{ errorMessage }}
                 </div>
-            </div>
+            }
 
-            <div class="form-group">
-                <label for="teacherId">Assigned Teacher ID</label>
-                <input
-                    type="text"
-                    formControlName="teacherId"
-                    class="form-control"
-                    [ngClass]="{ 'is-invalid': submitted && f['teacherId'].errors }"
-                    placeholder="Enter Teacher User ID"
-                />
-                <div *ngIf="submitted && f['teacherId'].errors" class="invalid-feedback">
-                    <div *ngIf="f['teacherId'].errors['required']">Teacher assignment is required</div>
-                </div>
-            </div>
+            @if (!loading) {
+                <form [formGroup]="classForm" (ngSubmit)="onSubmit()">
 
-            <div class="form-group">
-                <label for="description">Description (Optional)</label>
-                <textarea
-                    formControlName="description"
-                    class="form-control"
-                    rows="3"
-                    [ngClass]="{ 'is-invalid': submitted && f['description'].errors }"
-                ></textarea>
-                 <div *ngIf="submitted && f['description'].errors" class="invalid-feedback">
-                    <div *ngIf="f['description'].errors['maxlength']">Description cannot exceed 500 characters</div>
-                </div>
-            </div>
+                    <div class="row">
+                        <div class="col-md-7 mb-3">
+                            <label for="name" class="form-label">Class Name</label>
+                            <input type="text" id="name" formControlName="name" class="form-control"
+                                placeholder="e.g., Introduction to Web Development"
+                                [class.is-invalid]="classForm.get('name')?.invalid && classForm.get('name')?.touched">
+                            @if (classForm.get('name')?.hasError('required') && classForm.get('name')?.touched) {
+                                <div class="invalid-feedback">Class Name is required.</div>
+                            }
+                        </div>
 
-            <div class="form-group action-buttons mt-4">
-                <button [disabled]="loading" class="btn btn-primary mr-2">
-                    <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-                    {{ isEditMode ? 'Update Class' : 'Create Class' }}
-                </button>
-                <button type="button" [routerLink]="['/classes']" class="btn btn-secondary">
-                    Cancel
-                </button>
-            </div>
-        </form>
+                        <div class="col-md-5 mb-3">
+                            <label for="courseCode" class="form-label">Course Code</label>
+                            <input type="text" id="courseCode" formControlName="courseCode" class="form-control"
+                                placeholder="e.g., CS101"
+                                [class.is-invalid]="classForm.get('courseCode')?.invalid && classForm.get('courseCode')?.touched">
+                            @if (classForm.get('courseCode')?.hasError('required') && classForm.get('courseCode')?.touched) {
+                                <div class="invalid-feedback">Course Code is required.</div>
+                            } @else if (classForm.get('courseCode')?.hasError('pattern') && classForm.get('courseCode')?.touched) {
+                                <div class="invalid-feedback">Must be a valid code (e.g., MATH201).</div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="creditHours" class="form-label">Credit Hours</label>
+                            <input type="number" id="creditHours" formControlName="creditHours" class="form-control"
+                                [class.is-invalid]="classForm.get('creditHours')?.invalid && classForm.get('creditHours')?.touched">
+                            @if (classForm.get('creditHours')?.hasError('required') && classForm.get('creditHours')?.touched) {
+                                <div class="invalid-feedback">Credit Hours is required.</div>
+                            } @else if (classForm.get('creditHours')?.hasError('min') || classForm.get('creditHours')?.hasError('max')) {
+                                <div class="invalid-feedback">Must be between 1 and 6 hours.</div>
+                            }
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="department" class="form-label">Department</label>
+                            <select id="department" formControlName="department" class="form-select"
+                                [class.is-invalid]="classForm.get('department')?.invalid && classForm.get('department')?.touched">
+                                <option value="" disabled>Select Department</option>
+                                @for (dept of departments; track dept) {
+                                    <option [value]="dept">{{ dept }}</option>
+                                }
+                            </select>
+                            @if (classForm.get('department')?.hasError('required') && classForm.get('department')?.touched) {
+                                <div class="invalid-feedback">Department is required.</div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="description" class="form-label">Description (Optional)</label>
+                        <textarea id="description" formControlName="description" class="form-control" rows="3"
+                            [class.is-invalid]="classForm.get('description')?.invalid && classForm.get('description')?.touched"></textarea>
+                         @if (classForm.get('description')?.hasError('maxlength') && classForm.get('description')?.touched) {
+                                <div class="invalid-feedback">Description is too long (max 500 characters).</div>
+                            }
+                    </div>
+
+                    <div class="d-flex justify-content-end pt-3 border-top">
+                        <button type="button" class="btn btn-secondary me-2" (click)="cancel()">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary" [disabled]="submitting || classForm.invalid">
+                            @if (submitting) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Saving...
+                            } @else {
+                                <i class="fas fa-save me-2"></i>
+                                {{ isEditMode ? 'Update Class' : 'Create Class' }}
+                            }
+                        </button>
+                    </div>
+
+                </form>
+            }
+        </div>
     </div>
 </div>

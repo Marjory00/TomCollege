@@ -1,12 +1,17 @@
-<div class="dashboard-container">
+<div class="dashboard-container container-fluid mt-3">
     <div class="row">
         <div class="col-12">
             <h1 class="welcome-header">
                 Welcome, {{ currentUser?.firstName }} {{ currentUser?.lastName }}!
             </h1>
-            <p class="role-text">
-                Your role: <strong>{{ currentUser?.role | titlecase }}</strong>
-            </p>
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="role-text">
+                    Your role: <strong>{{ currentUser?.role | titlecase }}</strong>
+                </p>
+                <button class="btn btn-outline-danger btn-sm" (click)="logout()">
+                    <i class="fas fa-sign-out-alt me-2"></i> Log Out
+                </button>
+            </div>
             <hr>
         </div>
     </div>
@@ -31,17 +36,17 @@
 
         <div class="row narrow-stats-row justify-content-center">
 
-            <div class="col-lg-3 col-md-6 mb-4">
+            <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
                 <div class="stat-card card text-white bg-info">
                     <div class="card-body">
                         <div class="stat-value">{{ stats.totalClasses | number }}</div>
                         <div class="stat-label">Total Classes</div>
-                        <i class="stat-icon fas fa-chalkboard-teacher"></i>
+                        <i class="stat-icon fas fa-book"></i>
                     </div>
                 </div>
             </div>
 
-            <div class="col-lg-3 col-md-6 mb-4">
+            <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
                 <div class="stat-card card text-white bg-success">
                     <div class="card-body">
                         <div class="stat-value">{{ stats.totalStudents | number }}</div>
@@ -51,7 +56,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-3 col-md-6 mb-4">
+            <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
                 <div class="stat-card card text-white bg-warning">
                     <div class="card-body">
                         <div class="stat-value">{{ stats.activeEnrollments | number }}</div>
@@ -61,7 +66,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-3 col-md-6 mb-4">
+            <div class="col-xl-3 col-lg-6 col-md-6 mb-4">
                 <div class="stat-card card text-white bg-danger">
                     <div class="card-body">
                         <div class="stat-value">{{ stats.totalSchedules | number }}</div>
@@ -72,17 +77,42 @@
             </div>
         </div>
 
-        <div class="row mt-4">
-            <div class="col-12">
-                <h3 class="section-header">Quick Actions</h3>
-                <p>Use the navigation bar to manage Users, Classes, and Schedules.</p>
-            </div>
+        <h2 class="section-header mt-4">Quick Actions & Navigation</h2>
+
+        <div class="row feature-cards">
+            @for (item of dashboardItems; track item.title) {
+                @if (canViewItem(item.roles)) {
+                    <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
+                        <div class="card h-100 shadow-sm dashboard-card" [routerLink]="item.link">
+                            <div class="card-body text-center">
+                                <i class="{{ item.icon }} fa-3x mb-3 text-primary"></i>
+                                <h5 class="card-title">{{ item.title }}</h5>
+                                <p class="card-text text-muted">Click to Manage</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
         </div>
     }
 
     @if (!loading && currentUser?.role === 'student') {
-        <div class="alert alert-info" role="alert">
-            Welcome to the Student Dashboard! Your enrolled classes and schedule information will appear here shortly.
+        <div class="alert alert-info mt-4" role="alert">
+            Welcome to the Student Dashboard! Here you can check your schedule and enrollment status.
         </div>
+
+        @for (item of dashboardItems; track item.title) {
+            @if (item.title === 'View My Schedule' && canViewItem(item.roles)) {
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 shadow-sm dashboard-card bg-primary text-white" [routerLink]="item.link">
+                        <div class="card-body text-center">
+                            <i class="{{ item.icon }} fa-3x mb-3"></i>
+                            <h5 class="card-title">{{ item.title }}</h5>
+                            <p class="card-text">Check Now</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
     }
 </div>

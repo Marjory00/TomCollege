@@ -1,0 +1,93 @@
+<div class="container-fluid mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">👨‍🏫 Teacher Roster ({{ totalTeachers }} Found)</h1>
+
+        @if (currentUserRole === 'admin') {
+            <button
+                class="btn btn-success"
+                (click)="addTeacher()">
+                <i class="fas fa-user-plus me-2"></i> Add New Teacher
+            </button>
+        }
+    </div>
+
+    @if (errorMessage && !loading) {
+        <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+    }
+
+    @if (loading) {
+        <div class="text-center py-5">
+            <div class="spinner-border text-success" role="status"></div>
+            <p class="mt-2">Loading teacher roster...</p>
+        </div>
+    }
+
+    @if (!loading && teachers.length > 0) {
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Department</th>
+                                <th>Hire Date</th>
+                                <th>Status</th>
+                                @if (currentUserRole === 'admin') {
+                                    <th class="text-center">Actions</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (teacher of teachers; track teacher.id) {
+                                <tr>
+                                    <td><strong>{{ teacher.firstName }} {{ teacher.lastName }}</strong></td>
+                                    <td>{{ teacher.email }}</td>
+                                    <td>{{ teacher.department }}</td>
+                                    <td>{{ teacher.hireDate | date:'mediumDate' }}</td>
+                                    <td>
+                                        <span class="badge"
+                                            [ngClass]="{'bg-success': teacher.status === 'Active', 'bg-warning text-dark': teacher.status === 'On Leave', 'bg-danger': teacher.status === 'Terminated'}">
+                                            {{ teacher.status }}
+                                        </span>
+                                    </td>
+
+                                    @if (currentUserRole === 'admin') {
+                                        <td class="text-center">
+                                            <button
+                                                class="btn btn-sm btn-outline-info me-2"
+                                                (click)="editTeacher(teacher.id)"
+                                                title="Edit Teacher">
+                                                <i class="fas fa-user-edit"></i>
+                                            </button>
+
+                                            <button
+                                                class="btn btn-sm btn-outline-danger"
+                                                [disabled]="deletingTeacherId === teacher.id"
+                                                (click)="deleteTeacher(teacher.id)"
+                                                title="Delete Teacher">
+                                                @if (deletingTeacherId === teacher.id) {
+                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                } @else {
+                                                    <i class="fas fa-trash"></i>
+                                                }
+                                            </button>
+                                        </td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    } @else if (!loading && teachers.length === 0 && !errorMessage) {
+        <div class="alert alert-info mt-4 text-center">
+            The teacher roster is empty.
+            @if (currentUserRole === 'admin') {
+                Click "Add New Teacher" to register staff.
+            }
+        </div>
+    }
+</div>

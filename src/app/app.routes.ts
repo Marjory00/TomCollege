@@ -1,77 +1,163 @@
-// src/app/app.routes.ts
-
 import { Routes } from '@angular/router';
+// --- RESTORED REQUIRED IMPORTS ---
+import { AuthGuard } from './guards/auth.guard';
+import { RoleGuard } from './guards/role.guard';
 
-// import { LoginComponent } from './components/login/login.component'; // Commented out the import, too
+// --- Core Components ---
+import { LoginComponent } from './components/auth/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { AddEditClassComponent } from './components/classes/add-edit-class/add-edit-class.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+
+// --- Feature Components ---
+// Classes
 import { ClassesComponent } from './components/classes/classes.component';
+import { AddEditClassComponent } from './components/classes/add-edit-class/add-edit-class.component';
+// Students
 import { StudentsComponent } from './components/students/students.component';
+import { StudentFormComponent } from './components/students/student-form/student-form.component'; // Cleaned up import line
+// Schedules
 import { SchedulesComponent } from './components/schedules/schedules.component';
-
-import { StudentFormComponent } from './components/student-form/student-form.component';
-
-// import { LoginComponent } from './components/login/login.component'; // Commented out
-// import { AuthGuard } from './guards/auth.guard'; // Commented out
-// import { RoleGuard } from './guards/role.guard'; // Commented out
+import { AddEditScheduleComponent } from './components/add-edit-schedule/add-edit-schedule.component';
+// Teachers
+import { TeachersComponent } from './components/teachers/teachers.component';
+import { AddEditTeacherComponent } from './components/teachers/add-edit-teacher/add-edit-teacher.component';
 
 
 export const routes: Routes = [
+    // --- Public Route: Login ---
+    {
+        path: 'login',
+        component: LoginComponent,
+        title: 'Login'
+    },
 
-  //  FIX 3: REMOVED the login route entry entirely.
-  // { path: 'login', component: LoginComponent },
+    // --- Protected Routes (Requires Authentication) ---
 
-  // --- Main Application Routes (No Guards for Mockup) ---
-  {
-    path: 'dashboard',
-    component: DashboardComponent,
-    // canActivate: [AuthGuard] // Commented out
-  },
-  {
-    path: 'classes',
-    component: ClassesComponent,
-    // canActivate: [AuthGuard, RoleGuard], // Commented out
-    data: { roles: ['admin', 'teacher'] }
-  },
-  {
-    path: 'classes/add',
-    component: AddEditClassComponent,
-    // canActivate: [AuthGuard, RoleGuard], // Commented out
-    data: { roles: ['admin', 'teacher'] }
-  },
-  {
-    path: 'classes/edit/:id',
-    component: AddEditClassComponent,
-    // canActivate: [AuthGuard, RoleGuard], // Commented out
-    data: { roles: ['admin', 'teacher'] }
-  },
-  {
-    path: 'students',
-    component: StudentsComponent,
-    // canActivate: [AuthGuard, RoleGuard], // Commented out
-    data: { roles: ['admin'] }
-  },
-  {
-    path: 'students/new', // Route for adding a new student
-    component: StudentFormComponent,
-    data: { roles: ['admin'] }
-  },
-  {
-    path: 'students/edit/:id', // Route for editing an existing student
-    component: StudentFormComponent,
-    data: { roles: ['admin'] }
-  },
+    // Default Redirect: Root path redirects to Dashboard
+    { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
 
-  // --- Schedule Routes ---
-  {
-    path: 'schedules',
-    component: SchedulesComponent,
-    // canActivate: [AuthGuard, RoleGuard], // Commented out
-    data: { roles: ['admin', 'teacher'] }
-  },
+    // Dashboard (Main Landing Page)
+    {
+        path: 'dashboard',
+        component: DashboardComponent,
+        canActivate: [AuthGuard],
+        title: 'Dashboard'
+    },
 
-  // --- Default Redirect ---
-  // FIX 4: Ensure the root path and any bad path goes directly to the dashboard.
-  { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
-  { path: '**', redirectTo: '/dashboard' }
+    // --- Class Management ---
+    {
+        path: 'classes',
+        children: [
+            {
+                path: '',
+                component: ClassesComponent,
+                canActivate: [AuthGuard],
+                data: { allowedRoles: ['admin', 'teacher'] },
+                title: 'Class List'
+            },
+            {
+                path: 'add',
+                component: AddEditClassComponent,
+                canActivate: [AuthGuard, RoleGuard],
+                data: { allowedRoles: ['admin'] },
+                title: 'Add Class'
+            },
+            {
+                path: 'edit/:id',
+                component: AddEditClassComponent,
+                canActivate: [AuthGuard, RoleGuard],
+                data: { allowedRoles: ['admin'] },
+                title: 'Edit Class'
+            },
+        ]
+    },
+
+    // --- Teacher Management ---
+    {
+        path: 'teachers',
+        children: [
+            {
+                path: '',
+                component: TeachersComponent,
+                canActivate: [AuthGuard, RoleGuard],
+                data: { allowedRoles: ['admin'] },
+                title: 'Teacher Roster'
+            },
+            {
+                path: 'add',
+                component: AddEditTeacherComponent,
+                canActivate: [AuthGuard, RoleGuard],
+                data: { allowedRoles: ['admin'] },
+                title: 'Add Teacher'
+            },
+            {
+                path: 'edit/:id',
+                component: AddEditTeacherComponent,
+                canActivate: [AuthGuard, RoleGuard],
+                data: { allowedRoles: ['admin'] },
+                title: 'Edit Teacher'
+            },
+        ]
+    },
+
+    // --- Schedule Management ---
+    {
+        path: 'schedules',
+        children: [
+            {
+                path: '',
+                component: SchedulesComponent,
+                canActivate: [AuthGuard],
+                title: 'Schedules'
+            },
+            {
+                path: 'add',
+                component: AddEditScheduleComponent,
+                canActivate: [AuthGuard, RoleGuard],
+                data: { allowedRoles: ['admin', 'teacher'] },
+                title: 'Add Schedule'
+            },
+            {
+                path: 'edit/:id',
+                component: AddEditScheduleComponent,
+                canActivate: [AuthGuard, RoleGuard],
+                data: { allowedRoles: ['admin', 'teacher'] },
+                title: 'Edit Schedule'
+            },
+        ]
+    },
+
+    // --- Student Management ---
+    {
+        path: 'students',
+        children: [
+            {
+                path: '',
+                component: StudentsComponent,
+                canActivate: [AuthGuard],
+                title: 'Student List'
+            },
+            {
+                path: 'add',
+                component: StudentFormComponent,
+                canActivate: [AuthGuard, RoleGuard],
+                data: { allowedRoles: ['admin'] },
+                title: 'Add Student'
+            },
+            {
+                path: 'edit/:id',
+                component: StudentFormComponent,
+                canActivate: [AuthGuard, RoleGuard],
+                data: { allowedRoles: ['admin'] },
+                title: 'Edit Student'
+            },
+        ]
+    },
+
+    // --- Wildcard Route (404 Not Found) ---
+    {
+        path: '**',
+        component: NotFoundComponent,
+        title: 'Page Not Found'
+    },
 ];

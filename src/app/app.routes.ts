@@ -9,6 +9,9 @@ import { ClassesComponent } from './components/classes/classes.component';
 import { StudentsComponent } from './components/students/students.component';
 import { SchedulesComponent } from './components/schedules/schedules.component';
 
+import { StudentFormComponent } from './components/student-form/student-form.component';
+
+// import { LoginComponent } from './components/login/login.component'; // Commented out
 // import { AuthGuard } from './guards/auth.guard'; // Commented out
 // import { RoleGuard } from './guards/role.guard'; // Commented out
 
@@ -48,6 +51,18 @@ export const routes: Routes = [
     // canActivate: [AuthGuard, RoleGuard], // Commented out
     data: { roles: ['admin'] }
   },
+  {
+    path: 'students/new', // Route for adding a new student
+    component: StudentFormComponent,
+    data: { roles: ['admin'] }
+  },
+  {
+    path: 'students/edit/:id', // Route for editing an existing student
+    component: StudentFormComponent,
+    data: { roles: ['admin'] }
+  },
+
+  // --- Schedule Routes ---
   {
     path: 'schedules',
     component: SchedulesComponent,

@@ -1,6 +1,16 @@
 // src/app/models/schedule.model.ts
 
 /**
+ * Type alias for the allowed days of the week.
+ */
+export type DayOfWeek = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
+
+/**
+ * Type alias for the allowed terms/semesters.
+ */
+export type Term = 'Fall' | 'Spring' | 'Summer' | 'Winter';
+
+/**
  * Defines the structure for a Schedule object, representing a specific
  * instance of a class happening at a particular time and place.
  */
@@ -17,8 +27,11 @@ export interface Schedule {
     /** The ID of the teacher responsible for this schedule. */
     teacherId: string;
 
+    /** FIX: The name of the teacher (denormalized for quick display in the list). */
+    teacherName?: string;
+
     /** The day(s) of the week this schedule is active. */
-    days: ('Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday')[];
+    days: DayOfWeek[]; // Using the exported DayOfWeek type
 
     /** The start time of the class (e.g., '09:00'). */
     startTime: string;
@@ -30,7 +43,7 @@ export interface Schedule {
     location: string;
 
     /** The term or semester this schedule is active for. */
-    term: string;
+    term: Term; // Using the exported Term type
 
     /** The academic year this schedule belongs to. */
     year: number;

@@ -1,0 +1,21 @@
+.card {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.card-header {
+    border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.form-label {
+    font-weight: 500;
+}
+
+/* Custom styling for invalid form controls */
+.form-control.is-invalid, .form-select.is-invalid {
+    border-color: #dc3545;
+}
+
+.invalid-feedback {
+    display: block; /* Ensure visibility under is-invalid */
+}

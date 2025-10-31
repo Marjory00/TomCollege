@@ -6,11 +6,11 @@ import { HttpClientModule } from '@angular/common/http';
 
 // Assuming these models and services exist
 import { User } from '../../models/user.model';
-import { Schedule } from '../../models/schedule.model'; // Assuming a Schedule model exists
+import { Schedule } from '../../models/schedule.model';
 import { ScheduleService } from '../../services/schedule.service';
 import { AuthService } from '../../services/auth.service';
 
-// Interface for API list response (used for all list data)
+// Interface for API list response (must be imported or defined here)
 interface ListResponse<T> {
   data: T[];
   count: number;
@@ -59,19 +59,21 @@ export class SchedulesComponent implements OnInit {
     this.loading = true;
     this.errorMessage = null;
 
+    // The service returns Observable<ListResponse<Schedule>>
     this.scheduleService.getAllSchedules()
       .pipe(
         // Ensure loading state is turned off on completion or error
         finalize(() => this.loading = false),
-        // Catch errors and return an empty list
+        // Catch errors and return an empty list response object
         catchError(error => {
           console.error('Error fetching schedules:', error);
           this.errorMessage = 'Failed to load schedule list. Please check the network.';
-          // Return a mock response to ensure the subscription completes successfully
+          // FIX APPLIED: Return a ListResponse object on error
           return of({ data: [], count: 0 } as ListResponse<Schedule>);
         })
       )
       .subscribe({
+        // FIX APPLIED: Expect ListResponse<Schedule> and use .data
         next: (response: ListResponse<Schedule>) => {
           this.schedules = response.data;
         },
@@ -85,7 +87,7 @@ export class SchedulesComponent implements OnInit {
    * Navigate to the form to add a new schedule.
    */
   addSchedule(): void {
-    this.router.navigate(['/schedules/new']);
+    this.router.navigate(['/schedules/add']);
   }
 
   /**

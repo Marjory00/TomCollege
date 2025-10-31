@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, TitleCasePipe } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { catchError, of, finalize } from 'rxjs';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms'; // Added FormsModule for search input
 
 // Assuming these models and services exist
 import { User } from '../../models/user.model';
-import { Student } from '../../models/student.model'; // Assuming a Student model exists
+import { Student } from '../../models/student.model';
 import { StudentService } from '../../services/student.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -20,7 +21,7 @@ interface ListResponse<T> {
   selector: 'app-students',
   standalone: true,
   // Ensure necessary modules are imported
-  imports: [CommonModule, RouterModule, HttpClientModule],
+  imports: [CommonModule, RouterModule, HttpClientModule, FormsModule],
   templateUrl: './students.component.html',
   styleUrls: ['./students.component.css']
 })
@@ -31,6 +32,14 @@ export class StudentsComponent implements OnInit {
   errorMessage: string | null = null;
   currentUserRole: string | undefined;
 
+  // --- Pagination and Filtering State ---
+  currentPage: number = 1;
+  pageSize: number = 10;
+  totalItems: number = 0;
+  searchTerm: string = '';
+  sortBy: string = 'lastName';
+  sortDirection: 'asc' | 'desc' = 'asc';
+
   constructor(
     private studentService: StudentService,
     private authService: AuthService,
@@ -39,7 +48,6 @@ export class StudentsComponent implements OnInit {
 
   ngOnInit(): void {
     // Get the synchronous user object for immediate role check
-    // Uses the established 'currentUserValue' property from AuthService
     const user: User | null = this.authService.currentUserValue;
     this.currentUserRole = user?.role;
 
@@ -54,13 +62,14 @@ export class StudentsComponent implements OnInit {
   }
 
   /**
-   * Fetches the list of students from the service.
+   * Fetches the list of students from the service, incorporating pagination and filtering.
    */
   loadStudents(): void {
     this.loading = true;
     this.errorMessage = null;
 
-    this.studentService.getAllStudents()
+    // IMPORTANT: Use all pagination/search parameters in the service call
+    this.studentService.getAllStudents(this.currentPage, this.pageSize, this.searchTerm, this.sortBy, this.sortDirection)
       .pipe(
         // Ensure loading state is turned off on completion or error
         finalize(() => this.loading = false),
@@ -75,11 +84,59 @@ export class StudentsComponent implements OnInit {
       .subscribe({
         next: (response: ListResponse<Student>) => {
           this.students = response.data;
+          this.totalItems = response.count;
         },
         error: (err) => {
+          // This block typically catches errors from `of` stream or final stream failure
           console.error('Subscription error:', err);
         }
       });
+  }
+
+  // --- Template Helper Method (Fix for 'min' pipe error) ---
+
+  /**
+   * Calculates the index of the last item displayed on the current page.
+   * This is used in the template to correctly display the pagination range (e.g., 'Showing 1-10').
+   */
+  getEndingIndex(): number {
+    return Math.min(this.currentPage * this.pageSize, this.totalItems);
+  }
+
+  // --- UI/Data Interaction Methods ---
+
+  /**
+   * Event handler for search input or filter changes.
+   */
+  onSearch(): void {
+    this.currentPage = 1; // Reset to first page on new search
+    this.loadStudents();
+  }
+
+  /**
+   * Event handler for column header click (sorting).
+   */
+  onSort(column: string): void {
+    if (this.sortBy === column) {
+      // Toggle direction if clicking the same column
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      // New column, default to ascending
+      this.sortBy = column;
+      this.sortDirection = 'asc';
+    }
+    this.loadStudents();
+  }
+
+  /**
+   * Event handler for pagination (next/previous page).
+   */
+  onPageChange(page: number): void {
+    const maxPage = Math.ceil(this.totalItems / this.pageSize);
+    if (page > 0 && page <= maxPage) {
+      this.currentPage = page;
+      this.loadStudents();
+    }
   }
 
   /**
@@ -91,8 +148,6 @@ export class StudentsComponent implements OnInit {
 
   /**
    * Navigate to the detail/edit view for a specific student.
-   * Uses a type guard to safely handle optional IDs.
-   * @param studentId The ID of the student (can be string or undefined).
    */
   editStudent(studentId: string | undefined): void {
     if (studentId) {
@@ -100,5 +155,15 @@ export class StudentsComponent implements OnInit {
     } else {
       console.warn('Attempted to edit a student with no ID.');
     }
+  }
+
+  /**
+   * Placeholder for student deletion logic.
+   */
+  deleteStudent(studentId: string | undefined): void {
+      if (studentId && confirm('Are you sure you want to delete this student?')) {
+          // Implementation of delete logic would go here, followed by loadStudents()
+          console.log(`Deleting student with ID: ${studentId}`);
+      }
   }
 }

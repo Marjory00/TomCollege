@@ -1,0 +1,108 @@
+<div class="container mt-4">
+    <div class="card shadow">
+        <div class="card-header bg-primary text-white">
+            <h1 class="h4 mb-0">
+                <i class="fas fa-user-plus me-2"></i>
+                @if (isEditMode) {
+                    Edit Student
+                } @else {
+                    Add New Student
+                }
+            </h1>
+        </div>
+        <div class="card-body">
+
+            @if (loading) {
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-2">Loading student details...</p>
+                </div>
+            }
+
+            @if (errorMessage) {
+                <div class="alert alert-danger" role="alert">
+                    {{ errorMessage }}
+                </div>
+            }
+
+            @if (!loading) {
+                <form [formGroup]="studentForm" (ngSubmit)="onSubmit()">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" id="firstName" formControlName="firstName" class="form-control"
+                                [class.is-invalid]="studentForm.get('firstName')?.invalid && studentForm.get('firstName')?.touched">
+                            @if (studentForm.get('firstName')?.hasError('required') && studentForm.get('firstName')?.touched) {
+                                <div class="invalid-feedback">First name is required.</div>
+                            }
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" id="lastName" formControlName="lastName" class="form-control"
+                                [class.is-invalid]="studentForm.get('lastName')?.invalid && studentForm.get('lastName')?.touched">
+                            @if (studentForm.get('lastName')?.hasError('required') && studentForm.get('lastName')?.touched) {
+                                <div class="invalid-feedback">Last name is required.</div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" id="email" formControlName="email" class="form-control"
+                                [class.is-invalid]="studentForm.get('email')?.invalid && studentForm.get('email')?.touched">
+                            @if (studentForm.get('email')?.hasError('required') && studentForm.get('email')?.touched) {
+                                <div class="invalid-feedback">Email is required.</div>
+                            } @else if (studentForm.get('email')?.hasError('email') && studentForm.get('email')?.touched) {
+                                <div class="invalid-feedback">Must be a valid email format.</div>
+                            }
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="dateOfBirth" class="form-label">Date of Birth</label>
+                            <input type="date" id="dateOfBirth" formControlName="dateOfBirth" class="form-control"
+                                [class.is-invalid]="studentForm.get('dateOfBirth')?.invalid && studentForm.get('dateOfBirth')?.touched">
+                            @if (studentForm.get('dateOfBirth')?.hasError('required') && studentForm.get('dateOfBirth')?.touched) {
+                                <div class="invalid-feedback">Date of birth is required.</div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label for="enrollmentStatus" class="form-label">Enrollment Status</label>
+                            <select id="enrollmentStatus" formControlName="enrollmentStatus" class="form-select"
+                                [class.is-invalid]="studentForm.get('enrollmentStatus')?.invalid && studentForm.get('enrollmentStatus')?.touched">
+                                @for (status of enrollmentStatuses; track status) {
+                                    <option [value]="status">{{ status }}</option>
+                                }
+                            </select>
+                            @if (studentForm.get('enrollmentStatus')?.hasError('required') && studentForm.get('enrollmentStatus')?.touched) {
+                                <div class="invalid-feedback">Enrollment status is required.</div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-end pt-3 border-top">
+                        <button type="button" class="btn btn-secondary me-2" (click)="cancel()">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </button>
+                        <button type="submit" class="btn btn-success" [disabled]="submitting || studentForm.invalid">
+                            @if (submitting) {
+                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                Saving...
+                            } @else {
+                                <i class="fas fa-save me-2"></i>
+                                {{ isEditMode ? 'Update Student' : 'Create Student' }}
+                            }
+                        </button>
+                    </div>
+
+                </form>
+            }
+
+        </div>
+    </div>
+</div>

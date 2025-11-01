@@ -31,10 +31,13 @@ export class AddEditClassComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.initForm();
+    // Moved form initialization to ngOnInit for better lifecycle adherence
   }
 
   ngOnInit(): void {
+    // FIX 1: Initialize form first, before checking route params
+    this.initForm();
+
     // Check for an 'id' parameter to determine if we are in edit mode
     this.classId = this.route.snapshot.paramMap.get('id');
     this.isEditMode = !!this.classId;
@@ -50,11 +53,19 @@ export class AddEditClassComponent implements OnInit {
   private initForm(): void {
     this.classForm = this.fb.group({
       name: ['', [Validators.required, Validators.maxLength(100)]],
-      courseCode: ['', [Validators.required, Validators.maxLength(10), Validators.pattern(/^[A-Z]{2,4}\d{3,5}$/)]], // e.g., CS101 or MATH2001
+      // Regex pattern check is correct: /^[A-Z]{2,4}\d{3,5}$/
+      courseCode: ['', [Validators.required, Validators.maxLength(10), Validators.pattern(/^[A-Z]{2,4}\d{3,5}$/)]],
       creditHours: [3, [Validators.required, Validators.min(1), Validators.max(6)]],
       department: ['', Validators.required],
       description: ['', Validators.maxLength(500)]
     });
+  }
+
+  /**
+   * Convenience getter for easy access to form fields.
+   */
+  get f() {
+    return this.classForm.controls;
   }
 
   /**
@@ -100,19 +111,17 @@ export class AddEditClassComponent implements OnInit {
 
     const formValue = this.classForm.value;
 
-    // The Class model includes ID, which is only present in edit mode
-    const classData: Class = {
-        id: this.classId, // null in create mode
-        ...formValue
-    };
-
     let saveOperation: Observable<Class>;
 
     if (this.isEditMode && this.classId) {
-      // Update existing class (full object with ID)
+      // FIX 2: Construct the full Class object with ID for update
+      const classData: Class = {
+          id: this.classId,
+          ...formValue
+      };
       saveOperation = this.classService.updateClass(classData);
     } else {
-      // Create new class (using Omit<Class, 'id'> which is handled by the service signature)
+      // FIX 3: Pass just the form value (which aligns with Omit<Class, 'id'>) for creation
       saveOperation = this.classService.createClass(formValue);
     }
 
@@ -121,7 +130,9 @@ export class AddEditClassComponent implements OnInit {
         finalize(() => this.submitting = false),
         catchError(error => {
           console.error('Save failed:', error);
-          this.errorMessage = `Failed to ${this.isEditMode ? 'update' : 'create'} class: ${error.message}`;
+          // Use a default message if error object is not well-structured
+          const specificError = error.error?.message || error.message;
+          this.errorMessage = `Failed to ${this.isEditMode ? 'update' : 'create'} class: ${specificError}`;
           return of(null);
         })
       )

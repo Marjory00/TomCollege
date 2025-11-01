@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http'; // Import HttpErrorResponse for typing
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { Class } from '../models/class.model';
-import { environment } from '@env/environment'; // Assuming environment is correctly defined and imported
+import { environment } from '@env/environment';
 
 // Defining the expected response structure for list operations
 interface ListResponse<T> {
@@ -31,8 +31,8 @@ export class ClassService {
 
   /**
    * Fetches a list of all classes, returning only the Class[] for reference lists.
-    * This is useful for dropdowns where pagination/count isn't needed.
-    */
+   * This is useful for dropdowns where pagination/count isn't needed.
+   */
   getAllClassReferences(): Observable<Class[]> {
     return this.http.get<ListResponse<Class>>(this.apiUrl + '/references').pipe(
       map(response => response.data),
@@ -92,11 +92,12 @@ export class ClassService {
   }
 
   /**
-   * FIX APPLIED: Centralized error handling for HTTP requests.
+   * CRITICAL FIX: Defined as an arrow function property to retain the correct 'this' context
+   * when used in Observable pipe(catchError(this.handleError)).
    * @param error The HttpErrorResponse object.
    * @returns An Observable that throws the error.
    */
-  private handleError(error: HttpErrorResponse): Observable<never> {
+  private handleError = (error: HttpErrorResponse): Observable<never> => {
     let errorMessage = 'An unknown error occurred!';
 
     if (error.error instanceof ErrorEvent) {

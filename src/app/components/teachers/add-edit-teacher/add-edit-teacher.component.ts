@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core'; // FIX 1: Import Inject
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -23,20 +23,23 @@ export class AddEditTeacherComponent implements OnInit {
   submitting: boolean = false;
   errorMessage: string | null = null;
 
-  // Reference data for dropdowns (Assuming types are defined in the Teacher model)
+  // Reference data for dropdowns
   readonly departments: string[] = ['Science', 'Mathematics', 'Humanities', 'Engineering', 'Arts', 'Business'];
   readonly statuses: TeacherStatus[] = ['Active', 'On Leave', 'Terminated'];
 
   constructor(
     private fb: FormBuilder,
-    private teacherService: TeacherService,
+    @Inject(TeacherService) private teacherService: TeacherService, // FIX 2: Use @Inject for robustness
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.initForm();
+    // FIX 3: Removed this.initForm() from here to ngOnInit()
   }
 
   ngOnInit(): void {
+    // FIX 3: Initialize form here, ensuring services/models are ready
+    this.initForm();
+
     // Check if we are in edit mode
     this.teacherId = this.route.snapshot.paramMap.get('id');
     this.isEditMode = !!this.teacherId;
@@ -60,6 +63,11 @@ export class AddEditTeacherComponent implements OnInit {
       status: ['Active', Validators.required]
     });
   }
+
+  /**
+   * Convenience getter for easy access to form fields.
+   */
+  get f() { return this.teacherForm.controls; }
 
   /**
    * Loads existing teacher data when in edit mode.
@@ -107,23 +115,25 @@ export class AddEditTeacherComponent implements OnInit {
 
     const formValue = this.teacherForm.value;
 
-    const teacherData: Teacher = {
-        // ID is required on the full model, but null/empty for creation
-        id: this.teacherId,
-        ...formValue,
-        // Ensure hireDate is sent as a Date object or proper string format
-        hireDate: new Date(formValue.hireDate)
-    };
-
+    // Use a partial object for creation, or the full object for update
     let saveOperation: Observable<Teacher>;
 
     if (this.isEditMode && this.teacherId) {
-      // Update existing teacher
+      // Update existing teacher (full object with ID)
+      const teacherData: Teacher = {
+        id: this.teacherId,
+        ...formValue,
+        hireDate: new Date(formValue.hireDate)
+      };
       saveOperation = this.teacherService.updateTeacher(teacherData);
     } else {
-      // Create new teacher
-      // The service signature handles the Omit<Teacher, 'id'> conversion
-      saveOperation = this.teacherService.createTeacher(formValue);
+      // Create new teacher (using formValue, assuming service signature is Omit<Teacher, 'id'>)
+      // Ensure hireDate is converted for the service
+      const createData = {
+          ...formValue,
+          hireDate: new Date(formValue.hireDate)
+      };
+      saveOperation = this.teacherService.createTeacher(createData);
     }
 
     saveOperation
@@ -131,7 +141,7 @@ export class AddEditTeacherComponent implements OnInit {
         finalize(() => this.submitting = false),
         catchError(error => {
           console.error('Save failed:', error);
-          this.errorMessage = `Failed to ${this.isEditMode ? 'update' : 'create'} teacher: ${error.message}`;
+          this.errorMessage = `Failed to ${this.isEditMode ? 'update' : 'create'} teacher: ${error.message || 'Server error'}`;
           return of(null);
         })
       )

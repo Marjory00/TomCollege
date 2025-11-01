@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core'; // CRITICAL FIX 1: Import Inject
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { Observable, of, catchError, finalize } from 'rxjs';
-import { HttpClientModule } from '@angular/common/http';
+// import { HttpClientModule } from '@angular/common/http'; // REMOVED: Rely on global provideHttpClient()
 
 import { TeacherService } from '../../services/teacher.service';
 import { AuthService } from '../../services/auth.service';
@@ -19,8 +19,8 @@ interface ListResponse<T> {
 @Component({
   selector: 'app-teachers',
   standalone: true,
-  // Ensure necessary modules are imported
-  imports: [CommonModule, RouterModule, HttpClientModule],
+  // FIX 2: HttpClientModule removed
+  imports: [CommonModule, RouterModule],
   templateUrl: './teachers.component.html',
   styleUrls: ['./teachers.component.css']
 })
@@ -34,13 +34,14 @@ export class TeachersComponent implements OnInit {
   currentUserRole: string | undefined;
 
   constructor(
-    private teacherService: TeacherService,
-    private authService: AuthService,
+    // CRITICAL FIX 1: Use @Inject for robust dependency injection
+    @Inject(TeacherService) private teacherService: TeacherService,
+    @Inject(AuthService) private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    // Determine the user's role for template permissions (only Admins can usually manage staff)
+    // Determine the user's role for template permissions
     const user: User | null = this.authService.currentUserValue;
     this.currentUserRole = user?.role;
 

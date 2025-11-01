@@ -1,8 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core'; // CRITICAL FIX: Import Inject
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { Observable, of, catchError, finalize } from 'rxjs';
-import { HttpClientModule } from '@angular/common/http';
 import { ClassService } from '../../services/class.service';
 import { AuthService } from '../../services/auth.service';
 import { Class } from '../../models/class.model';
@@ -17,15 +16,13 @@ interface ListResponse<T> {
 @Component({
   selector: 'app-classes',
   standalone: true,
-  // Ensure necessary modules are imported
-  imports: [CommonModule, RouterModule, HttpClientModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './classes.component.html',
   styleUrls: ['./classes.component.css']
 })
 export class ClassesComponent implements OnInit {
 
   classes: Class[] = [];
-  // FIX APPLIED: Declare and initialize the missing property
   totalClasses: number = 0;
   loading: boolean = true;
   deletingClassId: string | null = null;
@@ -34,7 +31,7 @@ export class ClassesComponent implements OnInit {
 
   constructor(
     private classService: ClassService,
-    private authService: AuthService,
+    @Inject(AuthService) private authService: AuthService, // CRITICAL FIX: Explicitly inject AuthService
     private router: Router
   ) {}
 
@@ -42,6 +39,7 @@ export class ClassesComponent implements OnInit {
     const user: User | null = this.authService.currentUserValue;
     this.currentUserRole = user?.role;
 
+    // Check permissions on load (as a fallback to RoleGuard)
     if (this.currentUserRole === 'admin' || this.currentUserRole === 'teacher') {
       this.loadClasses();
     } else {
@@ -69,7 +67,6 @@ export class ClassesComponent implements OnInit {
       .subscribe({
         next: (response: ListResponse<Class>) => {
           this.classes = response.data;
-          // Ensure the totalClasses property is set from the API response
           this.totalClasses = response.count;
         },
         error: (err) => {
@@ -77,8 +74,6 @@ export class ClassesComponent implements OnInit {
         }
       });
   }
-
-  // ... (rest of the component methods remain the same) ...
 
   /**
    * Navigates to the form to add a new class.

@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router'; // CRITICAL FIX: Import RouterModule
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-student-form',
   standalone: true,
-  // ADD RouterModule to the imports array
   imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './student-form.component.html',
   styleUrls: ['./student-form.component.css']
@@ -16,6 +15,8 @@ export class StudentFormComponent implements OnInit {
   isEditMode: boolean = false;
   studentId: string | null = null;
   loading: boolean = false;
+  // CRITICAL FIX: Add the 'submitted' state property
+  submitted: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -47,6 +48,9 @@ export class StudentFormComponent implements OnInit {
   get f() { return this.studentForm.controls; }
 
   onSubmit(): void {
+    // CRITICAL FIX: Set submitted to true to trigger validation display
+    this.submitted = true;
+
     if (this.studentForm.invalid) {
       return;
     }

@@ -1,25 +1,30 @@
 // src/app/models/class.model.ts
 
 import { User } from './user.model';
+// Assuming Student is a defined interface or type
 import { Student } from './student.model';
 
 /**
  * Defines the structure for a Class object in the TomCollege system.
  */
 export interface Class {
-department: any;
-creditHours: any;
-courseCode: any;
     /** The unique identifier for the class. Optional for creation. */
     id?: string;
 
     /** The formal name of the class. Matches form control 'name'. */
     name: string;
 
-    // 🚨 CRITICAL FIX: Ensure 'classCode' property is explicitly defined as a string,
-    // matching the property name used in classes.component.html.
+    // FIX 1: Integrated and typed the 'department' property
+    /** The academic department offering the class (e.g., 'Science', 'Mathematics'). */
+    department: string;
+
+    // FIX 2: Integrated and typed the 'creditHours' property
+    /** The number of credit hours the class is worth. */
+    creditHours: number;
+
+    // FIX 3: Renamed 'classCode' to 'courseCode' and kept it unique/required.
     /** The short, unique course code (e.g., 'MATH101'). */
-    classCode: string;
+    courseCode: string;
 
     /** Boolean flag indicating if the class is currently running or open for enrollment. */
     isActive: boolean;

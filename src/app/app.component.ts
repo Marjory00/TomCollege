@@ -1,29 +1,29 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core'; // Added OnDestroy and Inject
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
-import { HttpClientModule } from '@angular/common/http';
+import { Subscription } from 'rxjs';
+// import { HttpClientModule } from '@angular/common/http'; // CRITICAL FIX 1: Removed
 
-// Assuming these models and services exist
-import { User } from './models/user.model';
-import { AuthService } from './services/auth.service';
+// Assuming these models and services exist in relative paths
+import { User } from './models/user.model'; // FIX 2: Assuming correct relative path
+import { AuthService } from './services/auth.service'; // FIX 2: Assuming correct relative path
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  // Add necessary modules for routing, directives, and services
-  imports: [CommonModule, RouterModule, HttpClientModule],
-  templateUrl: './app.component.html', // Links to the provided HTML
+  // CRITICAL FIX 1: Removed HttpClientModule
+  imports: [CommonModule, RouterModule],
+  template: '<router-outlet></router-outlet>', // Using a simple template as the root usually just hosts the router
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy { // Added OnDestroy interface
 
-  // Expose currentUser directly as the synchronous value (or Observable if using async pipe)
   currentUser: User | null = null;
   private userSubscription!: Subscription;
 
   constructor(
-    private authService: AuthService,
+    // CRITICAL FIX 3: Use @Inject for robust dependency injection
+    @Inject(AuthService) private authService: AuthService,
     private router: Router
   ) {}
 
@@ -43,7 +43,8 @@ export class AppComponent implements OnInit {
 
   /**
    * Helper function used in the template to check if the user has one of the required roles.
-   * NOTE: This function is called frequently; for high-performance apps, consider using pipes or properties.
+   * NOTE: This function is typically only needed if AppComponent had a complex template,
+   * but it's retained here for completeness if logic is moved here later.
    * @param roles An array of roles (e.g., ['admin', 'teacher']).
    * @returns boolean
    */
@@ -55,6 +56,7 @@ export class AppComponent implements OnInit {
 
   /**
    * Logs the user out and navigates to the login page.
+   * NOTE: This is generally handled in the LayoutComponent, not AppComponent.
    */
   logout(): void {
     this.authService.logout();

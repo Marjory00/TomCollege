@@ -1,59 +1,97 @@
 // src/app/services/schedule.service.ts
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Schedule } from '../models/schedule.model'; // Assuming Schedule model is complete
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import { Schedule } from '../models/schedule.model';
+import { environment } from '@env/environment'; // CRITICAL FIX 1: Import environment
 
-const API_URL = 'http://localhost:3000/api/schedules';
-
-// Interface matching the expected API list response
+// Defining the expected response structure for list operations
 interface ListResponse<T> {
-  count: number;
-  data: T[];
+    count: number;
+    data: T[];
 }
 
 @Injectable({ providedIn: 'root' })
 export class ScheduleService {
+    // CRITICAL FIX 2: Use environment variable for the API URL
+    private apiUrl = `${environment.apiUrl}/schedules`;
 
-  constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient) { }
 
-  /**
-   * Fetches all academic schedules, returning paginated data.
-   */
-  getAllSchedules(): Observable<ListResponse<Schedule>> {
-    // Note: This implementation assumes the API handles pagination/filtering on the backend.
-    return this.http.get<ListResponse<Schedule>>(API_URL);
-  }
+    /**
+     * Fetches all academic schedules, returning paginated data.
+     */
+    getAllSchedules(): Observable<ListResponse<Schedule>> {
+        return this.http.get<ListResponse<Schedule>>(this.apiUrl).pipe(
+            catchError(this.handleError)
+        );
+    }
 
-  /**
-   * FIX: Retrieves a single schedule by ID.
-   */
-  getSchedule(id: string): Observable<Schedule> {
-    return this.http.get<Schedule>(`${API_URL}/${id}`);
-  }
+    /**
+     * Retrieves a single schedule by ID.
+     */
+    getSchedule(id: string): Observable<Schedule> {
+        // FIX 3: Assume API wraps single objects in a 'data' property and use map to unwrap.
+        return this.http.get<{ data: Schedule }>(`${this.apiUrl}/${id}`).pipe(
+            map(response => response.data),
+            catchError(this.handleError)
+        );
+    }
 
-  /**
-   * FIX: Creates a new schedule record.
-   */
-  createSchedule(schedule: Schedule): Observable<Schedule> {
-    // Omit the 'id' field for creation since the server generates it
-    const { id, ...data } = schedule;
-    return this.http.post<Schedule>(API_URL, data);
-  }
+    /**
+     * Creates a new schedule record.
+     */
+    createSchedule(schedule: Omit<Schedule, 'id' | 'createdAt' | 'updatedAt'>): Observable<Schedule> {
+        // FIX 4: Use Omit<Schedule, ...> for clear typing of the input.
+        // FIX 5: Assume API returns the created object wrapped in 'data' and use map.
+        return this.http.post<{ data: Schedule }>(this.apiUrl, schedule).pipe(
+            map(response => response.data),
+            catchError(this.handleError)
+        );
+    }
 
-  /**
-   * FIX: Updates an existing schedule record.
-   */
-  updateSchedule(id: string, schedule: Partial<Schedule>): Observable<Schedule> {
-    return this.http.put<Schedule>(`${API_URL}/${id}`, schedule);
-  }
+    /**
+     * Updates an existing schedule record.
+     */
+    updateSchedule(schedule: Schedule): Observable<Schedule> {
+        // FIX 6: Accept the full model and destructure the ID for the URL.
+        // FIX 7: Assume API returns the updated object wrapped in 'data' and use map.
+        const { id, ...body } = schedule;
+        return this.http.put<{ data: Schedule }>(`${this.apiUrl}/${id}`, body).pipe(
+            map(response => response.data),
+            catchError(this.handleError)
+        );
+    }
 
-  /**
-   * Deletes a schedule record by ID.
-   */
-  deleteSchedule(id: string): Observable<void> {
-    // Using `void` as the expected successful response body type is usually empty
-    return this.http.delete<void>(`${API_URL}/${id}`);
-  }
+    /**
+     * Deletes a schedule record by ID.
+     */
+    deleteSchedule(id: string): Observable<void> {
+        return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
+            catchError(this.handleError)
+        );
+    }
+
+    /**
+     * CRITICAL FIX 8: Centralized error handling using an arrow function to bind 'this'.
+     */
+    private handleError = (error: HttpErrorResponse): Observable<never> => {
+        let errorMessage = 'An unknown error occurred!';
+
+        if (error.error instanceof ErrorEvent) {
+            errorMessage = `Client Error: ${error.error.message}`;
+        } else {
+            const backendError = error.error as { message?: string };
+            if (backendError && backendError.message) {
+                errorMessage = `Server Error (${error.status}): ${backendError.message}`;
+            } else {
+                errorMessage = `Server Error: ${error.status} ${error.statusText || 'Unknown Status'}`;
+            }
+        }
+
+        console.error('HTTP Error in ScheduleService:', errorMessage);
+        return throwError(() => new Error(errorMessage));
+    }
 }

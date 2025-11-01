@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule, TitleCasePipe, DecimalPipe } from '@angular/common'; // Moved pipes here
-import { Router, RouterModule } from '@angular/router'; // FIX 1: Import RouterModule
+import { Component, OnInit, OnDestroy, Inject } from '@angular/core'; // CRITICAL FIX: Import Inject
+import { CommonModule, TitleCasePipe, DecimalPipe } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 import { forkJoin, of, Subscription, Observable } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
-import { HttpClientModule } from '@angular/common/http';
+// import { HttpClientModule } from '@angular/common/http'; // REMOVED: HttpClient functionality is provided globally
 
 // Assuming these models and services exist
 import { User } from '../../models/user.model';
@@ -23,26 +23,26 @@ interface DashboardStats {
   totalStudents: number;
   totalClasses: number;
   totalSchedules: number;
-  activeEnrollments: number; // Sum of students across all classes (if linked)
+  activeEnrollments: number;
 }
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
-        CommonModule,
-        HttpClientModule,
-        TitleCasePipe,
-        DecimalPipe,
-        RouterModule // FIX 1: Added RouterModule for [routerLink]
-    ],
+    CommonModule,
+    // HttpClientModule, // REMOVED
+    TitleCasePipe,
+    DecimalPipe,
+    RouterModule
+  ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit, OnDestroy {
 
   currentUser: User | null = null;
-  userRole: string = 'guest'; // Added for convenience in HTML
+  userRole: string = 'guest';
 
   stats: DashboardStats = {
     totalStudents: 0,
@@ -53,14 +53,12 @@ export class DashboardComponent implements OnInit, OnDestroy {
   loading = true;
   errorMessage: string = '';
 
-    // Define quick links based on user roles (copied from previous HTML structure)
     dashboardItems: { title: string, icon: string, link: string, roles: string[], statKey?: keyof DashboardStats }[] = [
         { title: 'Total Students', icon: 'fas fa-user-graduate', link: '/students', roles: ['admin', 'teacher'], statKey: 'totalStudents' },
         { title: 'Total Classes', icon: 'fas fa-book', link: '/classes', roles: ['admin', 'teacher'], statKey: 'totalClasses' },
         { title: 'Total Schedules', icon: 'fas fa-clipboard-list', link: '/schedules', roles: ['admin', 'teacher'], statKey: 'totalSchedules' },
         { title: 'Active Enrollments', icon: 'fas fa-users', link: '/classes', roles: ['admin'], statKey: 'activeEnrollments' },
         { title: 'Teacher Roster', icon: 'fas fa-chalkboard-teacher', link: '/teachers', roles: ['admin'] },
-        // A placeholder for a student view
         { title: 'View My Schedule', icon: 'fas fa-calendar-alt', link: '/schedules', roles: ['student'] },
     ];
 
@@ -69,10 +67,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
   private dataSubscription: Subscription = new Subscription();
 
   constructor(
-    private authService: AuthService,
-    private studentService: StudentService,
-    private classService: ClassService,
-    private scheduleService: ScheduleService,
+    // CRITICAL FIX: Use @Inject for all services to prevent potential injection errors
+    @Inject(AuthService) private authService: AuthService,
+    @Inject(StudentService) private studentService: StudentService,
+    @Inject(ClassService) private classService: ClassService,
+    @Inject(ScheduleService) private scheduleService: ScheduleService,
     private router: Router
   ) {}
 
@@ -141,7 +140,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
         classes: classObs$,
         schedules: scheduleObs$
       }).pipe(
-        // Finalize runs upon success or any error in the stream
         finalize(() => {
              this.loading = false;
         })
@@ -153,9 +151,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
           this.stats.totalClasses = results.classes.count;
           this.stats.totalSchedules = results.schedules.count;
 
-          // Calculate active enrollments from class data (FIX 2: Safer access)
+          // Calculate active enrollments from class data
           this.stats.activeEnrollments = results.classes.data.reduce(
-            (sum: number, cls: Class) => sum + ((cls as any).enrolledStudentIds?.length || 0), // Cast to 'any' for property not in strict Class model
+            (sum: number, cls: Class) => sum + ((cls as any).enrolledStudentIds?.length || 0),
             0
           );
         },

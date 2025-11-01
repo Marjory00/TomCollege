@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core'; // CRITICAL FIX 1: Import Inject
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { catchError, of, finalize } from 'rxjs';
-import { HttpClientModule } from '@angular/common/http';
+// import { HttpClientModule } from '@angular/common/http'; // REMOVED: Rely on global provideHttpClient()
 
 // Assuming these models and services exist
 import { User } from '../../models/user.model';
@@ -19,8 +19,8 @@ interface ListResponse<T> {
 @Component({
   selector: 'app-schedules',
   standalone: true,
-  // Add necessary modules for routing, directives, and services
-  imports: [CommonModule, RouterModule, HttpClientModule],
+  // FIX 2: HttpClientModule removed
+  imports: [CommonModule, RouterModule],
   templateUrl: './schedules.component.html',
   styleUrls: ['./schedules.component.css']
 })
@@ -32,8 +32,8 @@ export class SchedulesComponent implements OnInit {
   currentUserRole: string | undefined;
 
   constructor(
-    private scheduleService: ScheduleService,
-    private authService: AuthService,
+    @Inject(ScheduleService) private scheduleService: ScheduleService, // CRITICAL FIX 1: Use @Inject
+    @Inject(AuthService) private authService: AuthService,             // CRITICAL FIX 1: Use @Inject
     private router: Router
   ) {}
 
@@ -68,12 +68,12 @@ export class SchedulesComponent implements OnInit {
         catchError(error => {
           console.error('Error fetching schedules:', error);
           this.errorMessage = 'Failed to load schedule list. Please check the network.';
-          // FIX APPLIED: Return a ListResponse object on error
+          // Return a ListResponse object on error
           return of({ data: [], count: 0 } as ListResponse<Schedule>);
         })
       )
       .subscribe({
-        // FIX APPLIED: Expect ListResponse<Schedule> and use .data
+        // Expect ListResponse<Schedule> and use .data
         next: (response: ListResponse<Schedule>) => {
           this.schedules = response.data;
         },
@@ -102,4 +102,6 @@ export class SchedulesComponent implements OnInit {
       console.warn('Attempted to edit a schedule with no ID.');
     }
   }
+
+  // NOTE: You may also want to implement a deleteSchedule() method here for completeness.
 }

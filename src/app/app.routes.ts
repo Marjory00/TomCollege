@@ -1,169 +1,96 @@
+// src/app/app.routes.ts
+
 import { Routes } from '@angular/router';
-
-// --- Guards ---
-import { AuthGuard } from './guards/auth.guard';
-import { RoleGuard } from './guards/role.guard';
-
-// --- Core Components ---
-import { LayoutComponent } from './components/layout/layout.component';
 import { LoginComponent } from './components/auth/login/login.component';
+import { LayoutComponent } from './components/layout/layout.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { NotFoundComponent } from './components/not-found/not-found.component';
-
-// --- Feature Components ---
-// Classes
-import { ClassesComponent } from './components/classes/classes.component';
-import { AddEditClassComponent } from './components/classes/add-edit-class/add-edit-class.component';
-// Students
-import { StudentsComponent } from './components/students/students.component';
-import { StudentFormComponent } from './components/students/student-form/student-form.component';
-// Schedules
-import { SchedulesComponent } from './components/schedules/schedules.component';
-import { AddEditScheduleComponent } from './components/schedules/add-edit-schedule/add-edit-schedule.component';
-// Teachers
-import { TeachersComponent } from './components/teachers/teachers.component';
-import { AddEditTeacherComponent } from './components/teachers/add-edit-teacher/add-edit-teacher.component';
-
+import { StudentListComponent } from './components/students/student-list/student-list.component';
+import { AuthGuard } from './guards/auth.guard'; // Assume this guard exists
+import { RoleGuard } from './guards/role.guard'; // Assume this guard exists
 
 export const routes: Routes = [
-    // 1. Public Route: Login
-    {
-        path: 'login',
-        component: LoginComponent,
-        title: 'Login'
-    },
+  // Authentication routes
+  { path: 'login', component: LoginComponent },
+  // { path: 'register', component: RegisterComponent }, // (Optional)
 
-    // 2. Protected Routes Shell (Layout)
-    {
-        path: '',
-        component: LayoutComponent, // This component provides the header/sidebar
-        canActivate: [AuthGuard], // AuthGuard protects the entire shell
-        children: [
-            // Default Redirect: Root path redirects to Dashboard
-            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  // Main application routes (Protected by AuthGuard)
+  {
+    path: '',
+    component: LayoutComponent,
+    canActivate: [AuthGuard], // Protects the entire application layout
+    children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardComponent, title: 'Dashboard' },
 
-            // Dashboard
-            {
-                path: 'dashboard',
-                component: DashboardComponent,
-                title: 'Dashboard'
-            },
+      // Student Routes (Admin/Teacher only for management)
+      {
+        path: 'students',
+        component: StudentListComponent,
+        title: 'Student Roster',
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin', 'teacher'] }
+      },
+      // Assuming a separate component for Add/Edit
+      {
+        path: 'students/add',
+        loadComponent: () => import('./components/students/add-edit-student/add-edit-student.component').then(m => m.AddEditStudentComponent),
+        title: 'Add Student',
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] }
+      },
+      {
+        path: 'students/edit/:id',
+        loadComponent: () => import('./components/students/add-edit-student/add-edit-student.component').then(m => m.AddEditStudentComponent),
+        title: 'Edit Student',
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin', 'teacher'] } // Teachers can edit their students
+      },
 
-            // --- Class Management ---
-            {
-                path: 'classes',
-                children: [
-                    {
-                        path: '',
-                        component: ClassesComponent,
-                        data: { allowedRoles: ['admin', 'teacher', 'student'] },
-                        title: 'Class List'
-                    },
-                    {
-                        path: 'add',
-                        component: AddEditClassComponent,
-                        canActivate: [RoleGuard],
-                        data: { allowedRoles: ['admin'] },
-                        title: 'Add Class'
-                    },
-                    {
-                        path: 'edit/:id',
-                        component: AddEditClassComponent,
-                        canActivate: [RoleGuard],
-                        data: { allowedRoles: ['admin'] },
-                        title: 'Edit Class'
-                    },
-                ]
-            },
+      // Teacher Routes (Admin only)
+      {
+        path: 'teachers',
+        loadComponent: () => import('./components/teachers/teacher-list/teacher-list.component').then(m => m.TeacherListComponent),
+        title: 'Teacher Roster',
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] }
+      },
+      // Note: We already built the AddEditTeacherComponent
+      {
+        path: 'teachers/add',
+        loadComponent: () => import('./components/teachers/add-edit-teacher/add-edit-teacher.component').then(m => m.AddEditTeacherComponent),
+        title: 'Add Teacher',
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] }
+      },
+      {
+        path: 'teachers/edit/:id',
+        loadComponent: () => import('./components/teachers/add-edit-teacher/add-edit-teacher.component').then(m => m.AddEditTeacherComponent),
+        title: 'Edit Teacher',
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] }
+      },
 
-            // --- Teacher Management (Admin Only) ---
-            {
-                path: 'teachers',
-                children: [
-                    {
-                        path: '',
-                        component: TeachersComponent,
-                        canActivate: [RoleGuard],
-                        data: { allowedRoles: ['admin'] },
-                        title: 'Teacher Roster'
-                    },
-                    {
-                        path: 'add',
-                        component: AddEditTeacherComponent,
-                        canActivate: [RoleGuard],
-                        data: { allowedRoles: ['admin'] },
-                        title: 'Add Teacher'
-                    },
-                    {
-                        path: 'edit/:id',
-                        component: AddEditTeacherComponent,
-                        canActivate: [RoleGuard],
-                        data: { allowedRoles: ['admin'] },
-                        title: 'Edit Teacher'
-                    },
-                ]
-            },
+      // Placeholder routes (Schedule, Classes, Settings)
+      {
+        path: 'schedule',
+        loadComponent: () => import('./components/placeholder/schedule/schedule.component').then(m => m.ScheduleComponent),
+        title: 'My Schedule',
+      },
+      {
+        path: 'classes',
+        loadComponent: () => import('./components/placeholder/classes/classes.component').then(m => m.ClassesComponent),
+        title: 'Classes',
+      },
+      {
+        path: 'settings',
+        loadComponent: () => import('./components/placeholder/settings/settings.component').then(m => m.SettingsComponent),
+        title: 'Settings',
+        canActivate: [RoleGuard],
+        data: { allowedRoles: ['admin'] }
+      },
+    ],
+  },
 
-            // --- Schedule Management ---
-            {
-                path: 'schedules',
-                children: [
-                    {
-                        path: '',
-                        component: SchedulesComponent,
-                        title: 'Schedules'
-                    },
-                    {
-                        path: 'add',
-                        component: AddEditScheduleComponent,
-                        canActivate: [RoleGuard],
-                        data: { allowedRoles: ['admin', 'teacher'] },
-                        title: 'Add Schedule'
-                    },
-                    {
-                        path: 'edit/:id',
-                        component: AddEditScheduleComponent,
-                        canActivate: [RoleGuard],
-                        data: { allowedRoles: ['admin', 'teacher'] },
-                        title: 'Edit Schedule'
-                    },
-                ]
-            },
-
-            // --- Student Management ---
-            {
-                path: 'students',
-                children: [
-                    {
-                        path: '',
-                        component: StudentsComponent,
-                        title: 'Student List'
-                    },
-                    {
-                        path: 'add',
-                        component: StudentFormComponent,
-                        canActivate: [RoleGuard],
-                        data: { allowedRoles: ['admin'] },
-                        title: 'Add Student'
-                    },
-                    {
-                        path: 'edit/:id',
-                        component: StudentFormComponent,
-                        canActivate: [RoleGuard],
-                        data: { allowedRoles: ['admin'] },
-                        title: 'Edit Student'
-                    },
-                ]
-            },
-        ]
-    },
-
-    // 3. Wildcard Route (404/Fallback)
-    {
-        path: '404',
-        component: NotFoundComponent,
-        title: 'Page Not Found'
-    },
-    // Final catch-all redirect to the 404 page
-    { path: '**', redirectTo: '/404' }
+  // Wildcard route for 404
+  { path: '**', redirectTo: '/dashboard' },
 ];

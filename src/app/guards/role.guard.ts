@@ -1,39 +1,35 @@
-import { Router, CanActivateFn, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+// src/app/guards/role.guard.ts
+
+import { Injectable, inject } from '@angular/core';
+import { CanActivateFn, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { inject } from '@angular/core';
 
-/**
- * Checks if the logged-in user has one of the roles allowed for the route.
- * If not, it redirects the user to the dashboard.
- */
-export const RoleGuard: CanActivateFn = (
-  route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
-) => {
-  // Use Angular's inject function to get the required services
-  const authService = inject(AuthService);
-  const router = inject(Router);
+@Injectable({ providedIn: 'root' })
+export class RoleGuard {
+  constructor(private authService: AuthService, private router: Router) {}
 
-  // 1. Get the roles allowed for this specific route from the route data
-  // The route data is expected to contain { allowedRoles: ['admin', 'teacher'] }
-  const allowedRoles = route.data['allowedRoles'] as string[];
+  canActivate: CanActivateFn = (route: ActivatedRouteSnapshot) => {
+    const authService = inject(AuthService);
+    const router = inject(Router);
 
-  // Defense against undefined configuration (shouldn't happen if routes are set up correctly)
-  if (!allowedRoles || allowedRoles.length === 0) {
-    console.warn('RoleGuard blocked access: No allowedRoles defined for this route.');
+    const requiredRoles = route.data['allowedRoles'] as Array<string>;
+
+    if (!requiredRoles || requiredRoles.length === 0) {
+      // If no roles are specified, allow access
+      return true;
+    }
+
+    if (authService.hasRequiredRole(requiredRoles)) {
+      return true;
+    }
+
+    // Role is not permitted, redirect to dashboard or access denied page
     router.navigate(['/dashboard']);
+    alert('Access Denied: You do not have the required permissions.');
     return false;
-  }
+  };
+}
 
-  // 2. Check if the current user's role is included in the allowed roles
-  if (authService.hasRequiredRole(allowedRoles)) {
-    // Role is authorized, grant access
-    return true;
-  }
-
-  // 3. Role is NOT authorized, redirect to the dashboard
-  const userRole = authService.currentUserValue?.role || 'Guest';
-  console.warn(`RoleGuard blocked access: User role '${userRole}' not authorized for required roles [${allowedRoles.join(', ')}].`);
-  router.navigate(['/dashboard']);
-  return false;
+export const canActivateRole: CanActivateFn = (route, state) => {
+    return inject(RoleGuard).canActivate(route, state);
 };

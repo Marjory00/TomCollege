@@ -1,23 +1,20 @@
-// src/app/models/teacher.model.ts (Updated)
+// src/app/models/teacher.model.ts
 
-import { User } from './user.model';
+import { User, NewUser } from './user.model';
 
-/**
- * Extends the base User model with teacher-specific properties.
- */
-export interface Teacher extends User {
-dateJoined: string|number|Date;
-    role: 'teacher' | 'admin';
-    subject: string;
+// Specific status types for a Teacher
+export type TeacherStatus = 'Active' | 'Suspended' | 'On Leave' | 'Retired';
+
+export interface Teacher extends Omit<User, 'status'> {
+    role: 'teacher';
     department: string;
-    status: 'Active' | 'Suspended' | 'On Leave' | 'Retired';
-    officeNumber?: string;
+    subject: string;
+    status: TeacherStatus;
 }
 
-/**
- * FIX: Define the required interface for adding a new teacher.
- * This includes the 'password' but omits auto-generated fields like 'id' and 'dateJoined'.
- */
-export interface NewTeacherData extends Omit<Teacher, 'id' | 'dateJoined'> {
-    password: string;
+export interface NewTeacherData extends Omit<NewUser, 'role'> {
+    role: 'teacher';
+    department: string;
+    subject: string;
+    status: TeacherStatus;
 }

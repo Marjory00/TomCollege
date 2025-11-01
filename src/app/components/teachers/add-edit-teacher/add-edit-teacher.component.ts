@@ -3,7 +3,7 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common'; // FIX: DatePipe removed
+import { CommonModule } from '@angular/common'; // FIXED: DatePipe import removed
 import { Subject, takeUntil, catchError, of, Observable, finalize } from 'rxjs';
 
 import { TeacherService } from '../../../services/teacher.service';
@@ -12,14 +12,13 @@ import { Teacher, NewTeacherData } from '../../../models/teacher.model';
 @Component({
   selector: 'app-add-edit-teacher',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule], // FIX: DatePipe removed from imports array
+  imports: [CommonModule, ReactiveFormsModule, RouterModule], // FIXED: DatePipe removed from imports array
   templateUrl: './add-edit-teacher.component.html',
   styleUrls: ['./add-edit-teacher.component.css']
 })
 export class AddEditTeacherComponent implements OnInit, OnDestroy {
 
   teacherForm!: FormGroup;
-
   isEditMode: boolean = false;
   teacherId: string | null = null;
   loading: boolean = true;
@@ -82,6 +81,7 @@ export class AddEditTeacherComponent implements OnInit, OnDestroy {
       )
       .subscribe((teacher: Teacher | null) => {
         if (teacher) {
+          // Date formatting for the input type="date"
           const formattedDate = teacher.dateJoined
             ? new Date(teacher.dateJoined).toISOString().substring(0, 10)
             : null;

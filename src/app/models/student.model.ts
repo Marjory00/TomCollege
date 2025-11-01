@@ -1,49 +1,23 @@
 // src/app/models/student.model.ts
 
-// We need Omit to extend User and RegisterData while overriding 'status'
-import { User, RegisterData } from './user.model';
-import { Teacher } from './teacher.model'; // Assuming Teacher is needed to define the advisor type
+import { User, NewUser } from './user.model';
 
-/**
- * Defines the structure for a Student entity.
- * * CRITICAL FIX: Use Omit<User, 'status'> to remove the incompatible
- * status property from the base interface before adding the student-specific status.
- */
+// Define the specific status types for a Student (includes "On Probation" fix)
+export type StudentStatus = 'Active' | 'Graduated' | 'Withdrawn' | 'Suspended' | 'On Probation';
+
 export interface Student extends Omit<User, 'status'> {
-    // Overrides the role property to ensure it is always 'student'.
+gradeLevel: any;
     role: 'student';
-
-    // Status is explicitly redefined here to include student-specific statuses
-    status: 'Active' | 'Graduated' | 'Withdrawn' | 'Suspended';
-
-    /** Year or level of study (e.g., '10th Grade', 'Freshman'). */
-    gradeLevel: string;
-
-    /** Date the student enrolled in the institution. */
-    enrollmentDate: Date | string;
-
-    /** Unique IDs of classes the student is currently enrolled in. */
-    enrolledClassIds: string[];
-
-    /** The unique ID of the student's primary advisor/homeroom teacher. */
-    advisorId: string;
-
-    /** Optional: Full advisor details, often populated during a fetch. */
-    advisor?: Teacher;
+    studentId: string;
+    currentClass: string;
+    enrollmentDate: string;
+    status: StudentStatus;
 }
 
-/**
- * Defines the structure for creating a new Student via the API.
- * Uses Omit<RegisterData, 'status'> to remove the incompatible status property.
- */
-export interface NewStudentData extends Omit<RegisterData, 'status'> {
-    // These fields are required for the student profile creation
-    gradeLevel: string;
-    advisorId: string;
-
-    // Ensure the role is set correctly during creation
+export interface NewStudentData extends Omit<NewUser, 'role'> {
     role: 'student';
-
-    // Status is now correctly defined with the extended student statuses
-    status?: 'Active' | 'Graduated' | 'Withdrawn' | 'Suspended';
+    studentId: string;
+    currentClass: string;
+    enrollmentDate: string;
+    status: StudentStatus;
 }

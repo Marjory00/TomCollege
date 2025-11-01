@@ -9,11 +9,15 @@ export interface User {
     email: string;
     phone?: string;
     role: 'admin' | 'teacher' | 'student';
-    dateJoined: string;
+    // Status is broad enough to cover all derived types
+    status: 'Active' | 'Inactive' | 'Suspended' | 'On Leave' | 'Retired' | 'Graduated' | 'Withdrawn' | 'On Probation';
+}
 
-    // FIX: Expanded 'status' type to include all known derived statuses.
-    // This allows the Teacher interface to correctly extend User.
-    status: 'Active' | 'Inactive' | 'Suspended' | 'On Leave' | 'Retired';
+/**
+ * User data including the JWT token, used after login.
+ */
+export interface AuthenticatedUser extends User {
+    token: string;
 }
 
 // Data model for registration/creation requests
@@ -25,4 +29,26 @@ export interface NewUser {
     phone?: string;
     role: 'admin' | 'teacher' | 'student';
     dateJoined: string;
+}
+
+/**
+ * Interface used specifically for login requests.
+ */
+export interface LoginCredentials {
+    email: string;
+    password: string;
+}
+
+/**
+ * Data model for user registration.
+ */
+export interface RegisterData extends NewUser {}
+
+/**
+ * Common API response after successful login/register.
+ */
+export interface AuthResponse {
+    user: User;
+    token: string;
+    expiresIn: number; // e.g., token lifetime in seconds
 }

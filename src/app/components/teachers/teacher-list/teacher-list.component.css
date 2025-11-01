@@ -1,0 +1,57 @@
+/* src/app/components/teachers/teacher-list/teacher-list.component.css */
+
+/* Reuse styles from student-list for consistency */
+.teacher-list-container {
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 60px);
+}
+
+.page-title {
+    font-weight: 300;
+    color: #343a40;
+}
+
+.controls-row {
+    padding: 15px 20px;
+    background-color: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.table thead th {
+    font-weight: 600;
+    color: #495057;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: default;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.name-column {
+    font-weight: 500;
+    color: #343a40;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5em 0.75em;
+    font-weight: 600;
+}
+
+.pagination .page-link {
+    color: #007bff;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+}

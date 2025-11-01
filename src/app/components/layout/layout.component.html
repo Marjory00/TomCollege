@@ -1,0 +1,82 @@
+<div class="app-layout-wrapper" [class.collapsed]="isSidebarCollapsed">
+
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>TomCollege <i class="fas fa-book"></i></h3>
+        </div>
+
+        <nav class="sidebar-nav">
+            <ul>
+                @if (currentUser) {
+
+                    <li>
+                        <a routerLink="/dashboard" routerLinkActive="active">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+
+                    @if (hasRole('admin') || hasRole('teacher')) {
+                        <li>
+                            <a routerLink="/schedules" routerLinkActive="active">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Schedules</span>
+                            </a>
+                        </li>
+                    }
+
+                    <li>
+                        <a routerLink="/classes" routerLinkActive="active">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>Classes</span>
+                        </a>
+                    </li>
+
+                    @if (hasRole('admin')) {
+                        <li>
+                            <a routerLink="/teachers" routerLinkActive="active">
+                                <i class="fas fa-users-cog"></i>
+                                <span>Teachers</span>
+                            </a>
+                        </li>
+                    }
+
+                    @if (hasRole('admin') || hasRole('teacher')) {
+                        <li>
+                            <a routerLink="/students" routerLinkActive="active">
+                                <i class="fas fa-user-graduate"></i>
+                                <span>Students</span>
+                            </a>
+                        </li>
+                    }
+                }
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <p>Logged in as: <strong>{{ currentUser?.username }}</strong></p>
+            <p>Role: <strong>{{ currentUser?.role | titlecase }}</strong></p>
+        </div>
+    </aside>
+
+    <main class="main-content-area">
+
+        <header class="app-header">
+            <button class="toggle-btn" (click)="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
+            <span class="app-title-mobile">TMS</span>
+
+            <div class="user-actions">
+                <span>Welcome, {{ currentUser?.firstName }}!</span>
+                <button class="btn-logout" (click)="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <section class="page-content">
+            <router-outlet></router-outlet>
+        </section>
+    </main>
+</div>

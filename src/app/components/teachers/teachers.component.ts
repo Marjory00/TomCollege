@@ -1,128 +1,115 @@
-import { Component, OnInit, Inject } from '@angular/core'; // CRITICAL FIX 1: Import Inject
+// src/app/components/teachers/teachers.component.ts
+
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { Observable, of, catchError, finalize } from 'rxjs';
-// import { HttpClientModule } from '@angular/common/http'; // REMOVED: Rely on global provideHttpClient()
+import { RouterModule } from '@angular/router';
+import { Subject, takeUntil, catchError, of, finalize } from 'rxjs';
 
 import { TeacherService } from '../../services/teacher.service';
-import { AuthService } from '../../services/auth.service';
-// Assuming a Teacher model exists with common properties
 import { Teacher } from '../../models/teacher.model';
-import { User } from '../../models/user.model';
 
-// Interface matching the expected API list response
-interface ListResponse<T> {
-  data: T[];
-  count: number;
+// Re-define the expected response type for clarity
+interface TeacherListResponse {
+  teachers: Teacher[];
+  total: number;
 }
 
 @Component({
   selector: 'app-teachers',
   standalone: true,
-  // FIX 2: HttpClientModule removed
   imports: [CommonModule, RouterModule],
   templateUrl: './teachers.component.html',
   styleUrls: ['./teachers.component.css']
 })
-export class TeachersComponent implements OnInit {
+export class TeachersComponent implements OnInit, OnDestroy {
+getStatusClass(arg0: any): string|string[]|Set<string>|{ [klass: string]: any; }|null|undefined {
+throw new Error('Method not implemented.');
+}
 
   teachers: Teacher[] = [];
-  totalTeachers: number = 0;
   loading: boolean = true;
-  deletingTeacherId: string | null = null;
   errorMessage: string | null = null;
-  currentUserRole: string | undefined;
+  totalTeachers: number = 0;
+
+  // Pagination/Filtering properties (if needed)
+  currentPage: number = 1;
+  pageSize: number = 10;
+
+  private destroy$ = new Subject<void>();
 
   constructor(
-    // CRITICAL FIX 1: Use @Inject for robust dependency injection
-    @Inject(TeacherService) private teacherService: TeacherService,
-    @Inject(AuthService) private authService: AuthService,
-    private router: Router
+    @Inject(TeacherService) private teacherService: TeacherService
   ) {}
 
   ngOnInit(): void {
-    // Determine the user's role for template permissions
-    const user: User | null = this.authService.currentUserValue;
-    this.currentUserRole = user?.role;
-
-    // Only Administrators are typically allowed to view/manage all staff
-    if (this.currentUserRole === 'admin') {
-      this.loadTeachers();
-    } else {
-      this.errorMessage = 'You must be an administrator to view or manage the teacher roster.';
-      this.loading = false;
-    }
+    this.loadTeachers();
   }
 
   /**
-   * Fetches the list of teachers from the service.
+   * Loads the list of teachers from the service.
    */
   loadTeachers(): void {
     this.loading = true;
     this.errorMessage = null;
 
-    this.teacherService.getAllTeachers()
+    // Optional: Include pagination parameters in the service call
+    const params = { page: this.currentPage, size: this.pageSize };
+
+    this.teacherService.getTeachers(params)
       .pipe(
+        takeUntil(this.destroy$),
         finalize(() => this.loading = false),
         catchError(error => {
-          console.error('Error fetching teachers:', error);
-          this.errorMessage = 'Failed to load teacher list. Please check the network or server.';
-          // Return a mock response on error
-          return of({ data: [], count: 0 } as ListResponse<Teacher>);
+          console.error('Error loading teachers:', error);
+          this.errorMessage = 'Failed to load teacher data. Please try again later.';
+          // Return a structured fallback response on error
+          return of({ teachers: [], total: 0 } as TeacherListResponse);
         })
       )
-      .subscribe({
-        next: (response: ListResponse<Teacher>) => {
-          this.teachers = response.data;
-          this.totalTeachers = response.count;
-        },
-        error: (err) => {
-          console.error('Subscription error:', err);
+      // CRITICAL FIX: Use the positional callback syntax (value, error, complete)
+      .subscribe(
+        // Success callback (value)
+        (response: TeacherListResponse) => {
+          this.teachers = response.teachers;
+          this.totalTeachers = response.total;
         }
-      });
+        // Error handling is managed by the catchError pipe, so a dedicated error callback is optional here
+      );
   }
 
   /**
-   * Navigates to the form to add a new teacher.
+   * Deletes a teacher and reloads the list upon success.
+   * @param id The ID of the teacher to delete.
    */
-  addTeacher(): void {
-    this.router.navigate(['/teachers/add']);
-  }
-
-  /**
-   * Navigates to the form to edit an existing teacher.
-   * @param teacherId The ID of the teacher to edit.
-   */
-  editTeacher(teacherId: string | undefined): void {
-    if (teacherId) {
-      this.router.navigate(['/teachers/edit', teacherId]);
-    } else {
-      console.warn('Attempted to edit a teacher with no ID.');
-    }
-  }
-
-  /**
-   * Handles the deletion of a teacher.
-   * @param teacherId The ID of the teacher to delete.
-   */
-  deleteTeacher(teacherId: string | undefined): void {
-    if (!teacherId || this.deletingTeacherId) return;
-
-    if (confirm('WARNING: Are you sure you want to delete this teacher? This action may affect associated schedules and classes.')) {
-      this.deletingTeacherId = teacherId;
-      this.teacherService.deleteTeacher(teacherId)
+  deleteTeacher(id: string): void {
+    if (confirm('Are you sure you want to delete this teacher? This action cannot be undone.')) {
+      this.loading = true;
+      this.teacherService.deleteTeacher(id)
         .pipe(
-          finalize(() => this.deletingTeacherId = null),
+          takeUntil(this.destroy$),
+          finalize(() => this.loading = false),
           catchError(error => {
             console.error('Deletion failed:', error);
-            this.errorMessage = 'Failed to delete teacher. They may still be linked to active classes/schedules.';
+            this.errorMessage = 'Failed to delete teacher.';
             return of(null);
           })
         )
+        // CRITICAL FIX: Use the positional callback syntax
         .subscribe(() => {
-          // Successfully deleted, refresh the list
+          // Only reload if the deletion was successful (i.e., not an error result)
           this.loadTeachers();
         });
     }
+  }
+
+  // Placeholder for pagination control action
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadTeachers();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core'; // Added Inject
+import { Component, OnInit, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -10,9 +10,13 @@ import {
     AbstractControl,
     ValidatorFn
 } from '@angular/forms';
+// FIX: Add Omit to the Observable import if needed, or import directly from TypeScript utilities
 import { catchError, of, finalize, Observable } from 'rxjs';
 import { Schedule, DayOfWeek, Term } from '../../../models/schedule.model';
 import { ScheduleService } from '../../../services/schedule.service';
+
+// Utility type required to correctly type the creation payload
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 
 // Assuming simplified models exist for reference data
 interface ClassReference {
@@ -53,9 +57,8 @@ export class AddEditScheduleComponent implements OnInit {
     readonly allTerms: Term[] = ['Fall', 'Spring', 'Summer', 'Winter'];
 
     constructor(
-        // CRITICAL FIX 1: Use @Inject for robustness in standalone components
         @Inject(FormBuilder) private fb: FormBuilder,
-        private scheduleService: ScheduleService,
+        @Inject(ScheduleService) private scheduleService: ScheduleService,
         private router: Router,
         private route: ActivatedRoute,
         // private classService: ClassService,
@@ -186,33 +189,33 @@ export class AddEditScheduleComponent implements OnInit {
 
         // 3. Construct the FINAL data payload
         const scheduleData: Schedule = {
-            // Include ID only if updating, but ensure it's removed for creation if passed
-            ...rawFormValue, // spread all fields
+            // Merge all form controls (excluding the 'days' boolean array)
+            ...this.scheduleForm.value,
             days: selectedDays,
             className: className,
             teacherName: teacherName,
-            // Ensure ID is only set if editing
+            // ID will be defined in edit mode, undefined in create mode
             id: this.isEditMode ? this.scheduleId! : undefined,
         } as Schedule;
 
         let saveOperation: Observable<Schedule>;
 
         if (this.isEditMode && this.scheduleId) {
-             // CRITICAL FIX 2: Pass the ID and the payload separately as per common service pattern
-             // The service signature was fixed to use: updateSchedule(schedule: Schedule): Observable<Schedule>
-             // The component passes the complete Schedule object, ensuring the ID is within the object.
-             saveOperation = this.scheduleService.updateSchedule(scheduleData);
+            saveOperation = this.scheduleService.updateSchedule(scheduleData);
         } else {
             // When creating, the service expects the object without the ID property
-            // Omit the ID before passing to the create function
+            // Use object destructuring to safely exclude 'id'
             const { id, ...createPayload } = scheduleData;
+
+            // FIX: Explicitly cast to the Omit type for creation payload consistency
+            // This resolves the TS2353 type mismatch error
             saveOperation = this.scheduleService.createSchedule(createPayload as Omit<Schedule, 'id' | 'createdAt' | 'updatedAt'>);
         }
 
         saveOperation
             .pipe(
                 finalize(() => this.submitting = false),
-                catchError(error => {
+                catchError((error: any) => {
                     console.error('Save failed:', error);
                     this.errorMessage = `Failed to ${this.isEditMode ? 'update' : 'create'} schedule: ${error.message}`;
                     return of(null);

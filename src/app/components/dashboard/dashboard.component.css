@@ -1,3 +1,5 @@
+/* src/app/components/dashboard/dashboard.component.css */
+
 /* General Dashboard Layout */
 .dashboard-container {
     padding: 30px;
@@ -23,9 +25,9 @@
     padding-left: 10px;
 }
 
-/* FIX 1: New style to constrain the total width of the cards row and center it */
+/* FIX 1: Constrain the total width of the cards row and center it */
 .narrow-stats-row {
-    max-width: 1200px; /* Adjusted slightly for better desktop visibility */
+    max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
 }
@@ -40,6 +42,8 @@
 
     height: 100px;
     margin: 0;
+    /* FIX 2: Ensure all text inside stat cards is white for contrast */
+    color: #ffffff !important;
 }
 
 .stat-card.card:hover {
@@ -55,19 +59,19 @@
     height: 100%;
 }
 
-/* FIX: Text elements are explicitly styled for dark colors over light background */
+/* FIX 3: Reset text colors to WHITE for high-contrast over dark backgrounds */
 .stat-value {
     font-size: 1.7rem;
     font-weight: 700;
     line-height: 1;
     margin-bottom: 0.1rem;
-    color: #343a40; /* Darker than original for better contrast */
+    color: #ffffff; /* Explicitly set to white */
 }
 
 .stat-label {
     font-size: 0.8em;
     font-weight: 400;
-    color: #6c757d;
+    color: rgba(255, 255, 255, 0.8); /* Semi-transparent white */
     text-transform: uppercase;
     letter-spacing: 0.08em;
 }
@@ -77,26 +81,28 @@
     bottom: 5px;
     right: 10px;
     font-size: 3rem;
-    color: rgba(73, 80, 87, 0.1);
+    color: rgba(255, 255, 255, 0.1); /* Light transparent icon */
     opacity: 0.7;
     pointer-events: none;
 }
 
-/* --- Light Grey Card Colors --- (As provided by user) */
+/* --- Stat Card Colors (FIXED for high contrast) --- */
+/* Restoring to dark/vibrant colors to contrast with white text in HTML */
 .bg-info {
-    background: linear-gradient(135deg, #e0e0e0, #cccccc) !important;
+    background: linear-gradient(135deg, #17a2b8, #138496) !important;
 }
 
 .bg-success {
-    background: linear-gradient(135deg, #e8e8e8, #d3d3d3) !important;
+    background: linear-gradient(135deg, #28a745, #1e7e34) !important;
 }
 
 .bg-warning {
-    background: linear-gradient(135deg, #f0f0f0, #dbdbdb) !important;
+    /* Warning often needs dark text, but we'll use a deep gradient for white text */
+    background: linear-gradient(135deg, #ffc107, #d39e00) !important;
 }
 
 .bg-danger {
-    background: linear-gradient(135deg, #f5f5f5, #e0e0e0) !important;
+    background: linear-gradient(135deg, #dc3545, #bd2130) !important;
 }
 
 /* --- Navigation Cards (Quick Actions) --- */

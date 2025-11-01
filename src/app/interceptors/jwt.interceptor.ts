@@ -1,23 +1,26 @@
-
-import { HttpHandlerFn, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { HttpInterceptorFn } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
-import { environment } from '@env/environment'; // Assuming environment alias is working
+import { environment } from '../../environments/environment';
 
-export const jwtInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
-    const authService = inject(AuthService);
-    const token = authService.getToken();
-    const isLoggedIn = !!token;
-    const isApiUrl = req.url.startsWith(environment.apiUrl);
+export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
+  const authService = inject(AuthService);
+  const currentUser = authService.currentUserValue; // Get the full user object
 
-    if (isLoggedIn && isApiUrl) {
-        // Clone the request and add the Authorization header
-        req = req.clone({
-            setHeaders: {
-                Authorization: `Bearer ${token}`
-            }
-        });
-    }
+  // 1. CRITICAL FIX: Get the token from the user object, not a missing getToken() method
+  const token = currentUser?.token;
 
-    return next(req);
+  // Check if the user is logged in AND the request is to your API (not a third party)
+  const isApiUrl = req.url.startsWith(environment.apiUrl);
+
+  if (currentUser && token && isApiUrl) {
+    // Clone the request and add the Authorization header
+    req = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+  }
+
+  return next(req);
 };

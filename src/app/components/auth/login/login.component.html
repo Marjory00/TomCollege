@@ -1,0 +1,53 @@
+<div class="login-container">
+    <div class="login-card">
+        <div class="logo-header">
+            <h3>TomCollege TMS <i class="fas fa-graduation-cap"></i></h3>
+        </div>
+
+        <h2 class="form-title">Login to your Account</h2>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+            @if (errorMessage) {
+                <div class="alert alert-danger">{{ errorMessage }}</div>
+            }
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    formControlName="username"
+                    class="form-control"
+                    [ngClass]="{ 'is-invalid': f['username'].invalid && f['username'].touched }"
+                    placeholder="Enter your username"
+                >
+                @if (f['username'].invalid && f['username'].touched && f['username'].errors?.['required']) {
+                    <div class="invalid-feedback">Username is required.</div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    formControlName="password"
+                    class="form-control"
+                    [ngClass]="{ 'is-invalid': f['password'].invalid && f['password'].touched }"
+                    placeholder="Enter your password"
+                >
+                @if (f['password'].invalid && f['password'].touched && f['password'].errors?.['required']) {
+                    <div class="invalid-feedback">Password is required.</div>
+                }
+            </div>
+
+            <button type="submit" [disabled]="submitting || loginForm.invalid" class="btn btn-login">
+                @if (submitting) {
+                    <i class="fas fa-spinner fa-spin"></i>
+                }
+                Login
+            </button>
+        </form>
+    </div>
+</div>

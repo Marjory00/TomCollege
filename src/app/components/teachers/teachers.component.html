@@ -1,93 +1,74 @@
-<div class="container-fluid mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="page-title">👨‍🏫 Teacher Roster ({{ totalTeachers }} Found)</h1>
+<div class="classes-container">
 
-        @if (currentUserRole === 'admin') {
-            <button
-                class="btn btn-success"
-                (click)="addTeacher()">
-                <i class="fas fa-user-plus me-2"></i> Add New Teacher
-            </button>
-        }
+    <div class="header-section">
+        <h1>Faculty Management ({{ totalTeachers }})</h1>
+        <button class="btn-primary" [routerLink]="['/teachers/add']">
+            <i class="fas fa-plus me-2"></i> Add New Teacher
+        </button>
     </div>
 
-    @if (errorMessage && !loading) {
-        <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+    @if (errorMessage) {
+        <div class="alert alert-danger" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMessage }}
+        </div>
     }
 
     @if (loading) {
-        <div class="text-center py-5">
-            <div class="spinner-border text-success" role="status"></div>
-            <p class="mt-2">Loading teacher roster...</p>
+        <div class="loading-state">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p class="mt-3">Loading faculty data...</p>
+        </div>
+    }
+
+    @if (!loading && teachers.length === 0) {
+        <div class="empty-state">
+            <i class="fas fa-users-slash fa-2x"></i>
+            <p class="mt-3">No teacher records found.</p>
+            <p>Click 'Add New Teacher' to begin populating the list.</p>
         </div>
     }
 
     @if (!loading && teachers.length > 0) {
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover table-striped">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Department</th>
-                                <th>Hire Date</th>
-                                <th>Status</th>
-                                @if (currentUserRole === 'admin') {
-                                    <th class="text-center">Actions</th>
-                                }
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @for (teacher of teachers; track teacher.id) {
-                                <tr>
-                                    <td><strong>{{ teacher.firstName }} {{ teacher.lastName }}</strong></td>
-                                    <td>{{ teacher.email }}</td>
-                                    <td>{{ teacher.department }}</td>
-                                    <td>{{ teacher.hireDate | date:'mediumDate' }}</td>
-                                    <td>
-                                        <span class="badge"
-                                            [ngClass]="{'bg-success': teacher.status === 'Active', 'bg-warning text-dark': teacher.status === 'On Leave', 'bg-danger': teacher.status === 'Terminated'}">
-                                            {{ teacher.status }}
-                                        </span>
-                                    </td>
-
-                                    @if (currentUserRole === 'admin') {
-                                        <td class="text-center">
-                                            <button
-                                                class="btn btn-sm btn-outline-info me-2"
-                                                (click)="editTeacher(teacher.id)"
-                                                title="Edit Teacher">
-                                                <i class="fas fa-user-edit"></i>
-                                            </button>
-
-                                            <button
-                                                class="btn btn-sm btn-outline-danger"
-                                                [disabled]="deletingTeacherId === teacher.id"
-                                                (click)="deleteTeacher(teacher.id)"
-                                                title="Delete Teacher">
-                                                @if (deletingTeacherId === teacher.id) {
-                                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                } @else {
-                                                    <i class="fas fa-trash"></i>
-                                                }
-                                            </button>
-                                        </td>
-                                    }
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="table-responsive">
+            <table class="classes-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Subject</th>
+                        <th>Status</th>
+                        <th>Date Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (teacher of teachers; track teacher.id) {
+                        <tr>
+                            <td>{{ teacher.lastName }}, {{ teacher.firstName }}</td>
+                            <td>{{ teacher.email }}</td>
+                            <td>{{ teacher.subject }}</td>
+                            <td>
+                                <span class="badge rounded-pill" [ngClass]="getStatusClass(teacher.status)">
+                                    {{ teacher.status }}
+                                </span>
+                            </td>
+                            <td>{{ teacher.dateJoined | date:'shortDate' }}</td>
+                            <td class="action-buttons">
+                                <button class="btn-sm btn-info" [routerLink]="['/teachers', teacher.id, 'edit']" title="Edit">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn-sm btn-danger" (click)="deleteTeacher(teacher.id)" title="Delete">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
-    } @else if (!loading && teachers.length === 0 && !errorMessage) {
-        <div class="alert alert-info mt-4 text-center">
-            The teacher roster is empty.
-            @if (currentUserRole === 'admin') {
-                Click "Add New Teacher" to register staff.
-            }
+
+        <div class="d-flex justify-content-center mt-3">
+            <small class="text-muted">Showing {{ teachers.length }} of {{ totalTeachers }} records.</small>
         </div>
     }
 </div>

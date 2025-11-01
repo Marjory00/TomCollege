@@ -1,145 +1,140 @@
 <div class="container mt-4">
-    <div class="card shadow">
-        <div class="card-header bg-success text-white">
-            <h1 class="h4 mb-0">
-                <i class="fas fa-calendar-alt me-2"></i>
-                @if (isEditMode) {
-                    Edit Class Schedule
-                } @else {
-                    Create New Schedule
-                }
-            </h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">
+            <i class="fas me-2" [ngClass]="{'fa-calendar-plus': !isEditMode, 'fa-edit': isEditMode}"></i>
+            {{ isEditMode ? 'Edit Schedule Slot' : 'Create New Schedule Slot' }}
+        </h1>
+    </div>
+
+    <hr>
+
+    @if (loading) {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Loading data...</p>
         </div>
-        <div class="card-body">
+    }
 
-            @if (loading) {
-                <div class="text-center py-5">
-                    <div class="spinner-border text-success" role="status"></div>
-                    <p class="mt-2">Loading reference data...</p>
-                </div>
-            }
+    @if (errorMessage) {
+        <div class="alert alert-danger" role="alert">{{ errorMessage }}</div>
+    }
 
-            @if (errorMessage) {
-                <div class="alert alert-danger" role="alert">
-                    {{ errorMessage }}
-                </div>
-            }
-
-            @if (!loading) {
+    @if (!loading) {
+        <div class="card shadow-sm">
+            <div class="card-body">
                 <form [formGroup]="scheduleForm" (ngSubmit)="onSubmit()">
 
-                    <div class="row">
+                    <h5 class="mb-3 text-primary"><i class="fas fa-book me-1"></i> Class Assignment</h5>
+                    <div class="row mb-3">
                         <div class="col-md-6 mb-3">
-                            <label for="classId" class="form-label">Associated Class</label>
+                            <label for="classId" class="form-label">Class</label>
                             <select id="classId" formControlName="classId" class="form-select"
                                 [class.is-invalid]="scheduleForm.get('classId')?.invalid && scheduleForm.get('classId')?.touched">
                                 <option value="" disabled>Select a Class</option>
-                                @for (cls of availableClasses; track cls.id) {
-                                    <option [value]="cls.id">{{ cls.name }}</option>
+                                @for (classRef of availableClasses; track classRef.id) {
+                                    <option [value]="classRef.id">{{ classRef.name }}</option>
                                 }
                             </select>
-                            @if (scheduleForm.get('classId')?.hasError('required') && scheduleForm.get('classId')?.touched) {
-                                <div class="invalid-feedback">Class is required.</div>
+                            @if (scheduleForm.get('classId')?.invalid && scheduleForm.get('classId')?.touched) {
+                                <div class="invalid-feedback">Class selection is required.</div>
                             }
                         </div>
-
                         <div class="col-md-6 mb-3">
-                            <label for="teacherId" class="form-label">Assigned Teacher</label>
+                            <label for="teacherId" class="form-label">Teacher</label>
                             <select id="teacherId" formControlName="teacherId" class="form-select"
                                 [class.is-invalid]="scheduleForm.get('teacherId')?.invalid && scheduleForm.get('teacherId')?.touched">
                                 <option value="" disabled>Select a Teacher</option>
-                                @for (teacher of availableTeachers; track teacher.id) {
-                                    <option [value]="teacher.id">{{ teacher.name }}</option>
+                                @for (teacherRef of availableTeachers; track teacherRef.id) {
+                                    <option [value]="teacherRef.id">{{ teacherRef.name }}</option>
                                 }
                             </select>
-                            @if (scheduleForm.get('teacherId')?.hasError('required') && scheduleForm.get('teacherId')?.touched) {
-                                <div class="invalid-feedback">Teacher is required.</div>
+                            @if (scheduleForm.get('teacherId')?.invalid && scheduleForm.get('teacherId')?.touched) {
+                                <div class="invalid-feedback">Teacher assignment is required.</div>
                             }
                         </div>
                     </div>
 
-                    <hr>
-
+                    <h5 class="mb-3 text-primary"><i class="fas fa-clock me-1"></i> Time and Term</h5>
                     <div class="row mb-3">
-                        <div class="col-md-12">
-                            <label class="form-label d-block">Schedule Days</label>
-                            <div class="form-group-days" [formArrayName]="'days'">
-                                @for (day of allDays; track day; let i = $index) {
-                                    <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="checkbox" [id]="'day-' + day" [formControlName]="i">
-                                        <label class="form-check-label" [for]="'day-' + day">{{ day.substring(0, 3) }}</label>
-                                    </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="term" class="form-label">Term</label>
+                            <select id="term" formControlName="term" class="form-select">
+                                @for (term of allTerms; track term) {
+                                    <option [value]="term">{{ term }}</option>
                                 }
-                            </div>
-                            @if (scheduleForm.get('days')?.hasError('daysRequired') && scheduleForm.get('days')?.touched) {
-                                <div class="text-danger small mt-2">At least one day must be selected.</div>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="year" class="form-label">Year</label>
+                            <input type="number" id="year" formControlName="year" class="form-control"
+                                [class.is-invalid]="scheduleForm.get('year')?.invalid && scheduleForm.get('year')?.touched">
+                            @if (scheduleForm.get('year')?.invalid && scheduleForm.get('year')?.touched) {
+                                <div class="invalid-feedback">Year must be between 2000 and 2100.</div>
                             }
                         </div>
-                    </div>
-
-                    <div class="row">
                         <div class="col-md-3 mb-3">
                             <label for="startTime" class="form-label">Start Time</label>
                             <input type="time" id="startTime" formControlName="startTime" class="form-control"
                                 [class.is-invalid]="scheduleForm.get('startTime')?.invalid && scheduleForm.get('startTime')?.touched">
-                            @if (scheduleForm.get('startTime')?.hasError('required') && scheduleForm.get('startTime')?.touched) {
+                            @if (scheduleForm.get('startTime')?.invalid && scheduleForm.get('startTime')?.touched) {
                                 <div class="invalid-feedback">Start time is required.</div>
                             }
                         </div>
-
                         <div class="col-md-3 mb-3">
                             <label for="endTime" class="form-label">End Time</label>
                             <input type="time" id="endTime" formControlName="endTime" class="form-control"
                                 [class.is-invalid]="scheduleForm.get('endTime')?.invalid && scheduleForm.get('endTime')?.touched">
-                            @if (scheduleForm.get('endTime')?.hasError('required') && scheduleForm.get('endTime')?.touched) {
+                            @if (scheduleForm.get('endTime')?.invalid && scheduleForm.get('endTime')?.touched) {
                                 <div class="invalid-feedback">End time is required.</div>
                             }
                         </div>
+                    </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="location" class="form-label">Location / Room</label>
+                    <h5 class="mb-3 text-primary"><i class="fas fa-map-marker-alt me-1"></i> Days & Location</h5>
+                    <div class="row mb-4">
+                        <div class="col-md-4 mb-3">
+                            <label for="location" class="form-label">Location/Room</label>
                             <input type="text" id="location" formControlName="location" class="form-control"
-                                placeholder="e.g., Room A101 or Online"
                                 [class.is-invalid]="scheduleForm.get('location')?.invalid && scheduleForm.get('location')?.touched">
-                            @if (scheduleForm.get('location')?.hasError('required') && scheduleForm.get('location')?.touched) {
+                            @if (scheduleForm.get('location')?.invalid && scheduleForm.get('location')?.touched) {
                                 <div class="invalid-feedback">Location is required.</div>
                             }
                         </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="term" class="form-label">Term/Semester</label>
-                            <select id="term" formControlName="term" class="form-select"
-                                [class.is-invalid]="scheduleForm.get('term')?.invalid && scheduleForm.get('term')?.touched">
-                                @for (t of allTerms; track t) {
-                                    <option [value]="t">{{ t }}</option>
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label d-block">Days of the Week</label>
+                            <div class="d-flex flex-wrap gap-3" formArrayName="days">
+                                @for (day of allDays; track day; let i = $index) {
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" [id]="'day-' + day" [formControlName]="i">
+                                        <label class="form-check-label" [for]="'day-' + day">{{ day }}</label>
+                                    </div>
                                 }
-                            </select>
-                        </div>
+                            </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="year" class="form-label">Academic Year</label>
-                            <input type="number" id="year" formControlName="year" class="form-control"
-                                [class.is-invalid]="scheduleForm.get('year')?.invalid && scheduleForm.get('year')?.touched">
-                            @if (scheduleForm.get('year')?.hasError('required') && scheduleForm.get('year')?.touched) {
-                                <div class="invalid-feedback">Year is required.</div>
-                            } @else if (scheduleForm.get('year')?.hasError('min') || scheduleForm.get('year')?.hasError('max')) {
-                                <div class="invalid-feedback">Please enter a valid year.</div>
+                            @if (scheduleForm.get('days')?.hasError('daysRequired') && scheduleForm.get('days')?.touched) {
+                                <div class="text-danger mt-1 small">At least one day must be selected.</div>
                             }
                         </div>
                     </div>
 
+                    <h5 class="mb-3 text-primary"><i class="fas fa-clipboard me-1"></i> Notes (Optional)</h5>
                     <div class="mb-4">
-                        <label for="notes" class="form-label">Notes (Optional)</label>
-                        <textarea id="notes" formControlName="notes" class="form-control" rows="2"></textarea>
+                        <label for="notes" class="form-label">Additional Notes</label>
+                        <textarea id="notes" formControlName="notes" class="form-control" rows="3"></textarea>
                     </div>
 
                     <div class="d-flex justify-content-end pt-3 border-top">
-                        <button type="button" class="btn btn-secondary me-2" (click)="cancel()">
-                            <i class="fas fa-times me-2"></i>Cancel
+                        <button
+                            type="button"
+                            class="btn btn-secondary me-3"
+                            (click)="cancel()">
+                            <i class="fas fa-times me-2"></i> Cancel
                         </button>
-                        <button type="submit" class="btn btn-success" [disabled]="submitting || scheduleForm.invalid">
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                            [disabled]="scheduleForm.invalid || submitting">
                             @if (submitting) {
                                 <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                                 Saving...
@@ -151,7 +146,7 @@
                     </div>
 
                 </form>
-            }
+            </div>
         </div>
-    </div>
+    }
 </div>

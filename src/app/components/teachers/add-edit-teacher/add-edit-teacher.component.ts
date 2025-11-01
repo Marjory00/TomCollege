@@ -1,163 +1,167 @@
-import { Component, OnInit, Inject } from '@angular/core'; // FIX 1: Import Inject
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { catchError, of, finalize, Observable } from 'rxjs';
+// src/app/components/teachers/add-edit-teacher.component.ts
 
-import { Teacher, TeacherStatus } from '../../../models/teacher.model';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common'; // FIX: DatePipe removed
+import { Subject, takeUntil, catchError, of, Observable, finalize } from 'rxjs';
+
 import { TeacherService } from '../../../services/teacher.service';
+import { Teacher, NewTeacherData } from '../../../models/teacher.model';
 
 @Component({
   selector: 'app-add-edit-teacher',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule], // FIX: DatePipe removed from imports array
   templateUrl: './add-edit-teacher.component.html',
   styleUrls: ['./add-edit-teacher.component.css']
 })
-export class AddEditTeacherComponent implements OnInit {
+export class AddEditTeacherComponent implements OnInit, OnDestroy {
 
   teacherForm!: FormGroup;
+
   isEditMode: boolean = false;
   teacherId: string | null = null;
-  loading: boolean = false;
+  loading: boolean = true;
   submitting: boolean = false;
   errorMessage: string | null = null;
+  successMessage: string | null = null;
 
-  // Reference data for dropdowns
-  readonly departments: string[] = ['Science', 'Mathematics', 'Humanities', 'Engineering', 'Arts', 'Business'];
-  readonly statuses: TeacherStatus[] = ['Active', 'On Leave', 'Terminated'];
+  departments = ['Mathematics', 'Science', 'English', 'History', 'Art', 'PE', 'Administration'];
+  subjects = ['Calculus', 'Physics', 'Literature', 'World History', 'Sculpture', 'Gymnastics'];
+  teacherStatuses: Teacher['status'][] = ['Active', 'Suspended', 'On Leave', 'Retired'];
+
+  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
-    @Inject(TeacherService) private teacherService: TeacherService, // FIX 2: Use @Inject for robustness
+    private route: ActivatedRoute,
     private router: Router,
-    private route: ActivatedRoute
-  ) {
-    // FIX 3: Removed this.initForm() from here to ngOnInit()
-  }
+    @Inject(TeacherService) private teacherService: TeacherService
+  ) {}
 
   ngOnInit(): void {
-    // FIX 3: Initialize form here, ensuring services/models are ready
-    this.initForm();
-
-    // Check if we are in edit mode
     this.teacherId = this.route.snapshot.paramMap.get('id');
     this.isEditMode = !!this.teacherId;
+    this.initializeForm();
 
     if (this.isEditMode && this.teacherId) {
       this.loadTeacherData(this.teacherId);
+    } else {
+      this.loading = false;
     }
   }
 
-  /**
-   * Initializes the teacher form structure with validators.
-   */
-  private initForm(): void {
+  private initializeForm(): void {
     this.teacherForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.maxLength(50)]],
-      lastName: ['', [Validators.required, Validators.maxLength(50)]],
+      firstName: ['', Validators.required],
+      lastName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
+      phone: [''],
       department: ['', Validators.required],
-      // Use the current date as default for new teachers
-      hireDate: [new Date().toISOString().substring(0, 10), Validators.required],
+      dateJoined: ['', Validators.required],
+      subject: ['', Validators.required],
+      password: ['', [this.isEditMode ? null : Validators.required, Validators.minLength(6)]],
       status: ['Active', Validators.required]
     });
+
+    if (this.isEditMode) {
+      this.teacherForm.controls['password'].disable();
+    }
   }
 
-  /**
-   * Convenience getter for easy access to form fields.
-   */
-  get f() { return this.teacherForm.controls; }
-
-  /**
-   * Loads existing teacher data when in edit mode.
-   * @param id The ID of the teacher to load.
-   */
-  loadTeacherData(id: string): void {
-    this.loading = true;
-    this.errorMessage = null;
-
+  private loadTeacherData(id: string): void {
     this.teacherService.getTeacherById(id)
       .pipe(
+        takeUntil(this.destroy$),
         finalize(() => this.loading = false),
         catchError(error => {
-          console.error('Error loading teacher:', error);
           this.errorMessage = 'Failed to load teacher data.';
           return of(null);
         })
       )
-      .subscribe((teacherData: Teacher | null) => {
-        if (teacherData) {
+      .subscribe((teacher: Teacher | null) => {
+        if (teacher) {
+          const formattedDate = teacher.dateJoined
+            ? new Date(teacher.dateJoined).toISOString().substring(0, 10)
+            : null;
+
           this.teacherForm.patchValue({
-            ...teacherData,
-            // Format Date object to YYYY-MM-DD string for input type="date"
-            hireDate: new Date(teacherData.hireDate).toISOString().substring(0, 10)
+            firstName: teacher.firstName,
+            lastName: teacher.lastName,
+            email: teacher.email,
+            phone: teacher.phone,
+            department: teacher.department,
+            dateJoined: formattedDate,
+            subject: teacher.subject,
+            status: teacher.status
           });
         } else {
-          // Navigate away if data failed to load
-          this.router.navigate(['/teachers']);
+          this.errorMessage = this.errorMessage || 'Teacher not found.';
+          if(!this.errorMessage.includes('Failed to load')) this.router.navigate(['/teachers']);
         }
       });
   }
 
-  /**
-   * Handles form submission: either creation or update.
-   */
   onSubmit(): void {
+    this.submitting = true;
+    this.errorMessage = null;
+    this.successMessage = null;
+
     if (this.teacherForm.invalid) {
       this.teacherForm.markAllAsTouched();
-      this.errorMessage = 'Please fix the highlighted errors in the form.';
+      this.errorMessage = 'Please fix the validation errors.';
+      this.submitting = false;
       return;
     }
 
-    this.submitting = true;
-    this.errorMessage = null;
+    let saveOperation: Observable<Teacher | undefined>;
+    const formData = this.teacherForm.getRawValue();
 
-    const formValue = this.teacherForm.value;
-
-    // Use a partial object for creation, or the full object for update
-    let saveOperation: Observable<Teacher>;
-
-    if (this.isEditMode && this.teacherId) {
-      // Update existing teacher (full object with ID)
-      const teacherData: Teacher = {
-        id: this.teacherId,
-        ...formValue,
-        hireDate: new Date(formValue.hireDate)
+    if (!this.isEditMode) {
+      const createData: NewTeacherData = {
+        ...formData,
+        dateJoined: new Date(formData.dateJoined).toISOString(),
+        role: 'teacher',
       };
-      saveOperation = this.teacherService.updateTeacher(teacherData);
+      saveOperation = this.teacherService.addTeacher(createData);
     } else {
-      // Create new teacher (using formValue, assuming service signature is Omit<Teacher, 'id'>)
-      // Ensure hireDate is converted for the service
-      const createData = {
-          ...formValue,
-          hireDate: new Date(formValue.hireDate)
+      const updateData: Partial<Teacher> = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        department: formData.department,
+        dateJoined: new Date(formData.dateJoined).toISOString(),
+        subject: formData.subject,
+        status: formData.status
       };
-      saveOperation = this.teacherService.createTeacher(createData);
+      saveOperation = this.teacherService.updateTeacher(this.teacherId!, updateData);
     }
 
     saveOperation
       .pipe(
+        takeUntil(this.destroy$),
         finalize(() => this.submitting = false),
-        catchError(error => {
-          console.error('Save failed:', error);
-          this.errorMessage = `Failed to ${this.isEditMode ? 'update' : 'create'} teacher: ${error.message || 'Server error'}`;
-          return of(null);
+        catchError((error: any) => {
+          this.errorMessage = `Error saving teacher: ${error.message || 'Server error'}`;
+          return of(undefined);
         })
       )
-      .subscribe((result) => {
+      .subscribe((result: Teacher | undefined) => {
         if (result) {
-          console.log('Teacher saved successfully:', result);
-          // Navigate back to the teacher list upon success
+          this.successMessage = this.isEditMode ? 'Teacher updated successfully!' : 'Teacher added successfully!';
           this.router.navigate(['/teachers']);
         }
       });
   }
 
-  /**
-   * Navigates back to the teacher list.
-   */
-  cancel(): void {
-    this.router.navigate(['/teachers']);
+  get f() {
+    return this.teacherForm.controls;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 }

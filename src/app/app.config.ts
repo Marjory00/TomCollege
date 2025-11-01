@@ -7,34 +7,35 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // Required f
 import { routes } from './app.routes';
 import { jwtInterceptor } from './interceptors/jwt.interceptor';
 import { AuthService } from './services/auth.service'; // CRITICAL: Import the AuthService
+// NOTE: Assuming other services like ScheduleService, etc., will be added here or use providedIn: 'root'
 
 export const appConfig: ApplicationConfig = {
-  providers: [
-    // Core/Advanced Providers
-    provideBrowserGlobalErrorListeners(),
-    provideClientHydration(withEventReplay()),
+    providers: [
+        // Core/Advanced Providers
+        provideBrowserGlobalErrorListeners(),
+        provideClientHydration(withEventReplay()),
+        // NOTE: Zoneless change detection is included but should be managed carefully.
+        // It's generally best to keep it here if intended.
+        provideZonelessChangeDetection(),
 
-    // 1. Routing setup
-    provideRouter(routes),
+        // 1. Routing setup
+        provideRouter(routes),
 
-    // 2. HTTP Client and Functional Interceptor Setup
-    provideHttpClient(
-      withInterceptors([
-        jwtInterceptor
-      ])
-    ),
+        // 2. HTTP Client and Functional Interceptor Setup
+        provideHttpClient(
+            withInterceptors([
+                jwtInterceptor
+            ])
+        ),
 
-    // 3. Application Services
-    // FIX 1: Explicitly provide AuthService to guarantee resolution of its token,
-    // solving the 'No suitable injection token' error.
-    AuthService,
-    // You may also list other root services like StudentService, TeacherService here
+        // 3. Application Services
+        // This explicitly registers AuthService, guaranteeing its availability
+        // throughout the application and resolving the 'No suitable injection token' error.
+        AuthService,
 
-    // 4. Forms Modules Setup
-    // FIX 2: Use importProvidersFrom to make standard Angular modules available globally
-    importProvidersFrom(FormsModule, ReactiveFormsModule),
-
-    // NOTE: Zoneless change detection is left in but should be managed carefully.
-    provideZonelessChangeDetection(),
-  ]
+        // 4. Forms Modules Setup
+        // This makes standard Angular modules, which are often needed by external libraries
+        // or common built-in components, available globally in the standalone environment.
+        importProvidersFrom(FormsModule, ReactiveFormsModule),
+    ]
 };

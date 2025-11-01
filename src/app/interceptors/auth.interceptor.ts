@@ -1,35 +1,27 @@
-// src/app/interceptors/auth.interceptor.ts
-
-import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { HttpInterceptorFn } from '@angular/common/http';
 import { AuthService } from '../services/auth.service';
-import { Router } from '@angular/router';
-import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { environment } from '../../environments/environment';
 
-export const AuthInterceptor: HttpInterceptorFn = (req, next) => {
-    const authService = inject(AuthService);
-    const router = inject(Router);
+export const authInterceptor: HttpInterceptorFn = (req, next) => {
+  const authService = inject(AuthService);
+  const currentUser = authService.currentUserValue; // Get the full user object
 
-    const token = authService.getToken();
+  // 1. CRITICAL FIX: Get the token from the user object, not a missing getToken() method
+  const token = currentUser?.token;
 
-    const authReq = token
-        ? req.clone({
-              setHeaders: {
-                  Authorization: `Bearer ${token}`
-              }
-          })
-        : req;
+  // Check if the user is logged in AND the request is to your API (not a third party)
+  const isApiUrl = req.url.startsWith(environment.apiUrl);
 
-    return next(authReq).pipe(
-        catchError(error => {
-            if (error instanceof HttpErrorResponse && (error.status === 401 || error.status === 403)) {
-                console.warn(`Auth error (${error.status}) on ${req.url}. Redirecting to login.`);
-                authService.logout(); // SSR-safe logout
-                router.navigate(['/login']);
-            }
-            return throwError(() => error);
-        })
-    );
+  // If the user is logged in and the token exists, attach it to the request
+  if (currentUser && token && isApiUrl) {
+    // Clone the request and add the Authorization header
+    req = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+  }
+
+  return next(req);
 };
-

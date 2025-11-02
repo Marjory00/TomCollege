@@ -1,0 +1,58 @@
+<div class="contact-page-container">
+
+  <header class="page-header contact-header">
+    <div class="header-content">
+      <h1>Contact TomCollege</h1>
+      <p>Whether you're a prospective student, an alumnus, or a community member, we're here to help.</p>
+    </div>
+  </header>
+
+  <section class="offices-section" aria-labelledby="offices-heading">
+    <h2 id="offices-heading" class="section-title">Reach the Right Office</h2>
+    <div class="offices-grid">
+      <div *ngFor="let office of contactOffices" class="office-card">
+        <h3>{{ office.name }}</h3>
+        <p class="focus-area">{{ office.focus }}</p>
+        <div class="contact-detail">
+          <span class="material-icons">email</span>
+          <a href="mailto:{{ office.email }}">{{ office.email }}</a>
+        </div>
+        <div class="contact-detail">
+          <span class="material-icons">phone</span>
+          <a href="tel:{{ office.phone }}">{{ office.phone }}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="form-section">
+    <div class="form-container">
+      <h2>Send Us a Message</h2>
+      <form #contactForm="ngForm" (ngSubmit)="submitForm(contactForm.value)" class="contact-form">
+
+        <div class="form-group">
+          <label for="name">Full Name *</label>
+          <input type="text" id="name" name="name" ngModel required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address *</label>
+          <input type="email" id="email" name="email" ngModel required>
+        </div>
+
+        <div class="form-group">
+          <label for="subject">Subject</label>
+          <input type="text" id="subject" name="subject" ngModel>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Your Message *</label>
+          <textarea id="message" name="message" rows="5" ngModel required></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary" [disabled]="contactForm.invalid">Submit Inquiry</button>
+      </form>
+    </div>
+  </section>
+
+</div>

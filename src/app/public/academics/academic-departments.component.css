@@ -1,42 +1,169 @@
-<div class="departments-page-container">
+/* --- Global Page Container --- */
+.departments-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px 60px; /* Padding for mobile safety and footer clearance */
+    font-family: Arial, sans-serif;
+}
 
-  <header class="page-header departments-header">
-    <div class="header-content">
-      <h1>Explore Our Academic Programs</h1>
-      <p>With over 40 majors and interdisciplinary programs, find the field that fuels your curiosity and prepares you for the future.</p>
-    </div>
-  </header>
+/* --- 1. Header Styles --- */
+.departments-header {
+    background-color: #f7f9fc;
+    padding: 60px 0;
+    margin: 0 -20px 40px; /* Extends background full width */
+    text-align: center;
+    border-bottom: 2px solid #e0e0e0;
+}
 
-  <section class="schools-grid-section" aria-labelledby="schools-heading">
-    <h2 id="schools-heading" class="section-title">Colleges & Schools</h2>
+.departments-header h1 {
+    color: #1a237e; /* Deep Blue */
+    font-size: 2.8em;
+    margin-bottom: 10px;
+}
 
-    <div class="schools-grid">
-      <div *ngFor="let school of academicSchools" class="school-card">
-        <span class="material-icons school-icon">{{ school.icon }}</span>
-        <h3>{{ school.name }}</h3>
-        <p class="school-description">{{ school.description }}</p>
+.departments-header p {
+    font-size: 1.1em;
+    color: #555;
+    max-width: 700px;
+    margin: 0 auto;
+}
 
-        <div class="department-list-wrapper">
-          <h4 class="department-list-title">Key Departments:</h4>
-          <ul class="department-list">
-            <li *ngFor="let dept of school.departments">
-              <a [routerLink]="dept.link" class="dept-link">{{ dept.name }}</a>
-            </li>
-          </ul>
-          <a [routerLink]="'/academics/' + cleanSchoolName(school.name)" class="btn-department-link">
-            View Full School Page →
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
+/* --- 2. Schools Grid Section --- */
+.section-title {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 2em;
+    margin-bottom: 40px;
+}
 
-  <section class="cta-section">
-    <div class="cta-box">
-      <h2>Deep Dive Into Research</h2>
-      <p>TomCollege faculty are leading groundbreaking studies. See how you can contribute to global innovation.</p>
-      <a routerLink="/research" class="btn-primary">Explore Research Centers</a>
-    </div>
-  </section>
+.schools-grid {
+    display: grid;
+    /* Responsive layout: 3 columns on large screens, adapts down to 1 */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
 
-</div>
+.school-card {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.school-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.school-icon {
+    font-size: 3em;
+    color: #f1c40f; /* Yellow accent */
+    margin-bottom: 15px;
+}
+
+.school-card h3 {
+    font-size: 1.6em;
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.school-description {
+    color: #7f8c8d;
+    margin-bottom: 20px;
+    flex-grow: 1; /* Pushes the department list to the bottom */
+}
+
+/* Department List */
+.department-list-wrapper {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed #eee;
+}
+
+.department-list-title {
+    font-size: 1.1em;
+    color: #34495e;
+    margin-bottom: 10px;
+}
+
+.department-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.dept-link {
+    display: block;
+    padding: 5px 0;
+    text-decoration: none;
+    color: #3498db;
+    transition: color 0.2s;
+}
+
+.dept-link:hover {
+    color: #2980b9;
+    text-decoration: underline;
+}
+
+.btn-department-link {
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    padding: 10px;
+    background-color: #f4f7f6;
+    color: #34495e;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    font-weight: bold;
+}
+
+.btn-department-link:hover {
+    background-color: #e0e6ec;
+}
+
+/* --- 3. CTA Section --- */
+.cta-section {
+    margin-top: 60px;
+    text-align: center;
+}
+
+.cta-box {
+    background-color: #1a237e; /* Deep Blue background */
+    color: white;
+    padding: 50px 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.cta-box h2 {
+    color: white;
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.cta-box p {
+    font-size: 1.1em;
+    margin-bottom: 30px;
+    opacity: 0.9;
+}
+
+.btn-primary {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #f1c40f; /* Yellow accent button */
+    color: #2c3e50;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #e6b800;
+}

@@ -1,21 +1,21 @@
 <app-navbar></app-navbar>
 
-<div
-  *ngIf="showDashboardLayout"
-  class="main-app-container"
-  style="z-index: 1; position: relative;">
+<div class="dashboard-layout-wrapper" *ngIf="showDashboardLayout">
 
-    <app-sidebar></app-sidebar>
+  <app-sidebar class="dashboard-sidebar"></app-sidebar>
 
-    <div class="content-area-dashboard">
-        <div class="router-view" style="padding-top: 60px;">
-            <router-outlet></router-outlet>
-        </div>
-    </div>
+  <div class="dashboard-content-area">
+    <main class="router-main-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
 </div>
 
-<div *ngIf="!showDashboardLayout" class="public-layout-wrapper">
-    <router-outlet></router-outlet>
+<div class="public-layout-wrapper" *ngIf="!showDashboardLayout">
 
-    <app-footer></app-footer>
+  <main class="router-main-content public-main">
+    <router-outlet></router-outlet>
+  </main>
+
+  <app-footer></app-footer>
 </div>

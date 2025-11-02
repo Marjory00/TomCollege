@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 // Import the necessary components and services
 import { ApiService } from '../../core/services/api.service';
-import { Student } from '../../models/student.model';
+import { Student } from '../../core/models/student.model';
 import { TableComponent } from '../../components/table/table.component';
 
 @Component({

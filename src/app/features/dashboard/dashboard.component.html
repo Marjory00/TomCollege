@@ -1,6 +1,9 @@
-<div class="dashboard-page" *ngIf="dashboardData$ | async as data else loading">
-    <h2>👋 Welcome to the TomCollege Dashboard</h2>
-    <p class="dashboard-description">Quick overview of institutional statistics and recent activity.</p>
+<main class="dashboard-page" *ngIf="dashboardData$ | async as data; else loading">
+
+    <div class="page-header">
+        <h2>👋 Welcome to the TomCollege Dashboard</h2>
+        <p class="dashboard-description">Quick overview of institutional statistics and recent activity.</p>
+    </div>
 
     <section class="card-row">
         <app-card
@@ -21,10 +24,13 @@
             </app-table>
         </div>
     </section>
-</div>
+
+    </main>
 
 <ng-template #loading>
-    <div class="loading-message">
-        <span class="material-icons loading-spinner">loop</span> Loading dashboard data...
+    <div class="dashboard-page loading-state">
+        <div class="loading-message">
+            <span class="material-icons loading-spinner">loop</span> Loading dashboard data...
         </div>
+    </div>
 </ng-template>

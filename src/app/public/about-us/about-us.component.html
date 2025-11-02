@@ -1,0 +1,42 @@
+<div class="about-page-container">
+
+  <header class="page-header about-header">
+    <div class="header-content">
+      <h1>About TomCollege</h1>
+      <p>A tradition of excellence since 1892. Discover our story, mission, and the people who make our community thrive.</p>
+    </div>
+  </header>
+
+  <section class="mission-section">
+    <div class="mission-grid">
+      <div *ngFor="let card of missionCards" class="mission-card">
+        <span class="material-icons mission-icon">{{ card.icon }}</span>
+        <h3>{{ card.title }}</h3>
+        <p>{{ card.text }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="history-section">
+    <div class="history-content">
+      <div class="history-text">
+        <h2>Our History: A Century of Growth</h2>
+        <p>Founded in 1892 by philanthropist Thomas W. Ellington, TomCollege began as a small liberal arts seminary dedicated to serving the region. Over the last century, we have expanded into a comprehensive research university, adding acclaimed schools of engineering, business, and health sciences.</p>
+        <p>Our commitment remains rooted in the belief that a strong foundation in the liberal arts, combined with cutting-edge technology and research, is the key to preparing ethical leaders for the modern world. We honor our past while constantly innovating for the future.</p>
+        <a routerLink="/history" class="link-more">View Historical Timeline →</a>
+      </div>
+      <div class="history-image">
+
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section leadership-cta">
+    <div class="cta-box">
+      <h2>Meet Our Leadership</h2>
+      <p>Our faculty and administration are dedicated to creating an environment where every student can achieve their full potential.</p>
+      <a routerLink="/leadership" class="btn-primary">Explore Faculty Profiles</a>
+    </div>
+  </section>
+
+</div>

@@ -7,36 +7,39 @@
     </div>
   </header>
 
-  <section class="schools-grid-section" aria-labelledby="schools-heading">
-    <h2 id="schools-heading" class="section-title">Colleges & Schools</h2>
+  <main>
+    <section class="schools-grid-section" aria-labelledby="schools-heading">
+      <h2 id="schools-heading" class="section-title">Colleges & Schools</h2>
 
-    <div class="schools-grid">
-      <div *ngFor="let school of academicSchools" class="school-card">
-        <span class="material-icons school-icon">{{ school.icon }}</span>
-        <h3>{{ school.name }}</h3>
-        <p class="school-description">{{ school.description }}</p>
+      <div class="schools-grid">
+        <div *ngFor="let school of academicSchools" class="school-card">
+          <span class="material-icons school-icon">{{ school.icon }}</span>
+          <h3>{{ school.name }}</h3>
+          <p class="school-description">{{ school.description }}</p>
 
-        <div class="department-list-wrapper">
-          <h4 class="department-list-title">Key Departments:</h4>
-          <ul class="department-list">
-            <li *ngFor="let dept of school.departments">
-              <a [routerLink]="dept.link" class="dept-link">{{ dept.name }}</a>
-            </li>
-          </ul>
-          <a [routerLink]="'/academics/' + cleanSchoolName(school.name)" class="btn-department-link">
+          <div class="department-list-wrapper">
+            <h4 class="department-list-title">Key Departments:</h4>
+            <ul class="department-list">
+              <li *ngFor="let dept of school.departments">
+                <a [routerLink]="dept.link" class="dept-link">{{ dept.name }}</a>
+              </li>
+            </ul>
+          </div>
+
+          <a [routerLink]="['/academics', cleanSchoolName(school.name)]" class="btn-department-link">
             View Full School Page →
           </a>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="cta-section">
-    <div class="cta-box">
-      <h2>Deep Dive Into Research</h2>
-      <p>TomCollege faculty are leading groundbreaking studies. See how you can contribute to global innovation.</p>
-      <a routerLink="/research" class="btn-primary">Explore Research Centers</a>
-    </div>
-  </section>
+    <section class="cta-section">
+      <div class="cta-box">
+        <h2>Deep Dive Into Research</h2>
+        <p>TomCollege faculty are leading groundbreaking studies. See how you can contribute to global innovation.</p>
+        <a routerLink="/research" class="btn-primary">Explore Research Centers</a>
+      </div>
+    </section>
+  </main>
 
 </div>

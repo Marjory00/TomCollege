@@ -54,6 +54,21 @@
     </div>
   </section>
 
+  <section class="programs-showcase-section">
+    <h2>Explore Our Signature Academic Programs</h2>
+    <div class="programs-grid">
+      <a *ngFor="let program of academicPrograms" [routerLink]="program.link" class="program-card">
+        <img [src]="program.image" [alt]="program.name" class="program-img">
+        <div class="program-content">
+          <h3 class="program-title">{{ program.name }}</h3>
+          <p class="program-description">{{ program.description }}</p>
+          <span class="program-cta">Learn More →</span>
+        </div>
+      </a>
+    </div>
+    <a routerLink="/academics" class="btn-tertiary">View All Programs</a>
+  </section>
+
   <section class="open-house-section">
     <div class="content-box">
       <h2>Student Life & Open House</h2>
@@ -61,6 +76,21 @@
       <div class="date-cta">
         <span class="date">Next Open House: **Saturday, March 15th**</span>
         <a routerLink="/admissions" class="btn-secondary">Register for Open House</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="campus-life-section">
+    <div class="campus-life-content">
+      <div class="campus-text">
+        <h2>Life Beyond the Classroom</h2>
+        <p>TomCollege is more than just lectures. Discover a vibrant community with diverse clubs, Division I athletics, and endless opportunities to make lifelong connections.</p>
+        <a routerLink="/campus-life" class="btn-primary">Discover Campus Life →</a>
+      </div>
+      <div class="campus-photo-grid">
+
+
+
       </div>
     </div>
   </section>

@@ -1,0 +1,198 @@
+/* --- Page Header/Hero --- */
+.contact-header {
+    /* Use a bright, contrasting color for the header, like a vibrant gold overlay */
+    background: linear-gradient(rgba(241, 196, 15, 0.9), rgba(241, 196, 15, 0.9)), url('/assets/images/contact-bg.jpg') no-repeat center center/cover;
+    color: #2c3e50; /* Dark text on light background */
+    padding: 80px 20px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.contact-header h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.contact-header p {
+    font-size: 1.2em;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* --- Key Offices Section (Grid) --- */
+.offices-section {
+    padding: 30px 20px 60px;
+    text-align: center;
+    background-color: #f4f7f6;
+}
+
+.section-title {
+    color: #2c3e50;
+    margin-bottom: 40px;
+    font-size: 2.2em;
+}
+
+.offices-grid {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.office-card {
+    flex-basis: 22%;
+    min-width: 250px;
+    padding: 25px;
+    background: white;
+    border-radius: 8px;
+    border-top: 5px solid #1a237e; /* Deep Blue Top Border */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    text-align: left;
+}
+
+.office-card h3 {
+    color: #1a237e;
+    font-size: 1.3em;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.focus-area {
+    font-size: 0.9em;
+    color: #7f8c8d;
+    min-height: 40px;
+    margin-bottom: 20px;
+}
+
+.contact-detail {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.95em;
+}
+
+.contact-detail .material-icons {
+    font-size: 18px;
+    color: #3498db;
+    margin-right: 8px;
+}
+
+.contact-detail a {
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.contact-detail a:hover {
+    color: #1a237e;
+}
+
+/* --- Contact Form Section --- */
+.form-section {
+    padding: 60px 20px;
+    background-color: white;
+}
+
+.form-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+}
+
+.form-container h2 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 2em;
+}
+
+.contact-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #2c3e50;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group textarea {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: #1a237e; /* Deep blue focus ring */
+    outline: none;
+}
+
+/* Primary button (reused from global styles) */
+.btn-primary {
+    display: block;
+    width: 100%;
+    padding: 12px 30px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    background-color: #1a237e; /* Using deep blue for the form submit */
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 20px;
+}
+
+.btn-primary:hover:not([disabled]) {
+    background-color: #3b506b;
+    transform: translateY(-2px);
+}
+
+.btn-primary[disabled] {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+    .offices-grid {
+        gap: 20px;
+    }
+    .office-card {
+        flex-basis: 45%; /* Two cards per row */
+    }
+}
+
+@media (max-width: 600px) {
+    .contact-header h1 {
+        font-size: 2.5em;
+    }
+    .offices-grid {
+        flex-direction: column;
+        gap: 15px;
+    }
+    .office-card {
+        min-width: 100%;
+        flex-basis: 100%;
+    }
+    .form-container {
+        padding: 20px;
+    }
+}

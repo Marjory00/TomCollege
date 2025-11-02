@@ -43,6 +43,7 @@
     font-size: 3.5em;
     margin-bottom: 15px;
     font-weight: 700;
+    color: white; /* Ensure H1 remains white against the dark overlay */
 }
 
 .hero-section p {
@@ -166,7 +167,7 @@
 }
 
 /* ---------------------------------------------------------------------- */
-/* 🆕 FIX: STATISTICS & FACTS SECTION STYLES 🆕 */
+/* --- STATISTICS & FACTS SECTION STYLES --- */
 /* ---------------------------------------------------------------------- */
 
 .stats-section {
@@ -251,7 +252,146 @@
 }
 
 /* ---------------------------------------------------------------------- */
-/* 🆕 FIX: NEWS & EVENTS SECTION STYLES 🆕 */
+/* 🆕 NEW SECTION: Academic Programs Showcase Styles 🆕 */
+/* ---------------------------------------------------------------------- */
+.programs-showcase-section {
+    padding: 80px 20px;
+    background-color: white;
+}
+
+.programs-showcase-section h2 {
+    color: #1a237e; /* Deep Blue */
+    margin-bottom: 40px;
+    font-size: 2.2em;
+}
+
+.programs-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    flex-wrap: wrap;
+}
+
+.program-card {
+    display: block;
+    text-decoration: none;
+    background-color: #f4f7f6; /* Light gray background */
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    flex-basis: 350px;
+    text-align: left;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.program-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.program-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.program-content {
+    padding: 20px;
+}
+
+.program-title {
+    font-size: 1.5em;
+    color: #1a237e; /* Deep Blue */
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.program-description {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.program-cta {
+    font-weight: 600;
+    color: #f1c40f; /* Gold accent */
+    border-bottom: 2px solid #f1c40f;
+    padding-bottom: 2px;
+    transition: color 0.3s;
+}
+
+.program-card:hover .program-cta {
+    color: #e6b800;
+}
+
+/* ---------------------------------------------------------------------- */
+/* 🆕 NEW SECTION: Campus Life Photo Grid/CTA Styles 🆕 */
+/* ---------------------------------------------------------------------- */
+.campus-life-section {
+    padding: 80px 20px;
+    background-color: #f4f7f6; /* Use existing light background */
+}
+
+.campus-life-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 50px;
+    text-align: left;
+}
+
+.campus-text {
+    flex: 1;
+    min-width: 300px;
+}
+
+.campus-text h2 {
+    font-size: 2.5em;
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.campus-text p {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+.campus-photo-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 150px);
+    gap: 10px;
+}
+
+.campus-photo-grid > * {
+    /* Placeholder styles for images, using existing color palette */
+    background-color: #95a5a6;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1em;
+    color: white;
+}
+/* Ensure the grid placeholders fill the space */
+.campus-photo-grid [alt*="collaborating"],
+.campus-photo-grid [alt*="celebrating"],
+.campus-photo-grid [alt*="event"] {
+    /* This rule assumes the images are being set via src in HTML
+       If using placeholder text, the previous rule handles color/centering */
+    background-color: #95a5a6;
+}
+
+
+/* ---------------------------------------------------------------------- */
+/* --- NEWS & EVENTS SECTION STYLES --- (Existing) */
 /* ---------------------------------------------------------------------- */
 
 .news-events-section {
@@ -320,6 +460,21 @@
 /* ---------------------------------------------------------------------- */
 /* --- Responsive Adjustments --- */
 /* ---------------------------------------------------------------------- */
+@media (max-width: 992px) {
+    /* New rule for the new Campus section */
+    .campus-life-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .campus-photo-grid {
+        max-width: 450px;
+        margin-top: 30px;
+    }
+    .programs-grid {
+        flex-direction: column;
+    }
+}
+
 @media (max-width: 768px) {
     .hero-section h1 {
         font-size: 2.5em;
@@ -328,3 +483,10 @@
     .hero-section p {
         font-size: 1.2em;
     }
+    .feature-cards {
+        gap: 20px;
+    }
+    .feature-cards .card {
+        flex-basis: 100%;
+    }
+}

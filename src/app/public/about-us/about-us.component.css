@@ -1,0 +1,188 @@
+/* --- Page Header/Hero --- */
+.about-header {
+    /* Use a contrasting color (like a dark forest green or slate) for distinction */
+    background: linear-gradient(rgba(47, 79, 79, 0.85), rgba(47, 79, 79, 0.85)), url('/assets/images/about-bg.jpg') no-repeat center center/cover;
+    color: white;
+    padding: 100px 20px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.about-header h1 {
+    font-size: 3.5em;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.about-header p {
+    font-size: 1.3em;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* --- Mission/Vision Section --- */
+.mission-section {
+    padding: 30px 20px 60px;
+    background-color: #f4f7f6; /* Light background */
+    text-align: center;
+}
+
+.mission-grid {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.mission-card {
+    flex-basis: 30%;
+    min-width: 280px;
+    padding: 30px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s;
+}
+
+.mission-card:hover {
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.mission-icon {
+    font-size: 48px;
+    color: #f1c40f; /* Gold accent */
+    margin-bottom: 15px;
+    display: block;
+    text-align: center;
+}
+
+.mission-card h3 {
+    color: #1a237e;
+    font-size: 1.4em;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.mission-card p {
+    color: #555;
+    font-size: 1em;
+}
+
+/* --- History Section --- */
+.history-section {
+    padding: 60px 20px;
+    background-color: white;
+}
+
+.history-content {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 40px;
+    align-items: center;
+}
+
+.history-text {
+    flex: 1;
+    text-align: left;
+}
+
+.history-text h2 {
+    color: #2c3e50;
+    font-size: 2.2em;
+    margin-bottom: 20px;
+    border-bottom: 3px solid #f1c40f;
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.history-text p {
+    line-height: 1.7;
+    margin-bottom: 15px;
+    color: #444;
+}
+
+.history-image {
+    flex: 1;
+    min-width: 300px;
+    /* Basic styling for the image placeholder/container */
+    height: 350px;
+    background-color: #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.link-more {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 600;
+    margin-top: 20px;
+    display: inline-block;
+}
+
+.link-more:hover {
+    text-decoration: underline;
+}
+
+/* --- CTA Section (Reusing Admissions styles) --- */
+.leadership-cta {
+    background-color: #1a237e; /* Deep blue background for high contrast */
+    color: white;
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.leadership-cta h2 {
+    color: white;
+    font-size: 2.5em;
+    margin-bottom: 15px;
+}
+
+.leadership-cta p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+/* Primary button (must ensure it works against the deep blue background) */
+.btn-primary {
+    display: inline-block;
+    padding: 12px 30px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600;
+    background-color: #f1c40f; /* Gold accent */
+    color: #2c3e50;
+    transition: background-color 0.3s, transform 0.2s;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #e6b800;
+    transform: translateY(-2px);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+    .history-content {
+        flex-direction: column;
+    }
+    .history-text, .history-image {
+        flex: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+    .about-header h1 {
+        font-size: 2.5em;
+    }
+    .mission-grid {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .mission-card {
+        min-width: 90%;
+    }
+}

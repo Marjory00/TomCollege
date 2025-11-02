@@ -7,7 +7,8 @@ import { ApiService } from '../../core/services/api.service';
 import { TableComponent } from '../../components/table/table.component';
 import { CardComponent } from '../../components/card/card.component';
 
-// Define the DashboardData structure for clarity
+// ⚠️ NOTE: This interface should ideally be imported from the ApiService file
+// (or a separate models file) to prevent duplication.
 interface DashboardData {
     totalStudents: number;
     activeCourses: number;
@@ -23,14 +24,14 @@ interface DashboardData {
     imports: [
         CommonModule,
         TableComponent, // Used for recent activity
-        CardComponent  // Used for metrics
+        CardComponent  // Used for metrics
     ],
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
+
     // Observable to hold all dashboard data
-    // Use the non-null assertion operator ! because it's initialized in ngOnInit
     dashboardData$!: Observable<DashboardData>;
 
     // Column definitions for the recent activity table
@@ -40,8 +41,7 @@ export class DashboardComponent implements OnInit {
     constructor(private apiService: ApiService) { }
 
     ngOnInit(): void {
-        // Fetch the strongly-typed dashboard data using the mock API service
-        // Assuming ApiService.getDashboardData() returns Observable<DashboardData>
+        // Fetch the strongly-typed dashboard data
         this.dashboardData$ = this.apiService.getDashboardData();
     }
 }

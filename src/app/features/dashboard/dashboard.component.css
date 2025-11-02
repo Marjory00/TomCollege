@@ -1,8 +1,10 @@
+/* --- Global Page Container --- */
 .dashboard-page {
-    /* Padding is already applied via .router-view in the global CSS,
-       but keeping this here for padding within the page content itself. */
-    /* Remove background-color here as it's defined in the global layout (.content-area-dashboard) */
-    /* padding: 30px; (Removed to avoid double padding if used inside router-view) */
+    /* FIX: Ensure the page container is flexible to handle the loading state
+       and takes up the available vertical space provided by the router-view. */
+    display: flex;
+    flex-direction: column;
+    min-height: 100%; /* Ensures it fills the container's height */
 }
 
 .dashboard-page h2 {
@@ -11,26 +13,23 @@
     font-size: 2em;
 }
 
-.dashboard-description { /* Targeted the specific paragraph class */
+.dashboard-description {
     color: #7f8c8d;
     margin-bottom: 30px;
 }
 
 /* --- Metrics Grid Styling --- */
-
-.card-row { /* FIX APPLIED: Renamed to match the HTML template */
+.card-row {
     display: grid;
-    /* Uses auto-fit/minmax for responsive card grid */
+    /* PRESERVED SETTINGS: Responsive card grid */
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 20px;
     margin-bottom: 40px;
 }
 
 /* --- Recent Activity Section --- */
-
 .recent-activity-section {
-    /* Using the global .table-container/card styles for shadow/background is usually better,
-       but keeping this specific style to provide a distinct look for the activity table. */
+    /* PRESERVED SETTINGS: Specific styles for the activity table container */
     background-color: white;
     padding: 25px;
     border-radius: 8px;
@@ -38,6 +37,7 @@
 }
 
 .recent-activity-section h3 {
+    /* PRESERVED SETTINGS: */
     color: #34495e;
     margin-top: 0;
     margin-bottom: 20px;
@@ -45,18 +45,27 @@
     padding-bottom: 10px;
 }
 
-/* --- Loading Message Styling --- */
+/* --- Loading Message Styling (Structural Fixes Applied) --- */
+.loading-state {
+    /* FIX: Force the loading container to take all remaining space within .dashboard-page */
+    flex-grow: 1;
+    display: flex;
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    min-height: 200px; /* Ensure visibility even if content area is small */
+}
+
 .loading-message {
-    text-align: center;
-    padding: 50px;
+    /* PRESERVED SETTINGS: */
     font-size: 1.2em;
     color: #7f8c8d;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: center; /* FIX: Center the message content itself */
 }
 
 .loading-spinner {
+    /* PRESERVED SETTINGS: */
     animation: spin 1.5s linear infinite;
     margin-right: 10px;
     color: #3498db;

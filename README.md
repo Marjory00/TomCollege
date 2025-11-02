@@ -84,7 +84,61 @@ The project uses a combined monorepo-style structure, with the Angular applicati
 
 
 ```
-TomCollege/ │ ├── backend/ │ ├── routes/ │ │ └── api.js # Express routes for data endpoints │ └── server.js # Express application entry point │ ├── src/ │ ├── app/ │ │ ├── components/ # Reusable components (Card, Table) │ │ ├── core/ │ │ │ ├── guards/ # AuthGuard (Route protection) │ │ │ └── services/ # ApiService, AuthService │ │ ├── features/ # Secure/protected components (Dashboard, Login, Sidebar, Navbar, etc.) │ │ ├── public/ # Unprotected website components (Home, Admissions, Faculty) │ │ ├── app.config.ts # Application configuration │ │ └── app.routes.ts # Central routing logic (Public vs. Dashboard) │ ├── assets/ │ │ └── data.json # Mock API data source │ ├── index.html │ └── styles.css # Global styles │ ├── package.json # Frontend & Backend dependencies └── README.md
+TomCollege-Project-Root/
+├── backend/                      (The backend server directory)
+│   ├── src/                      (Source code for the server, e.g., Express/Django)
+│   │   ├── config/               (Database connections, environment setup)
+│   │   ├── controllers/          (Logic for handling HTTP requests)
+│   │   ├── models/               (Database schemas, e.g., Mongoose models, SQL definitions)
+│   │   ├── routes/               (API endpoints, e.g., user.routes.js)
+│   │   └── server.js / app.py    (Main application entry file)
+│   ├── node_modules/             (Backend dependencies)
+│   ├── package.json              (Backend dependencies and scripts)
+│   └── .env                      (Environment variables)
+│
+├── tomcollege-app/               (The Angular Frontend directory - current focus)
+│   ├── node_modules/             (Frontend dependencies)
+│   ├── src/
+│   │   ├── app/                  (Application root)
+│   │   │   ├── core/             (App-wide services, models, guards)
+│   │   │   │   ├── guards/
+│   │   │   │   │   └── auth.guard.ts
+│   │   │   │   ├── models/
+│   │   │   │   │   └── faculty.model.ts  (FacultyMember Interface)
+│   │   │   │   ├── services/
+│   │   │   │   │   └── faculty.service.ts (Mock Data/API access)
+│   │   │   │   └── core.module.ts
+│   │   │   │
+│   │   │   ├── features/         (Auth and Dashboard components/modules)
+│   │   │   │   ├── dashboard/
+│   │   │   │   │   ├── dashboard.component.ts (Dashboard Layout/Shell)
+│   │   │   │   │   ├── students/
+│   │   │   │   │   │   └── students.component.ts
+│   │   │   │   │   └── courses/
+│   │   │   │   │       └── courses.component.ts
+│   │   │   │   └── login/
+│   │   │   │       └── login.component.ts (Feature Component)
+│   │   │   │
+│   │   │   ├── public/           (Publicly accessible pages)
+│   │   │   │   ├── admissions/
+│   │   │   │   │   └── admissions.component.ts (Next component to build)
+│   │   │   │   ├── faculty/
+│   │   │   │   │   └── faculty.component.ts (The component we just fixed)
+│   │   │   │   └── home/
+│   │   │   │       └── home.component.ts
+│   │   │   │
+│   │   │   ├── app.routes.ts     (Routing configuration)
+│   │   │   └── app.component.ts  (Root component)
+│   │   │
+│   │   └── assets/
+│   │   └── styles.css
+│   │
+│   ├── .gitignore
+│   ├── angular.json
+│   ├── package.json
+│   └── tsconfig.json             (TypeScript configuration)
+│
+└── README.md
 ```
 
 ---

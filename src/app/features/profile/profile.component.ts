@@ -1,10 +1,14 @@
+// src/app/features/profile/profile.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../core/services/api.service';
-import { Observable } from 'rxjs';
 import { FormsModule } from '@angular/forms';
-import { take } from 'rxjs/operators'; // Added for clean subscription
+import { take } from 'rxjs/operators';
+import { Router } from '@angular/router'; // 🆕 FIX: Import Router for navigation/redirection
 
+// ⚠️ NOTE: This interface should ideally be imported from the ApiService file
+// (or a separate models file) to prevent duplication.
 interface UserProfile {
   id: number;
   name: string;
@@ -17,35 +21,53 @@ interface UserProfile {
   selector: 'app-profile',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: './profile.component.html', // <-- FIXED: Use separate template file
+  templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
 
-  // FIX APPLIED: Store profile data locally for two-way binding
   profile: UserProfile | null = null;
-
-  // Optional: Observable for the initial load state (not strictly needed now)
   isLoading = true;
+  isSaving = false; // 🆕 FIX: Added state for Save button loading
 
-  constructor(private apiService: ApiService) { }
+  // 🆕 FIX: Added Router for potential navigation after save/cancel
+  constructor(private apiService: ApiService, private router: Router) { }
 
   ngOnInit(): void {
-    // FIX APPLIED: Subscribe and map the Observable data to the local variable
+    // Fetch profile data and assign it to the local variable for editing
     this.apiService.getProfile().pipe(
-      take(1) // Ensures we only fetch once
-    ).subscribe(data => {
-      this.profile = data;
-      this.isLoading = false;
+      take(1)
+    ).subscribe({
+        next: (data) => {
+            this.profile = data;
+            this.isLoading = false;
+        },
+        error: (err) => {
+            console.error('Error fetching profile:', err);
+            this.isLoading = false;
+            // Handle error state in template if needed
+        }
     });
   }
 
   saveProfile() {
     if (this.profile) {
-      // Placeholder for saving data via API
-      console.log('Saving profile:', this.profile);
-      // this.apiService.updateProfile(this.profile).subscribe(...);
-      alert(`Profile for ${this.profile.name} updated successfully (Mock)`);
+      this.isSaving = true;
+      // Placeholder for saving data via API (e.g., PUT request)
+      console.log('Attempting to save profile:', this.profile);
+
+      // Simulate API delay for saving
+      setTimeout(() => {
+        this.isSaving = false;
+        alert(`Profile for ${this.profile!.name} updated successfully (Mock)`);
+        // Optional: Navigate back or show a success message banner
+      }, 1500);
+
     }
+  }
+
+  cancelEdit() {
+    // Simply navigate back to the dashboard home page
+    this.router.navigate(['/dashboard/home']);
   }
 }

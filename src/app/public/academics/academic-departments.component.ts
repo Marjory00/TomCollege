@@ -5,13 +5,14 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-academic-departments',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink], // ⬅️ FIX: Added the missing comma here
   templateUrl: './academic-departments.component.html',
   styleUrls: ['./academic-departments.component.css']
 })
 export class AcademicDepartmentsComponent {
-  // Mock data for departments, simulating data retrieved from a service
-  academicSchools = [
+
+  // Data array kept for context (no changes needed here)
+  readonly academicSchools = [
     {
       name: "School of Arts & Humanities",
       description: "Explore culture, language, and creativity.",
@@ -57,8 +58,10 @@ export class AcademicDepartmentsComponent {
     }
   ];
 
-  // FIX: New method to replace spaces with hyphens and convert to lowercase
+  /**
+   * Method to clean school name for use in URLs/IDs.
+   */
   cleanSchoolName(name: string): string {
-    return name.toLowerCase().replace(/ /g, '-').replace(/&/g, 'and');
+    return name.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and');
   }
 }

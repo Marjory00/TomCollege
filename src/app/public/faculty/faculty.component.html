@@ -1,0 +1,56 @@
+<div class="faculty-directory-container">
+
+    <header class="directory-header">
+        <h1>Faculty Directory</h1>
+        <p>Browse our distinguished faculty members by department, name, or research area.</p>
+    </header>
+
+    <div class="search-bar">
+        <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            (ngModelChange)="onSearch()"
+            placeholder="Search by name, department, or title..."
+            class="search-input"
+        >
+        <span class="material-icons search-icon">search</span>
+    </div>
+
+    @if (faculty$ | async; as facultyList) {
+        @if (facultyList.length > 0) {
+            <div class="faculty-grid">
+                @for (member of facultyList; track member.id) {
+                    <div class="faculty-card">
+                        <div class="member-icon-box">
+                            <span class="material-icons member-icon">account_circle</span>
+                        </div>
+                        <div class="member-details">
+                            <h3 class="member-name">{{ member.name }}</h3>
+                            <p class="member-title">{{ member.title }}</p>
+                            <p class="member-department">{{ member.department }}</p>
+
+                            <div class="contact-info">
+                                <p>📧 {{ member.email }}</p>
+                                <p>🏢 {{ member.office }}</p>
+                            </div>
+
+                            <div class="research-tags">
+                                @for (interest of member.researchInterests; track interest) {
+                                    <span class="tag">{{ interest }}</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        } @else {
+            <div class="no-results">
+                <p>No faculty members found matching "{{ searchTerm }}".</p>
+            </div>
+        }
+    } @else {
+        <div class="loading-state">
+            <p>Loading faculty directory...</p>
+        </div>
+    }
+</div>

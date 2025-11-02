@@ -1,20 +1,22 @@
 /* --- Page Container --- */
-.profile-page {
-    /* Uses padding established by the global .router-view, but adds internal spacing */
+/* FIX: Changed .profile-page to .profile-page-container for consistency
+    with the surrounding div in the component's HTML.
+*/
+.profile-page-container {
     max-width: 800px;
     margin: 0 auto;
-    background-color: #ffffff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    padding: 30px; /* Internal spacing for the content */
 }
 
-.profile-page h2 {
+.profile-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.profile-header h1 { /* Targets the h1 inside the header */
     color: #2c3e50;
     margin-bottom: 5px;
     font-size: 2em;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #ecf0f1;
 }
 
 .profile-description {
@@ -23,13 +25,44 @@
     font-size: 1.1em;
 }
 
-/* --- Form Styling --- */
-.profile-form {
+/* FIX: Card around the form content */
+.profile-form-card {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* FIX: Container for Editable/Read-Only Sections */
+.form-section {
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.section-title {
+    color: #34495e;
+    font-size: 1.4em;
+    margin-bottom: 25px;
+}
+
+/* --- Form Grid Styling --- */
+.profile-form-card > section {
+    /* The grid layout should apply to the input groups within each section,
+        not the form itself, but for this simple layout, applying it to the section
+        content allows the h2 and actions to remain outside the grid flow.
+    */
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 25px;
-    align-items: end; /* Aligns the button to the bottom */
+    /* Aligns the button to the bottom */
 }
+
 
 .form-group {
     display: flex;
@@ -65,28 +98,67 @@
     border-style: dashed;
 }
 
-/* Save Button */
-.btn-primary {
-    grid-column: 1 / -1; /* Makes the button span the entire width */
+/* --- Form Actions --- */
+.form-actions {
+    /* FIX: Ensure actions span full width of the grid */
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.btn-primary, .btn-cancel {
     padding: 14px 25px;
-    background-color: #3498db;
-    color: white;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     font-size: 1.1em;
     font-weight: 600;
     transition: background-color 0.3s, transform 0.2s;
-    margin-top: 15px;
+    /* FIX: Added display flex for the saving spinner alignment */
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.btn-primary:hover {
-    background-color: #2980b9;
+.btn-primary.btn-save { /* Targets the Save button */
+    background-color: #2ecc71; /* Use green for saving */
+    color: white;
+}
+
+.btn-primary.btn-save:hover:not(:disabled) {
+    background-color: #27ae60;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.btn-cancel {
+    background-color: #ecf0f1;
+    color: #34495e;
+}
+
+.btn-cancel:hover {
+    background-color: #dbe4e9;
+}
+
+/* Disable State */
+.btn-primary:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
 /* --- Loading Message --- */
+/* FIX: Need a dedicated loading state container to center the message */
+.loading-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+}
+
 .loading-message {
     text-align: center;
     padding: 50px;
@@ -110,16 +182,20 @@
 
 /* --- Responsive Layout --- */
 @media (max-width: 600px) {
-    .profile-page {
-        padding: 20px;
+    .profile-page-container {
+        padding: 20px 10px;
     }
-    .profile-form {
+
+    .profile-form-card > section {
         /* Stack all inputs vertically on small screens */
         grid-template-columns: 1fr;
     }
 
-    .btn-primary {
-        /* Full width button on mobile */
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-primary, .btn-cancel {
         width: 100%;
     }
 }

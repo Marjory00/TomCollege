@@ -24,11 +24,10 @@ import { FooterComponent } from './public/footer/footer.component';
 export class AppComponent {
   title = 'TomCollege';
 
-  // Controls the visibility of the Sidebar, which defines the dashboard layout
+  // Controls the visibility of the Sidebar and layout structure
   showDashboardLayout = false;
 
-  // Updated to include all new public pages that should NOT have the Sidebar
-  private publicRoutes: string[] = ['/', '/login', '/admissions', '/faculty', '/calendar', '/contact', '/privacy'];
+  // NOTE: The private publicRoutes array is now unnecessary as the logic below is simpler and more reliable.
 
   constructor(private router: Router) {
     // Watch router events to determine if we are on a secure/dashboard route
@@ -37,13 +36,9 @@ export class AppComponent {
     ).subscribe((event) => {
       const currentUrl = (event as NavigationEnd).urlAfterRedirects;
 
-      // The layout logic simplifies to: ONLY show the dashboard layout if the URL starts with '/dashboard'
-      if (currentUrl.startsWith('/dashboard')) {
-        this.showDashboardLayout = true;
-      } else {
-        // Hide the sidebar for all public, login, and simple root routes
-        this.showDashboardLayout = false;
-      }
+      // The layout logic simplifies to checking the route prefix:
+      // showDashboardLayout is true ONLY if the URL starts with '/dashboard'
+      this.showDashboardLayout = currentUrl.startsWith('/dashboard');
     });
   }
 }

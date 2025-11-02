@@ -1,0 +1,18 @@
+.table-container {
+    overflow-x: auto; /* Ensures table is scrollable on small screens */
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+}
+
+th, td {
+    white-space: nowrap; /* Prevents text wrap in table cells */
+    text-align: left;
+    padding: 12px 15px;
+}
+
+/* Basic styling defined in styles.css handles the rest (headers, borders, etc.) */

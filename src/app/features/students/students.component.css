@@ -1,0 +1,14 @@
+.students-page {
+    padding: 20px 0;
+}
+
+.students-page h2 {
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-size: 1.8em;
+}
+
+.students-page p {
+    color: #7f8c8d;
+    margin-bottom: 25px;
+}

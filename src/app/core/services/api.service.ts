@@ -1,9 +1,26 @@
-
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Student } from '../../models/student.model';
 import { Course } from '../../models/course.model';
+
+// --- NEW INTERFACES (Matching the data.json structure) ---
+interface UserProfile {
+  id: number;
+  name: string;
+  email: string;
+  role: 'Student' | 'Faculty';
+  department: string;
+}
+
+interface GradeReport {
+  courseCode: string;
+  courseTitle: string;
+  instructor: string;
+  grade: string;
+  status: 'Complete' | 'In Progress';
+}
+// --- END NEW INTERFACES ---
 
 // Define the base URL for the backend API
 const API_BASE_URL = 'http://localhost:3000/api';
@@ -15,9 +32,10 @@ const API_BASE_URL = 'http://localhost:3000/api';
 export class ApiService {
   constructor(private http: HttpClient) { }
 
+  // --- CORE DATA METHODS (Existing) ---
+
   /**
    * Fetches the main dashboard data from the backend.
-   * The return type is typically an object that matches the 'dashboard' section of data.json.
    */
   getDashboardData(): Observable<any> {
     return this.http.get(`${API_BASE_URL}/dashboard`);
@@ -35,6 +53,30 @@ export class ApiService {
    */
   getCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${API_BASE_URL}/courses`);
+  }
+
+  // --- NEW FEATURE METHODS ---
+
+  /**
+   * Fetches the current user's profile data.
+   */
+  getProfile(): Observable<UserProfile> {
+    return this.http.get<UserProfile>(`${API_BASE_URL}/profile`);
+  }
+
+  /**
+   * Fetches the user's detailed grade report.
+   */
+  getGrades(): Observable<GradeReport[]> {
+    return this.http.get<GradeReport[]>(`${API_BASE_URL}/grades/report`);
+  }
+
+  /**
+   * Fetches the user's current cumulative GPA as a number.
+   */
+  getCurrentGPA(): Observable<number> {
+    // Note: We expect the backend to return just the number, matching the /grades/gpa endpoint
+    return this.http.get<number>(`${API_BASE_URL}/grades/gpa`);
   }
 
   // Add more methods for other CRUD operations (POST, PUT, DELETE) as needed.

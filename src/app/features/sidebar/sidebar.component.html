@@ -1,16 +1,25 @@
 <aside class="sidebar">
   <div class="logo">
     <span class="material-icons logo-icon">school</span>
-    <span class="logo-text">TomCollege</span>
+    <h3 class="logo-text">TomCollege</h3>
   </div>
-  <nav class="sidebar-nav">
-    <a
-      *ngFor="let item of menuItems"
-      [routerLink]="item.link"
-      routerLinkActive="active"
-      class="nav-item">
-      <span class="material-icons">{{ item.icon }}</span>
-      <span class="nav-label">{{ item.label }}</span>
-    </a>
-  </nav>
+
+  <ul class="nav-links">
+    <li *ngFor="let item of menuItems">
+      <a
+        [routerLink]="item.link"
+        routerLinkActive="active"
+        class="nav-item">
+        <span class="material-icons">{{ item.icon }}</span>
+        <span class="nav-label">{{ item.label }}</span>
+      </a>
+    </li>
+  </ul>
+
+  <div class="user-footer">
+    <p>Logged in as Student</p>
+    <button class="btn-logout">
+        <span class="material-icons">logout</span> Logout
+    </button>
+  </div>
 </aside>

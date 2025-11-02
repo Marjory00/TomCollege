@@ -11,6 +11,8 @@
   </div>
 </div>
 
-<div *ngIf="!showDashboardLayout" class="login-page-wrapper">
+<div *ngIf="!showDashboardLayout" class="public-layout-wrapper">
     <router-outlet></router-outlet>
+
+    <app-footer></app-footer>
 </div>

@@ -80,6 +80,7 @@ server.js
 /frontend/.angular
 /frontend/coverage
 /frontend/node_modules/
+/src/app/login
 
 # Database
 *.db

@@ -1,0 +1,23 @@
+<div class="students-page">
+  <h2>🧑‍🎓 Student Management</h2>
+  <p>Overview and details of all enrolled students at TomCollege.</p>
+
+  <div class="header-actions">
+    <button class="btn-primary">
+      <span class="material-icons">add_circle</span> Add New Student
+    </button>
+  </div>
+
+  <div class="student-list-container">
+    <app-table
+      [data]="students$ | async"
+      [columns]="['ID', 'Name', 'Department', 'Email', 'Enrollment Status']"
+      [keyMap]="['id', 'name', 'department', 'email', 'status']"
+      *ngIf="students$ | async as students else loading">
+    </app-table>
+
+    <ng-template #loading>
+      <div class="loading-message">Loading student data...</div>
+    </ng-template>
+  </div>
+</div>

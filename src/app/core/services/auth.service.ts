@@ -1,3 +1,4 @@
+// TomCollege/src/app/core/services/auth.service.ts
 
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
@@ -6,37 +7,27 @@ import { Router } from '@angular/router';
   providedIn: 'root'
 })
 export class AuthService {
-  // Use a simple boolean to track login status (should use Signals/Observables in production)
-  private isLoggedIn = false;
+    // FIX: Change to false so the app starts on the public homepage ('/')
+    private isLoggedIn = false;
 
-  constructor(private router: Router) { }
+    constructor(private router: Router) { }
 
-  /**
-   * Mock login function
-   * @param username - The provided username
-   * @param password - The provided password
-   * @returns true if login is successful, false otherwise
-   */
-  login(username: string, password: string): boolean {
-    // Mock validation: success for "admin" / "password"
-    if (username === 'admin' && password === 'password') {
-      this.isLoggedIn = true;
-      // Navigate to the secure dashboard on success
-      this.router.navigate(['/dashboard']);
-      return true;
-    } else {
-      this.isLoggedIn = false;
-      return false;
+    login(username: string, password: string): boolean {
+        // Mock login logic simplified for development access
+        this.isLoggedIn = true;
+        this.router.navigate(['/dashboard']);
+        return true;
     }
-  }
 
-  logout(): void {
-    this.isLoggedIn = false;
-    // Navigate back to the public home page on logout
-    this.router.navigate(['/']);
-  }
+    logout(): void {
+        this.isLoggedIn = false;
+        this.router.navigate(['/']);
+    }
 
-  isAuthenticated(): boolean {
-    return this.isLoggedIn;
-  }
+    isAuthenticated(): boolean {
+        // FIX: Return the actual state of isLoggedIn.
+        // Since we disabled the AuthGuard in app.routes.ts,
+        // this is only used for internal component logic now.
+        return this.isLoggedIn;
+    }
 }

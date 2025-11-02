@@ -13,12 +13,12 @@ import { CoursesComponent } from './features/courses/courses.component';
 import { ProfileComponent } from './features/profile/profile.component';
 import { GradesComponent } from './features/grades/grades.component';
 
-// Guard Import
-import { AuthGuard } from './core/guards/auth.guard'; // <-- NEW IMPORT
+// Guard Import: Uncomment the import and the 'canActivate' line below to enable security
+// import { AuthGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   // --- PUBLIC ROUTES (No layout/sidebar required) ---
-  { path: '', component: HomeComponent, title: 'TomCollege - Home' },
+  { path: '', component: HomeComponent, title: 'TomCollege - Home' }, // Loads the main website page
   { path: 'admissions', component: AdmissionsComponent, title: 'Admissions' },
   { path: 'faculty', component: FacultyComponent, title: 'Faculty Directory' },
   { path: 'login', component: LoginComponent, title: 'Login' },
@@ -26,14 +26,14 @@ export const routes: Routes = [
   // --- SECURE/DASHBOARD ROUTES GROUP ---
   {
     path: 'dashboard',
-    canActivate: [AuthGuard], // <-- APPLY GUARD TO THE PARENT ROUTE
+    // canActivate: [AuthGuard], // <-- UNCOMMENT THIS LINE TO RE-ENABLE LOGIN PROTECTION
     children: [
-      { path: '', component: DashboardComponent, title: 'Dashboard Overview' },
-      { path: 'students', component: StudentsComponent, title: 'Student Management' },
-      { path: 'courses', component: CoursesComponent, title: 'Course Catalog' },
-      { path: 'profile', component: ProfileComponent, title: 'My Profile' },
-      { path: 'grades', component: GradesComponent, title: 'Grade Report' },
-      { path: 'settings', component: ProfileComponent, title: 'Settings' } // Assuming profile component for settings placeholder
+      { path: '', component: DashboardComponent, title: 'Dashboard Overview' }, // /dashboard
+      { path: 'students', component: StudentsComponent, title: 'Student Management' }, // /dashboard/students
+      { path: 'courses', component: CoursesComponent, title: 'Course Catalog' }, // /dashboard/courses
+      { path: 'profile', component: ProfileComponent, title: 'My Profile' }, // /dashboard/profile
+      { path: 'grades', component: GradesComponent, title: 'Grade Report' }, // /dashboard/grades
+      { path: 'settings', component: ProfileComponent, title: 'Settings' }
     ]
   },
 

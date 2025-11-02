@@ -1,20 +1,26 @@
-<div class="dashboard-page">
-  <h2>🎓 College Dashboard Overview</h2>
+<div class="dashboard-page" *ngIf="dashboardData$ | async as data else loading">
+  <h2>👋 Welcome to the TomCollege Dashboard</h2>
+  <p>Quick overview of institutional statistics and recent activity.</p>
 
-  <div class="card-row">
+  <section class="metrics-grid">
     <app-card
-      *ngFor="let item of cardItems"
-      [title]="item.title"
-      [value]="item.value"
-      [icon]="item.icon">
+      *ngFor="let card of data.cardData"
+      [title]="card.title"
+      [value]="card.value"
+      [icon]="card.icon">
     </app-card>
-  </div>
+  </section>
 
-  <div class="recent-activity">
-    <h3>Recent Student Grades</h3>
+  <section class="recent-activity-section">
+    <h3>Recent Grade Submissions</h3>
     <app-table
-      [data]="(dashboardData$ | async)?.tableData"
-      [columns]="['ID', 'Name', 'Course', 'Grade']">
+      [data]="data.tableData"
+      [columns]="recentActivityColumns"
+      [keyMap]="recentActivityKeyMap">
     </app-table>
-  </div>
+  </section>
 </div>
+
+<ng-template #loading>
+  <div class="loading-message">Loading dashboard data...</div>
+</ng-template>

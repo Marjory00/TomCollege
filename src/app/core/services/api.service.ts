@@ -5,6 +5,17 @@ import { Student } from '../../models/student.model';
 import { Course } from '../../models/course.model';
 
 // --- NEW INTERFACES (Matching the data.json structure) ---
+
+/** Interface for the main dashboard data structure (metrics, recent table data) */
+interface DashboardData {
+    totalStudents: number;
+    activeCourses: number;
+    recentEnrollments: number;
+    currentGPAAverage: number;
+    cardData: { title: string; value: string; icon: string }[];
+    tableData: { id: number; name: string; course: string; grade: string }[];
+}
+
 interface UserProfile {
   id: number;
   name: string;
@@ -35,22 +46,23 @@ export class ApiService {
   // --- CORE DATA METHODS (Existing) ---
 
   /**
-   * Fetches the main dashboard data from the backend.
-   */
-  getDashboardData(): Observable<any> {
-    return this.http.get(`${API_BASE_URL}/dashboard`);
+    * Fetches the main dashboard data from the backend.
+    * FIX: Uses the strongly-typed DashboardData interface.
+    */
+  getDashboardData(): Observable<DashboardData> {
+    return this.http.get<DashboardData>(`${API_BASE_URL}/dashboard`);
   }
 
   /**
-   * Fetches the list of all students.
-   */
+    * Fetches the list of all students.
+    */
   getStudents(): Observable<Student[]> {
     return this.http.get<Student[]>(`${API_BASE_URL}/students`);
   }
 
   /**
-   * Fetches the list of all courses.
-   */
+    * Fetches the list of all courses.
+    */
   getCourses(): Observable<Course[]> {
     return this.http.get<Course[]>(`${API_BASE_URL}/courses`);
   }
@@ -58,24 +70,23 @@ export class ApiService {
   // --- NEW FEATURE METHODS ---
 
   /**
-   * Fetches the current user's profile data.
-   */
+    * Fetches the current user's profile data.
+    */
   getProfile(): Observable<UserProfile> {
     return this.http.get<UserProfile>(`${API_BASE_URL}/profile`);
   }
 
   /**
-   * Fetches the user's detailed grade report.
-   */
+    * Fetches the user's detailed grade report.
+    */
   getGrades(): Observable<GradeReport[]> {
     return this.http.get<GradeReport[]>(`${API_BASE_URL}/grades/report`);
   }
 
   /**
-   * Fetches the user's current cumulative GPA as a number.
-   */
+    * Fetches the user's current cumulative GPA as a number.
+    */
   getCurrentGPA(): Observable<number> {
-    // Note: We expect the backend to return just the number, matching the /grades/gpa endpoint
     return this.http.get<number>(`${API_BASE_URL}/grades/gpa`);
   }
 

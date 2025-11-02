@@ -1,54 +1,115 @@
 .sidebar {
+    /* Layout and Positioning */
     width: 250px;
-    min-width: 250px; /* Fixes width */
-    background-color: #2c3e50;
-    color: #ecf0f1;
-    padding-top: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    height: 100vh; /* Full height sidebar */
-    position: sticky;
+    min-width: 250px;
+    height: 100vh;
+    position: fixed; /* Use 'fixed' to keep it locked on the screen */
     top: 0;
+
+    /* Styling */
+    background-color: #2c3e50; /* Darker Navy/Slate Blue */
+    color: #ecf0f1;
+    padding: 20px 0; /* Adjusted padding to accommodate content */
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
 }
+
+/* --- Logo Section --- */
 
 .logo {
     display: flex;
     align-items: center;
-    padding: 10px 20px 40px;
-    font-size: 1.5em;
-    font-weight: 500;
+    padding: 0 20px;
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    padding-bottom: 15px;
 }
 
 .logo-icon {
     margin-right: 10px;
-    color: #3498db;
+    color: #f1c40f; /* Use the Gold/Yellow accent color for the icon */
     font-size: 32px;
 }
 
-.sidebar-nav {
-    display: flex;
-    flex-direction: column;
+.logo h3 {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 600;
 }
 
-.nav-item {
+/* --- Navigation Links --- */
+
+.nav-links {
+    list-style: none;
+    padding: 0;
+    flex-grow: 1; /* Allows links section to take up available vertical space */
+}
+
+/* Selector for the link element (a) which uses the routerLink */
+.nav-links li a {
     display: flex;
     align-items: center;
     padding: 12px 20px;
     text-decoration: none;
     color: #ecf0f1;
-    transition: background-color 0.3s, border-left 0.3s;
-}
-
-.nav-item:hover {
-    background-color: #34495e;
-}
-
-.nav-item.active {
-    background-color: #34495e;
-    border-left: 4px solid #3498db;
+    transition: background-color 0.3s, border-left 0.3s, color 0.3s;
     font-weight: 500;
 }
 
-.nav-item .material-icons {
+.nav-links li a:hover {
+    background-color: #3b506b;
+    color: white;
+}
+
+/* Active State for the link element (a) */
+.nav-links li a.active {
+    background-color: #3498db; /* Primary Blue accent color */
+    color: white;
+    font-weight: bold;
+    border-left: 5px solid #f1c40f; /* New accent color (Gold/Yellow) */
+}
+
+.nav-links li a .material-icons {
     margin-right: 15px;
     font-size: 22px;
+}
+
+/* --- User Footer and Logout (Existing from previous CSS) --- */
+
+.user-footer {
+    padding: 20px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin-top: 20px;
+}
+
+.user-footer p {
+    margin: 0 0 10px 0;
+    font-size: 0.9rem;
+}
+
+.btn-logout {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.btn-logout:hover {
+    background-color: #c0392b;
+}
+
+.btn-logout .material-icons {
+    font-size: 18px;
+    margin-right: 5px;
 }

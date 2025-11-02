@@ -1,34 +1,41 @@
-
 .dashboard-page {
-    padding: 20px 0;
+    padding: 30px;
+    background-color: #f4f7f6; /* Light background for separation */
 }
 
 .dashboard-page h2 {
     color: #2c3e50;
-    margin-bottom: 25px;
-    font-size: 1.8em;
+    margin-bottom: 5px;
+    font-size: 2em;
+}
+
+.dashboard-page p {
+    color: #7f8c8d;
+    margin-bottom: 30px;
+}
+
+/* --- Metrics Grid Styling --- */
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+/* --- Recent Activity Section --- */
+
+.recent-activity-section {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.recent-activity-section h3 {
+    color: #34495e;
+    margin-top: 0;
+    margin-bottom: 20px;
     border-bottom: 2px solid #ecf0f1;
     padding-bottom: 10px;
-}
-
-/* Card row layout for displaying key metrics */
-.card-row {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 30px;
-    flex-wrap: wrap; /* Allows cards to wrap on smaller screens */
-}
-
-/* Style for the Recent Activity section */
-.recent-activity {
-    background-color: #ffffff;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.recent-activity h3 {
-    font-size: 1.4em;
-    color: #34495e;
-    margin-bottom: 15px;
 }

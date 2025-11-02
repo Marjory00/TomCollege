@@ -125,10 +125,10 @@ ng serve
 
 🔑 Credentials for Testing
 
+```
 Feature	URL	Username	Password
-Public Website	http://localhost:4200/	N/A	N/A
 Login Page	http://localhost:4200/login	admin	password
-Dashboard	(Redirected after login)		
+```
 
 📚 API Documentation
 

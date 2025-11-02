@@ -1,4 +1,4 @@
-<div class="main-app-container">
+<div *ngIf="showDashboardLayout" class="main-app-container">
 
   <app-sidebar></app-sidebar>
 
@@ -9,4 +9,8 @@
       <router-outlet></router-outlet>
     </div>
   </div>
+</div>
+
+<div *ngIf="!showDashboardLayout" class="login-page-wrapper">
+    <router-outlet></router-outlet>
 </div>

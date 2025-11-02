@@ -1,7 +1,6 @@
+# 🎓 TomCollege Portal & Dashboard
 
-# 🎓 TomCollege School Management System
-
-A comprehensive **web-based school management system** for managing students, classes, and schedules with **role-based access control**.
+A comprehensive **web-based college portal** and administrative dashboard for managing students, courses, and academic data using a modern Angular standalone architecture.
 
 ---
 
@@ -9,177 +8,156 @@ A comprehensive **web-based school management system** for managing students, cl
 **Marjory D. Marquez**
 
 ### 🏷️ Project Information
-- **Project Name:** TomCollege  
-- **Version:** 1.0.0  
-- **License:** MIT  
+- **Project Name:** TomCollege 
+- **Version:** 1.0.0 (Standalone Architecture) 
+- **License:** MIT 
 
 ---
 
 ## 📋 Table of Contents
 - [Overview](#-overview)
-- [Features](#-features)
+- [Features Implemented](#-features-implemented)
 - [Technologies Used](#-technologies-used)
 - [Project Structure](#-project-structure)
-- [Installation](#-installation)
-- [Usage](#-usage)
+- [Installation and Usage](#-installation-and-usage)
 - [API Documentation](#-api-documentation)
 - [Case Study](#-case-study)
-- [Screenshots](#-screenshots)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Contact](#-contact)
 
 ---
 
 ## 🎓 Overview
 
-**TomCollege** is a full-stack school management system designed to streamline educational institution operations.  
-The application provides a centralized platform for managing student records, class schedules, and academic information with secure **role-based access** for administrators, teachers, and students.
+**TomCollege** is a full-stack proof-of-concept application simulating a modern college website and its secure administrative dashboard. The system showcases a clear separation between public-facing informational pages and a private, data-driven management dashboard, secured by mock authentication.
 
 ### 🧾 Description
-The system addresses common challenges faced by educational institutions in managing student data, class schedules, and academic performance tracking.  
-By replacing traditional paper-based methods with a **modern digital solution**, TomCollege enhances operational efficiency, improves data accuracy, and provides real-time access to critical information for all stakeholders.
+The primary goal of this project is to demonstrate **modern Angular standalone component architecture**, strong **component reusability**, and **conditional layout rendering** based on route state (public vs. secure dashboard). It utilizes a simple **Node/Express mock backend** to simulate real API data fetching for metrics, tables, and student information.
 
 ### 🔑 Key Highlights
-- 🔐 Secure **JWT-based authentication**
-- 👥 **Role-based access control** (Admin, Teacher, Student)
-- 📊 **Real-time dashboard** with statistics
-- 🎯 Comprehensive **student management**
-- 📚 **Class enrollment** and management
-- 📅 **Weekly schedule** organization
-- 🔍 **Advanced search and filtering**
-- 📱 **Responsive design** for all devices
+- 🏛️ **Dual Architecture:** Public-facing website (`/`, `/admissions`) and Secure Dashboard (`/dashboard`).
+- 🔄 **Conditional Layout:** Dynamic rendering of the sidebar and navbar only on secure dashboard routes.
+- 🧱 **Angular Standalone:** Built entirely using Angular Standalone Components, Modules are not required.
+- 🔌 **Mock API Integration:** Uses a lightweight Express server to simulate data retrieval from API endpoints.
+- 🛡️ **Route Protection:** Implements a simple `AuthGuard` to protect all dashboard links.
 
 ---
 
-## ✨ Features
+## ✨ Features Implemented
 
-### 👩‍💼 For Administrators
--  Complete **user management** (create, read, update, delete)
--  **Student registration** and profile management
--  **Class creation** and assignment
--  **Schedule management** and conflict detection
--  **Enrollment management**
--  **System configuration** and settings
--  Dashboard with **comprehensive statistics**
+### 🌐 Public Website (Unprotected)
+- **Home Page (`/`):** Landing page with institutional information and navigation to key areas.
+- **Admissions Page (`/admissions`):** Informational page placeholder.
+- **Faculty Directory (`/faculty`):** Informational page placeholder.
+- **Login Page (`/login`):** Component to access the secure area.
 
-### 👨‍🏫 For Teachers
--  View all **students** and their information
--  Access **class rosters**
--  View and **update assigned classes**
--  Check **class schedules**
--  Update **personal profile**
-
-### 🎓 For Students
--  View **personal academic information**
--  Check **enrolled classes**
--  View **weekly class schedule**
--  Update **personal profile**
--  Track **GPA and enrollment status**
+### 📊 Secure Dashboard (Protected via Login)
+- **Dashboard Overview (`/dashboard`):** Displays key metrics (cards) and recent activity (tables).
+- **Student Management (`/dashboard/students`):** Placeholder for CRUD operations on student data.
+- **Course Catalog (`/dashboard/courses`):** Placeholder for viewing available courses.
+- **Grade Report (`/dashboard/grades`):** Displays user's current GPA and a table of course grades.
+- **User Profile (`/dashboard/profile`):** Allows viewing and mock-updating of user details.
 
 ---
 
 ## 🛠️ Technologies Used
 
 ### 🖥️ Frontend
-| Technology | Version | Purpose |
-|-------------|----------|----------|
-| Angular | 17+ | Frontend framework |
-| TypeScript | 5.0+ | Programming language |
-| RxJS | 7.8+ | Reactive programming |
-| HTML5 | — | Structure |
-| CSS3 | — | Styling |
-| Angular CLI | 17+ | Project scaffolding and build tools |
+| Technology | Purpose |
+|-------------|----------|
+| **Angular (v17+)** | Frontend framework using Standalone Components |
+| **TypeScript** | Programming language |
+| **Angular Router** | Conditional routing and layout management |
+| **RxJS** | Reactive programming for data streams |
+| **Material Icons** | Consistent icon set for UI |
 
-### ⚙️ Backend
-| Technology | Version | Purpose |
-|-------------|----------|----------|
-| Node.js | 18+ | Runtime environment |
-| Express.js | 4.18+ | Web framework |
-| MongoDB | 6+ | Database |
-| Mongoose | 8+ | ODM for MongoDB |
-| JWT | 9.0+ | Authentication |
-| bcryptjs | 2.4+ | Password hashing |
-| dotenv | 16.3+ | Environment management |
-| CORS | 2.8+ | Cross-origin support |
-
-
-### 🧰 Development Tools
-- Visual Studio Code – Code editor  
-- PowerShell – Command-line interface  
-- Nodemon – Auto-restart development server  
-- Angular CLI – Angular development tools  
-- Git – Version control  
+### ⚙️ Backend & Data
+| Technology | Purpose |
+|-------------|----------|
+| **Node.js** | Runtime environment for the API |
+| **Express.js** | Minimalist web framework for creating mock REST API |
+| **Static Data (`data.json`)** | JSON file serving as the mock database |
 
 ---
 
 ## 📁 Project Structure
 
-```
-TomCollege/
-│
-├── backend/
-│ ├── config/
-│ ├── controllers/
-│ ├── models/
-│ ├── routes/
-│ └── server.js
-│
-├── frontend/
-│ ├── src/
-│ ├── assets/
-│ ├── environments/
-│ └── angular.json
-│
-├── .env
-├── package.json
-├── README.md
-└── LICENSE
-```
+The project uses a combined monorepo-style structure, with the Angular application in the root and the Express server in a dedicated `backend` folder.
 
+
+```
+TomCollege/ │ ├── backend/ │ ├── routes/ │ │ └── api.js # Express routes for data endpoints │ └── server.js # Express application entry point │ ├── src/ │ ├── app/ │ │ ├── components/ # Reusable components (Card, Table) │ │ ├── core/ │ │ │ ├── guards/ # AuthGuard (Route protection) │ │ │ └── services/ # ApiService, AuthService │ │ ├── features/ # Secure/protected components (Dashboard, Login, Sidebar, Navbar, etc.) │ │ ├── public/ # Unprotected website components (Home, Admissions, Faculty) │ │ ├── app.config.ts # Application configuration │ │ └── app.routes.ts # Central routing logic (Public vs. Dashboard) │ ├── assets/ │ │ └── data.json # Mock API data source │ ├── index.html │ └── styles.css # Global styles │ ├── package.json # Frontend & Backend dependencies └── README.md
+```
 
 ---
 
-## ⚙️ Installation
+## ⚙️ Installation and Usage
+
+You must run both the backend and frontend simultaneously.
+
+### 1. Installation
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/TomCollege.git
-
-# Navigate to project folder
+git clone [https://github.com/Marjory00/TomCollege.git](https://github.com/Marjory00/TomCollege.git)
 cd TomCollege
 
-# Install dependencies for both backend and frontend
-cd backend && npm install
-cd ../frontend && npm install
+# Install all dependencies (installs dependencies for Angular and Express)
+npm install
 
+2. Running the Application
 
-# Start backend server
+Open two separate terminal windows in the root TomCollege/ directory.
+
+Terminal 1 (Backend API):
+Bash
+
 cd backend
-npm run dev
+node server.js
+# The mock API will run on http://localhost:3000
 
-# Start Angular frontend
-cd ../frontend
+Terminal 2 (Angular Frontend):
+Bash
+
+# Start the Angular server
+npm start
+# OR
 ng serve
+# The frontend will run on http://localhost:4200
 
-Visit the app at:
-👉 http://localhost:4200
+🔑 Credentials for Testing
 
+Feature	URL	Username	Password
+Public Website	http://localhost:4200/	N/A	N/A
+Login Page	http://localhost:4200/login	admin	password
+Dashboard	(Redirected after login)		
 
 📚 API Documentation
 
-The API provides RESTful endpoints for managing users, students, classes, and schedules.
-Authentication is handled via JWT tokens.
+The mock backend exposes the following REST endpoints using the data.json file:
+Method	Endpoint	Description	Status
+GET	/api/dashboard	Returns all dashboard metrics and activity.	Implemented
+GET	/api/students	Returns the list of all students.	Implemented
+GET	/api/courses	Returns the list of all courses.	Implemented
+GET	/api/profile	Returns the mock user profile data.	Implemented
+GET	/api/grades/report	Returns the user's detailed grade report.	Implemented
+GET	/api/grades/gpa	Returns the current GPA score.	Implemented
 
 📖 Case Study
 
-The TomCollege project demonstrates efficient data-driven management for schools, improving accessibility and transparency between staff, students, and administration.
+The TomCollege Portal & Dashboard project successfully solves the challenge of distinguishing between public marketing content and secure user-specific data within a single-page application framework. By implementing a conditional layout in app.component.ts driven by the Angular Router, the application can switch between the simple, public view (for visitors) and the complex, sidebar/navbar-equipped dashboard view (for logged-in users) without needing separate root modules. This technique provides a clean, maintainable, and highly efficient solution for dual-purpose web portals, a critical pattern for real-world enterprise applications like school management systems.
 
 🖼️ Screenshots
 
-(Add your screenshots here)
+(Add your screenshots of the Home Page, Login Screen, and Dashboard here)
 
 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome!
-Feel free to check the issues page
+Contributions, issues, and feature requests are welcome! Feel free to check the issues page.
+
+⚖️ License
+
+Distributed under the MIT License. See LICENSE for more information.
+
+✉️ Contact
+
+Marjory D. Marquez - [Your Contact Information Here] Project Link: https://github.com/Marjory00/TomCollege
+

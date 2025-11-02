@@ -1,24 +1,18 @@
-/* To learn more about Typescript configuration file: https://www.typescriptlang.org/docs/handbook/tsconfig-json.html. */
-/* To learn more about Angular compiler options: https://angular.dev/reference/configs/angular-compiler-options. */
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "outDir": "./out-tsc/app",
+        "outDir": "./out-tsc/app", // Output directory for compiled files
         "types": [
-            "node"
+            "node" // Include Node types if needed
         ],
-
-        // Note: baseUrl is correctly omitted to avoid the TS error.
-
-        // 🚨 FINAL FIX: The path must be relative (start with ./) AND point to the correct folder.
         "paths": {
-            "@env/*": ["./src/environments/*"]
+            "@env/*": ["./src/environments/*"] // Path mapping for environments
         }
     },
     "include": [
-        "src/**/*.ts"
+        "src/**/*.ts" // Include all TypeScript files in the src directory
     ],
     "exclude": [
-        "src/**/*.spec.ts"
+        "src/**/*.spec.ts" // Exclude test files from compilation
     ]
 }

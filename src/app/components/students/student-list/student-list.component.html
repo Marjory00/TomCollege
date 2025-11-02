@@ -1,111 +1,105 @@
-<div class="container-fluid student-list-container py-4">
+<div class="container-fluid py-4 student-list-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="page-title"><i class="fas fa-user-graduate me-3"></i>Student Roster</h2>
 
-    <div class="d-flex justify-content-between align-items-center mb-4 header-row">
-        <h2 class="page-title"><i class="fas fa-user-graduate me-3"></i>Student Roster</h2>
-
-        @if (isAdmin()) {
-            <button class="btn btn-primary" [routerLink]="['/students/add']">
-                <i class="fas fa-plus me-2"></i> Add New Student
-            </button>
-        }
+                <button class="btn btn-primary" [routerLink]="['/students/add']">
+            <i class="fas fa-plus-circle me-2"></i>Add New Student
+        </button>
     </div>
 
-    <div class="row controls-row mb-4">
-        <div class="col-md-6">
-            <div class="input-group">
-                <input type="text"
-                       class="form-control"
-                       placeholder="Search by name or student ID..."
-                       [(ngModel)]="searchTerm"
-                       (ngModelChange)="onSearchChange()">
-                <button class="btn btn-outline-secondary" type="button">
-                    <i class="fas fa-search"></i>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+                        @if (loading) {
+                <div class="text-center py-5">
+                    <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
+                    <p class="mt-2">Loading student data...</p>
+                </div>
+            }
+
+            @if (errorMessage) {
+                <div class="alert alert-danger" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMessage }}
+                </div>
+            }
+
+                        <div class="d-flex mb-3">
+                <input
+                    type="text"
+                    class="form-control me-3"
+                    placeholder="Search by name or email..."
+                    aria-label="Search"
+                    [(ngModel)]="searchTerm"
+                    (ngModelChange)="onSearchChange()"
+                >
+                                <button class="btn btn-secondary" (click)="onSearchChange()">
+                    <i class="fas fa-search"></i> Search
                 </button>
             </div>
         </div>
-        <div class="col-md-6 text-md-end mt-3 mt-md-0">
-            <span class="text-muted fw-bold">Total Students: {{ totalRecords }}</span>
-        </div>
     </div>
 
-    @if (errorMessage) {
-        <div class="alert alert-danger" role="alert">
-            <i class="fas fa-exclamation-triangle me-2"></i>{{ errorMessage }}
-        </div>
-    }
-
-    @if (loading) {
-        <div class="text-center py-5">
-            <i class="fas fa-spinner fa-spin fa-2x text-primary"></i>
-            <p class="mt-2">Loading student data...</p>
-        </div>
-    }
-
-    @if (!loading && students.length > 0) {
-        <div class="table-responsive bg-white rounded shadow-sm">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="bg-light">
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Class</th>
-                        <th>Email</th>
-                        <th>Status</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @for (student of students; track student.id) {
+    @if (!loading && !errorMessage) {
+        <div class="card shadow">
+            <div class="card-header bg-light">
+                                Total Students: **{{ totalRecords }}**             </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="bg-light">
                         <tr>
-                            <td>{{ student.id | slice:0:8 }}...</td>
-                            <td class="name-column">
-                                <i class="fas fa-user-circle me-2 text-primary"></i>
-                                {{ student.firstName | titlecase }} {{ student.lastName | titlecase }}
-                            </td>
-                            <td>{{ student.currentClass | titlecase }}</td>
-                            <td>{{ student.email }}</td>
-                            <td>
-                                <span class="badge" [ngClass]="{
-                                    'bg-success': student.status === 'Active',
-                                    'bg-danger': student.status === 'Suspended',
-                                    'bg-warning': student.status === 'On Probation',
-                                    'bg-secondary': student.status === 'Graduated',
-                                    'bg-info': student.status === 'Withdrawn'
-                                }">{{ student.status }}</span>
-                            </td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <a [routerLink]="['/students/edit', student.id]" class="btn btn-sm btn-outline-info" title="Edit Profile">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    </div>
-                            </td>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Current Class</th>                             <th>Status</th>
+                            <th>Actions</th>
                         </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        @for (student of students; track student.id) {
+                            <tr>
+                                <td>{{ student.id | slice:0:8 }}...</td>
+                                <td>{{ student.lastName }}, {{ student.firstName }}</td>
+                                <td>{{ student.email }}</td>
+                                <td>{{ student.currentClass }}</td>                                 <td>
+                                    <span
+                                        class="badge"
+                                        [ngClass]="getStatusClass(student.status)"
+                                    >
+                                        {{ student.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button
+                                        class="btn btn-sm btn-info me-2"
+                                        [routerLink]="['/students/edit', student.id]"                                         title="Edit"
+                                    >
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button
+                                        class="btn btn-sm btn-danger"
+                                        (click)="deleteStudent(student.id)"
+                                        title="Delete"
+                                    >
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
 
-        <nav class="d-flex justify-content-center mt-4">
-            <ul class="pagination">
-                <li class="page-item" [class.disabled]="currentPage === 1">
-                    <button class="page-link" (click)="changePage(currentPage - 1)">Previous</button>
-                </li>
-                @for (page of pagesArray; track page) {
-                    <li class="page-item" [class.active]="currentPage === page">
-                        <button class="page-link" (click)="changePage(page)">{{ page }}</button>
-                    </li>
-                }
-                <li class="page-item" [class.disabled]="currentPage === totalPages || totalPages === 0">
-                    <button class="page-link" (click)="changePage(currentPage + 1)">Next</button>
-                </li>
-            </ul>
-        </nav>
-
-    } @else if (!loading && students.length === 0 && !errorMessage) {
-        <div class="alert alert-info text-center py-4" role="alert">
-            <i class="fas fa-info-circle me-2"></i>No students found matching your search criteria.
+                        @empty {
+                            <tr>
+                                <td colspan="6" class="text-center py-3">
+                                    <i class="fas fa-search-minus me-2"></i>No students found.
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            @if (totalRecords > pageSize) {                 <div class="card-footer d-flex justify-content-end">
+                    <button class="btn btn-sm btn-outline-secondary me-2" [disabled]="currentPage === 1" (click)="onPageChange(currentPage - 1)">Previous</button>
+                    <button class="btn btn-sm btn-outline-secondary" [disabled]="(currentPage * pageSize) >= totalRecords" (click)="onPageChange(currentPage + 1)">Next</button>
+                </div>
+            }
         </div>
     }
-
 </div>

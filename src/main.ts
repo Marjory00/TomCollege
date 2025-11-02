@@ -1,5 +1,8 @@
 // src/main.ts
 
+// FIX: Import Zone.js to resolve the NG0908 runtime error, common in modern Angular setups.
+import 'zone.js';
+
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app/app.component'; // Import the Standalone Component
 import { appConfig } from './app/app.config';

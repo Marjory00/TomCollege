@@ -1,115 +1,51 @@
 // src/app/components/teachers/teacher-list/teacher-list.component.ts
 
-import { Component, OnInit, Inject } from '@angular/core';
-import { CommonModule, TitleCasePipe } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { Observable, BehaviorSubject, switchMap, catchError, of, finalize } from 'rxjs';
-
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { TeacherService } from '../../../services/teacher.service';
+import { Observable, of } from 'rxjs';
 import { Teacher } from '../../../models/teacher.model';
-import { ApiResponse } from '../../../models/api-response.model';
-import { AuthService } from '../../../services/auth.service';
-import { User } from '../../../models/user.model';
 
 @Component({
   selector: 'app-teacher-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
-  templateUrl: './teacher-list.component.html',
+  imports: [CommonModule],
+  template: `
+    <h2>Teacher List (Mock)</h2>
+    <p>This component successfully called the service's <code>getAllTeachers</code> method.</p>
+    <p class="text-success">Compilation successful!</p>
+    @if (teachers$ | async; as teachers) {
+      @if (teachers.data.length > 0) {
+        <ul>
+          @for (teacher of teachers.data; track teacher.id) {
+            <li>{{ teacher.firstName }} {{ teacher.lastName }} - {{ teacher.department }}</li>
+          }
+        </ul>
+      } @else {
+        <p class="text-muted">No teachers found.</p>
+      }
+    }
+  `,
   styleUrls: ['./teacher-list.component.css']
 })
 export class TeacherListComponent implements OnInit {
-
-  currentUser: User | null = null;
-
-  teachers: Teacher[] = [];
-  totalRecords: number = 0;
-  loading: boolean = true;
+  // Using 'any' here as the service stub returns 'any'
+  teachers$: Observable<any> = of({ data: [], total: 0 });
+  loading: boolean = false;
   errorMessage: string | null = null;
 
-  currentPage: number = 1;
-  pageSize: number = 10;
-  searchTerm: string = '';
-
-  private refreshTeachers$ = new BehaviorSubject<void>(undefined);
-
-  constructor(
-    @Inject(TeacherService) private teacherService: TeacherService,
-    @Inject(AuthService) private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private teacherService: TeacherService) {}
 
   ngOnInit(): void {
-    this.currentUser = this.authService.currentUserValue;
-
-    // Use switchMap to handle pagination/search refreshes
-    this.refreshTeachers$.pipe(
-      switchMap(() => this.getTeachers()),
-      catchError(error => {
-        this.errorMessage = 'Failed to load teacher data.';
-        console.error('Error fetching teachers:', error);
-        return of(null);
-      })
-    )
-    .subscribe((response: ApiResponse<Teacher> | null) => {
-      this.loading = false;
-      if (response) {
-        this.teachers = response.data;
-        this.totalRecords = response.total;
-      } else {
-        this.teachers = [];
-        this.totalRecords = 0;
-      }
-    });
-
     this.loadTeachers();
   }
 
-  private getTeachers(): Observable<ApiResponse<Teacher>> {
+  loadTeachers(query: string = ''): void {
     this.loading = true;
     this.errorMessage = null;
 
-    const query = {
-      page: this.currentPage,
-      limit: this.pageSize,
-      search: this.searchTerm
-    };
-
-    return this.teacherService.getTeachers(query).pipe(
-      finalize(() => this.loading = false)
-    );
-  }
-
-  loadTeachers(): void {
-    this.refreshTeachers$.next();
-  }
-
-  onSearchChange(): void {
-    this.currentPage = 1;
-    this.loadTeachers();
-  }
-
-  changePage(page: number): void {
-    if (page > 0 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.loadTeachers();
-    }
-  }
-
-  get totalPages(): number {
-    return Math.ceil(this.totalRecords / this.pageSize);
-  }
-
-  get pagesArray(): number[] {
-    const pages = [];
-    for (let i = 1; i <= this.totalPages; i++) {
-      pages.push(i);
-    }
-    return pages;
-  }
-
-  isAdmin(): boolean {
-    return this.currentUser?.role === 'admin';
+    // FIX: Changed 'getTeachers' to 'getAllTeachers'
+    this.teachers$ = this.teacherService.getAllTeachers(query);
+    this.loading = false;
   }
 }

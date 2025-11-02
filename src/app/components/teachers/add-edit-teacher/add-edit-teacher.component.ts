@@ -3,16 +3,17 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common'; // FIXED: DatePipe import removed
+import { CommonModule } from '@angular/common';
 import { Subject, takeUntil, catchError, of, Observable, finalize } from 'rxjs';
 
 import { TeacherService } from '../../../services/teacher.service';
-import { Teacher, NewTeacherData } from '../../../models/teacher.model';
+// FIX: Use 'NewTeacher' instead of 'NewTeacherData' for type consistency
+import { Teacher, NewTeacher } from '../../../models/teacher.model';
 
 @Component({
   selector: 'app-add-edit-teacher',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule], // FIXED: DatePipe removed from imports array
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './add-edit-teacher.component.html',
   styleUrls: ['./add-edit-teacher.component.css']
 })
@@ -58,13 +59,16 @@ export class AddEditTeacherComponent implements OnInit, OnDestroy {
       email: ['', [Validators.required, Validators.email]],
       phone: [''],
       department: ['', Validators.required],
-      dateJoined: ['', Validators.required],
+      dateJoined: [new Date().toISOString().substring(0, 10), Validators.required],
       subject: ['', Validators.required],
+      // FIX: Added officeLocation to match the Teacher model's core fields
+      officeLocation: ['', Validators.required],
       password: ['', [this.isEditMode ? null : Validators.required, Validators.minLength(6)]],
       status: ['Active', Validators.required]
     });
 
     if (this.isEditMode) {
+      // If editing, the password field is disabled and its required validator is removed
       this.teacherForm.controls['password'].disable();
     }
   }
@@ -94,6 +98,7 @@ export class AddEditTeacherComponent implements OnInit, OnDestroy {
             department: teacher.department,
             dateJoined: formattedDate,
             subject: teacher.subject,
+            officeLocation: teacher.officeLocation, // Added missing field
             status: teacher.status
           });
         } else {
@@ -116,15 +121,24 @@ export class AddEditTeacherComponent implements OnInit, OnDestroy {
     }
 
     let saveOperation: Observable<Teacher | undefined>;
+    // Use getRawValue to include disabled (password) fields if needed, although we strip them later
     const formData = this.teacherForm.getRawValue();
 
     if (!this.isEditMode) {
-      const createData: NewTeacherData = {
-        ...formData,
-        dateJoined: new Date(formData.dateJoined).toISOString(),
-        role: 'teacher',
+      // FIX: Changed type to 'NewTeacher'
+      const createData: NewTeacher = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password, // Password is required for creation
+        phone: formData.phone,
+        department: formData.department,
+        subject: formData.subject,
+        officeLocation: formData.officeLocation,
+        hireDate: new Date(formData.dateJoined).toISOString(), // Map dateJoined to hireDate
       };
-      saveOperation = this.teacherService.addTeacher(createData);
+      // FIX: Changed method name to 'createTeacher'
+      saveOperation = this.teacherService.createTeacher(createData as NewTeacher);
     } else {
       const updateData: Partial<Teacher> = {
         firstName: formData.firstName,
@@ -134,6 +148,7 @@ export class AddEditTeacherComponent implements OnInit, OnDestroy {
         department: formData.department,
         dateJoined: new Date(formData.dateJoined).toISOString(),
         subject: formData.subject,
+        officeLocation: formData.officeLocation,
         status: formData.status
       };
       saveOperation = this.teacherService.updateTeacher(this.teacherId!, updateData);
@@ -151,7 +166,8 @@ export class AddEditTeacherComponent implements OnInit, OnDestroy {
       .subscribe((result: Teacher | undefined) => {
         if (result) {
           this.successMessage = this.isEditMode ? 'Teacher updated successfully!' : 'Teacher added successfully!';
-          this.router.navigate(['/teachers']);
+          // Note: Using setTimeout ensures the message is visible for a moment before redirect
+          setTimeout(() => this.router.navigate(['/teachers']), 1000);
         }
       });
   }

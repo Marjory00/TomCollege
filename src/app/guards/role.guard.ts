@@ -1,35 +1,19 @@
 // src/app/guards/role.guard.ts
 
-import { Injectable, inject } from '@angular/core';
-import { CanActivateFn, ActivatedRouteSnapshot, Router } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
+import { inject } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 
-@Injectable({ providedIn: 'root' })
-export class RoleGuard {
-  constructor(private authService: AuthService, private router: Router) {}
+export const RoleGuard: CanActivateFn = (route, state) => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
 
-  canActivate: CanActivateFn = (route: ActivatedRouteSnapshot) => {
-    const authService = inject(AuthService);
-    const router = inject(Router);
+  const expectedRoles = route.data?.['roles'];
 
-    const requiredRoles = route.data['allowedRoles'] as Array<string>;
+  if (authService.hasRequiredRole(expectedRoles)) {
+    return true;
+  }
 
-    if (!requiredRoles || requiredRoles.length === 0) {
-      // If no roles are specified, allow access
-      return true;
-    }
-
-    if (authService.hasRequiredRole(requiredRoles)) {
-      return true;
-    }
-
-    // Role is not permitted, redirect to dashboard or access denied page
-    router.navigate(['/dashboard']);
-    alert('Access Denied: You do not have the required permissions.');
-    return false;
-  };
-}
-
-export const canActivateRole: CanActivateFn = (route, state) => {
-    return inject(RoleGuard).canActivate(route, state);
+  // Role not allowed, redirect to unauthorized page
+  return router.createUrlTree(['/unauthorized']);
 };

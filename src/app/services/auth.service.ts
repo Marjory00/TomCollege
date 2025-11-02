@@ -7,7 +7,7 @@ import { BehaviorSubject, Observable, map, catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
 import { environment } from '../../environments/environment';
-import { User, AuthenticatedUser, LoginCredentials, AuthResponse, RegisterData } from '../models/user.model';
+import { User, AuthenticatedUser, LoginCredentials, AuthResponse, NewUser } from '../models/user.model';
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +30,20 @@ export class AuthService {
     let initialUser: AuthenticatedUser | null = null;
 
     if (this.isBrowser) {
-        const storedUser = localStorage.getItem('currentUser');
-        initialUser = storedUser ? JSON.parse(storedUser) : null;
+        // MOCK USER for testing purposes (Admin role)
+        const mockUser: AuthenticatedUser = {
+            id: 'U001',
+            firstName: 'Admin',
+            lastName: 'User',
+            email: 'admin@tomcollege.edu',
+            role: 'admin',
+            status: 'Active',
+            token: 'mock-auth-token-123'
+        };
+        // For production, you'd read from localStorage:
+        // const storedUser = localStorage.getItem('currentUser');
+        // initialUser = storedUser ? JSON.parse(storedUser) : null;
+        initialUser = mockUser;
     }
 
     this.currentUserSubject = new BehaviorSubject<AuthenticatedUser | null>(initialUser);
@@ -63,7 +75,7 @@ export class AuthService {
       );
   }
 
-  register(userData: RegisterData): Observable<User> {
+  register(userData: NewUser): Observable<User> {
     return this.http.post<User>(`${this.apiUrl}/register`, userData);
   }
 

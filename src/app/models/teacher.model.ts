@@ -1,20 +1,29 @@
 // src/app/models/teacher.model.ts
 
-import { User, NewUser } from './user.model';
+import { User } from './user.model';
+// Assuming User and NewUser (from user.model.ts) are correctly structured:
 
-// Specific status types for a Teacher
-export type TeacherStatus = 'Active' | 'Suspended' | 'On Leave' | 'Retired';
-
-export interface Teacher extends Omit<User, 'status'> {
-    role: 'teacher';
+// --- Teacher Interface (extends User) ---
+export interface Teacher extends User {
     department: string;
-    subject: string;
-    status: TeacherStatus;
+    subject?: string;
+    hireDate: string; // The date the teacher was hired
+    officeLocation: string;
+    adviseeIds: string[]; // List of student IDs they advise
 }
 
-export interface NewTeacherData extends Omit<NewUser, 'role'> {
-    role: 'teacher';
+// --- NewTeacher Interface (for creation requests) ---
+export interface NewTeacher {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+
+    // This property is necessary because the component form includes it
+    phone?: string;
+
     department: string;
-    subject: string;
-    status: TeacherStatus;
+    subject?: string;
+    officeLocation: string;
+    hireDate: string; // Used instead of dateJoined for initial creation
 }

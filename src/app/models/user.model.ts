@@ -9,8 +9,8 @@ export interface User {
     email: string;
     phone?: string;
     role: 'admin' | 'teacher' | 'student';
-    // Status is broad enough to cover all derived types
     status: 'Active' | 'Inactive' | 'Suspended' | 'On Leave' | 'Retired' | 'Graduated' | 'Withdrawn' | 'On Probation';
+    dateJoined?: string;
 }
 
 /**
@@ -25,10 +25,9 @@ export interface NewUser {
     firstName: string;
     lastName: string;
     email: string;
-    password?: string;
+    password: string;
     phone?: string;
     role: 'admin' | 'teacher' | 'student';
-    dateJoined: string;
 }
 
 /**
@@ -38,11 +37,6 @@ export interface LoginCredentials {
     email: string;
     password: string;
 }
-
-/**
- * Data model for user registration.
- */
-export interface RegisterData extends NewUser {}
 
 /**
  * Common API response after successful login/register.

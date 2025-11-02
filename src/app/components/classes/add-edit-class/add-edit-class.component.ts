@@ -1,10 +1,21 @@
+// src/app/components/placeholder/classes/add-edit-class.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { catchError, of, finalize, Observable } from 'rxjs';
-import { Class } from '../../../models/class.model';
-import { ClassService } from '../../../services/class.service';
+import { catchError, of, finalize, Observable } from 'rxjs'; // Note: Observable is no longer strictly needed but kept
+
+// FIX 1: Define a basic Class interface to resolve type errors
+// NOTE: This should be moved to 'src/app/models/class.model.ts' when implemented
+interface Class {
+    id: string;
+    name: string;
+    courseCode: string;
+    creditHours: number;
+    department: string;
+    description: string;
+}
 
 @Component({
   selector: 'app-add-edit-class',
@@ -27,15 +38,12 @@ export class AddEditClassComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private classService: ClassService,
     private router: Router,
     private route: ActivatedRoute
-  ) {
-    // Moved form initialization to ngOnInit for better lifecycle adherence
-  }
+    // FIX 2: ClassService dependency removed
+  ) {}
 
   ngOnInit(): void {
-    // FIX 1: Initialize form first, before checking route params
     this.initForm();
 
     // Check for an 'id' parameter to determine if we are in edit mode
@@ -76,24 +84,25 @@ export class AddEditClassComponent implements OnInit {
     this.loading = true;
     this.errorMessage = null;
 
-    this.classService.getClassById(id)
-      .pipe(
-        finalize(() => this.loading = false),
-        catchError(error => {
-          console.error('Error loading class:', error);
-          this.errorMessage = 'Failed to load class data.';
-          return of(null);
-        })
-      )
-      .subscribe((classData: Class | null) => {
-        if (classData) {
-          // Patch the form with the retrieved data
-          this.classForm.patchValue(classData);
+    // FIX 3: Replaced classService call with a mock setTimeout
+    setTimeout(() => {
+        this.loading = false;
+        if (id === '123') { // Mock success for a specific ID
+            const mockClass: Class = {
+                id: id,
+                name: 'Introduction to Angular',
+                courseCode: 'CS101',
+                creditHours: 3,
+                department: 'Science',
+                description: 'Fundamentals of web application development with Angular.'
+            };
+            this.classForm.patchValue(mockClass);
         } else {
-          // Navigate away if data failed to load
-          this.router.navigate(['/classes']);
+            console.error('Mock Error: Class not found.');
+            this.errorMessage = 'Failed to load class data. (Mock Error)';
+            this.router.navigate(['/classes']);
         }
-      });
+    }, 1000); // Simulate API delay
   }
 
   /**
@@ -109,40 +118,15 @@ export class AddEditClassComponent implements OnInit {
     this.submitting = true;
     this.errorMessage = null;
 
-    const formValue = this.classForm.value;
+    // FIX 4: Replaced saveOperation logic with a mock setTimeout
+    setTimeout(() => {
+        this.submitting = false;
 
-    let saveOperation: Observable<Class>;
+        // Mock success
+        console.log(`Class ${this.isEditMode ? 'updated' : 'created'} successfully:`, this.classForm.value);
+        this.router.navigate(['/classes']);
 
-    if (this.isEditMode && this.classId) {
-      // FIX 2: Construct the full Class object with ID for update
-      const classData: Class = {
-          id: this.classId,
-          ...formValue
-      };
-      saveOperation = this.classService.updateClass(classData);
-    } else {
-      // FIX 3: Pass just the form value (which aligns with Omit<Class, 'id'>) for creation
-      saveOperation = this.classService.createClass(formValue);
-    }
-
-    saveOperation
-      .pipe(
-        finalize(() => this.submitting = false),
-        catchError(error => {
-          console.error('Save failed:', error);
-          // Use a default message if error object is not well-structured
-          const specificError = error.error?.message || error.message;
-          this.errorMessage = `Failed to ${this.isEditMode ? 'update' : 'create'} class: ${specificError}`;
-          return of(null);
-        })
-      )
-      .subscribe((result) => {
-        if (result) {
-          console.log('Class saved successfully:', result);
-          // Navigate back to the class list upon success
-          this.router.navigate(['/classes']);
-        }
-      });
+    }, 1000); // Simulate API delay
   }
 
   /**

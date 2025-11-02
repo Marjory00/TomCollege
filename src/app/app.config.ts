@@ -1,41 +1,41 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZonelessChangeDetection, importProvidersFrom } from '@angular/core';
+// src/app/app.config.ts
+
+import { ApplicationConfig, provideZoneChangeDetection, importProvidersFrom } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms'; // Required for forms
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { routes } from './app.routes';
-import { jwtInterceptor } from './interceptors/jwt.interceptor';
-import { AuthService } from './services/auth.service'; // CRITICAL: Import the AuthService
-// NOTE: Assuming other services like ScheduleService, etc., will be added here or use providedIn: 'root'
+
+// Import Services and Guards (Ensuring all dependencies are provided)
+import { AuthService } from './services/auth.service';
+import { StudentService } from './services/student.service';
+import { TeacherService } from './services/teacher.service';
+import { AuthGuard } from './guards/auth.guard';
+import { RoleGuard } from './guards/role.guard';
 
 export const appConfig: ApplicationConfig = {
-    providers: [
-        // Core/Advanced Providers
-        provideBrowserGlobalErrorListeners(),
-        provideClientHydration(withEventReplay()),
-        // NOTE: Zoneless change detection is included but should be managed carefully.
-        // It's generally best to keep it here if intended.
-        provideZonelessChangeDetection(),
+  providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
 
-        // 1. Routing setup
-        provideRouter(routes),
+    // 1. ROUTING
+    provideRouter(routes),
 
-        // 2. HTTP Client and Functional Interceptor Setup
-        provideHttpClient(
-            withInterceptors([
-                jwtInterceptor
-            ])
-        ),
+    // 2. HTTP CLIENT (CRITICAL FIX)
+    provideHttpClient(),
 
-        // 3. Application Services
-        // This explicitly registers AuthService, guaranteeing its availability
-        // throughout the application and resolving the 'No suitable injection token' error.
-        AuthService,
+    // 3. FORMS
+    importProvidersFrom(
+      FormsModule,
+      ReactiveFormsModule
+    ),
 
-        // 4. Forms Modules Setup
-        // This makes standard Angular modules, which are often needed by external libraries
-        // or common built-in components, available globally in the standalone environment.
-        importProvidersFrom(FormsModule, ReactiveFormsModule),
-    ]
+    // 4. APPLICATION SERVICES (Provided for DI)
+    AuthService,
+    StudentService,
+    TeacherService,
+    // 5. GUARDS (Provided for DI)
+    AuthGuard,
+    RoleGuard,
+  ]
 };

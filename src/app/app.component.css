@@ -1,15 +1,21 @@
 /* --- Global Reset and Base Styles --- */
-/* (Assuming :host and body styles are now correctly managed in global styles) */
-
-/* --- Main Layout Container --- */
-
-.main-app-container {
-    display: flex;
-    height: 100vh; /* Use height: 100vh to ensure it fills the viewport */
-    /* Removed background-color here as it's better placed in .content-area */
+:host {
+    display: block;
+    height: 100vh;
 }
 
-/* --- Sidebar Navigation --- */
+/* --- Main Layout Container (DASHBOARD) --- */
+.main-app-container {
+    display: flex;
+    /* Shifts the entire container down by the Navbar height */
+    position: relative;
+    top: 60px;
+
+    /* Ensures the container fills the height remaining below the Navbar */
+    height: calc(100vh - 60px);
+}
+
+/* --- Sidebar Navigation (Remains fixed) --- */
 
 .sidebar {
     width: 250px;
@@ -20,8 +26,9 @@
     flex-direction: column;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
     z-index: 100;
-    position: fixed; /* Correctly fixed */
-    height: 100vh;
+    position: fixed;
+    /* Adjust sidebar height to match the main-app-container height */
+    height: calc(100vh - 60px);
 }
 
 .logo {
@@ -29,7 +36,6 @@
     margin-bottom: 30px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     padding-bottom: 15px;
-    /* Ensure flex alignment is set if logo-icon and logo-text are styled this way */
     display: flex;
     align-items: center;
 }
@@ -40,7 +46,7 @@
     font-weight: 600;
 }
 
-/* Nav Links Styling (Correctly handled in sidebar.component.css, but kept here for completeness) */
+/* Nav Links Styling (Correctly handled in sidebar.component.css, but kept here for clarity) */
 .nav-links {
     list-style: none;
     padding: 0;
@@ -71,7 +77,6 @@
 }
 
 /* --- User Footer and Logout (Layout structure remains correct) --- */
-
 .user-footer {
     padding: 20px;
     text-align: center;
@@ -99,46 +104,52 @@
     background-color: #c0392b;
 }
 
-/* --- Main Content Area (FIXED FOR NAVBAR ISSUE) --- */
+/* --- Dashboard Content Area (FIXED CLASS NAME and vertical stacking) --- */
 
-.content-area {
-    /* Critical fix: Stacks Navbar and Router View vertically */
+.content-area-dashboard { /* <-- FIXED CLASS NAME */
+    /* Critical fix: Stacks content vertically */
     display: flex;
     flex-direction: column;
 
-    /* Ensure content area starts after the fixed sidebar */
+    /* Offset for fixed sidebar */
     margin-left: 250px;
 
     /* Takes up all remaining space */
     flex-grow: 1;
 
-    /* Sets the background for the entire dashboard content area */
+    /* Sets the dashboard background */
     background-color: #f4f7f6;
 
-    /* Allows internal scrolling of the content, if necessary */
+    /* Ensures content scrolls within this container */
     overflow-y: auto;
     overflow-x: hidden;
+
+    /* Remove padding: it's added in .router-view */
 }
 
-/* FIX: The router-view must take up the remaining vertical space */
+/* FIX: The router-view takes up the remaining vertical space */
 .router-view {
     padding: 30px; /* Applies padding to the actual dashboard/page content */
     flex-grow: 1;
 }
 
-/* --- Public Website Layout Wrapper (Renamed from previous steps) --- */
+/* --- Public Website Layout Wrapper (FIXED FOR GLOBAL NAVBAR) --- */
 
 .public-layout-wrapper {
-    min-height: 100vh;
     width: 100%;
-    /* No align-items/justify-content so content flows naturally */
-    background-color: white; /* Use a clean background for public site */
+    background-color: white;
+
+    /* Shifts content down below the fixed global navbar */
+    margin-top: 60px;
+
+    /* Ensures the content container is at least the remaining height of the viewport */
+    min-height: calc(100vh - 60px);
 }
 
-/* If you need specific styling for the login page, you can target it like this: */
+/* ... existing public-layout-wrapper app-login styles ... */
 .public-layout-wrapper app-login {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    min-height: calc(100vh - 60px); /* Adjust height for navbar */
 }

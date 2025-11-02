@@ -6,7 +6,7 @@ import { filter } from 'rxjs/operators';
 // Import the standalone layout components
 import { NavbarComponent } from './features/navbar/navbar.component';
 import { SidebarComponent } from './features/sidebar/sidebar.component';
-import { FooterComponent } from './public/footer/footer.component'; // <-- FIX: Added FooterComponent
+import { FooterComponent } from './public/footer/footer.component';
 
 @Component({
   selector: 'app-root',
@@ -16,16 +16,18 @@ import { FooterComponent } from './public/footer/footer.component'; // <-- FIX: 
     RouterOutlet,
     NavbarComponent,
     SidebarComponent,
-    FooterComponent // <-- FIX: Added Footer to imports
+    FooterComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   title = 'TomCollege';
+
+  // Controls the visibility of the Sidebar, which defines the dashboard layout
   showDashboardLayout = false;
 
-  // FIX: Updated to include the new public pages (/calendar, /contact)
+  // Updated to include all new public pages that should NOT have the Sidebar
   private publicRoutes: string[] = ['/', '/login', '/admissions', '/faculty', '/calendar', '/contact', '/privacy'];
 
   constructor(private router: Router) {
@@ -35,20 +37,12 @@ export class AppComponent {
     ).subscribe((event) => {
       const currentUrl = (event as NavigationEnd).urlAfterRedirects;
 
-      // Check for exact match with simple public routes (e.g., '/', '/login')
-      const isPublicRoute = this.publicRoutes.some(route => currentUrl === route);
-
-      // Determine the layout state
+      // The layout logic simplifies to: ONLY show the dashboard layout if the URL starts with '/dashboard'
       if (currentUrl.startsWith('/dashboard')) {
-        // Show dashboard layout for /dashboard and all its children
         this.showDashboardLayout = true;
-      } else if (isPublicRoute) {
-        // Hide dashboard layout for specific public pages
-        this.showDashboardLayout = false;
       } else {
-         // This covers the catch-all wildcard or any public route we missed
-         // Also useful for public pages with parameters (though not used here)
-         this.showDashboardLayout = false;
+        // Hide the sidebar for all public, login, and simple root routes
+        this.showDashboardLayout = false;
       }
     });
   }

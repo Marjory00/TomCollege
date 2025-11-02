@@ -123,13 +123,6 @@ npm start
 ng serve
 # The frontend will run on http://localhost:4200
 
-🔑 Credentials for Testing
-
-```
-Feature	URL	Username	Password
-Login Page	http://localhost:4200/login	admin	password
-```
-
 📚 API Documentation
 
 The mock backend exposes the following REST endpoints using the data.json file:

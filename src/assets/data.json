@@ -1,0 +1,30 @@
+
+{
+  "dashboard": {
+    "totalStudents": 4500,
+    "activeCourses": 78,
+    "recentEnrollments": 120,
+    "currentGPAAverage": 3.45,
+    "cardData": [
+      { "title": "Total Students", "value": "4,500", "icon": "person" },
+      { "title": "Active Courses", "value": "78", "icon": "book" },
+      { "title": "New Enrollments", "value": "120", "icon": "group" },
+      { "title": "Avg GPA", "value": "3.45", "icon": "star" }
+    ],
+    "tableData": [
+        { "id": 1, "name": "John Doe", "course": "CS101", "grade": "A" },
+        { "id": 2, "name": "Jane Smith", "course": "MA202", "grade": "B+" },
+        { "id": 3, "name": "Peter Jones", "course": "PH301", "grade": "A-" }
+    ]
+  },
+  "students": [
+    { "id": 1001, "name": "Alice Johnson", "major": "Computer Science", "gpa": 3.8 },
+    { "id": 1002, "name": "Bob Williams", "major": "Business", "gpa": 3.2 },
+    { "id": 1003, "name": "Charlie Brown", "major": "Physics", "gpa": 3.9 }
+  ],
+  "courses": [
+    { "code": "CS101", "title": "Introduction to Programming", "credits": 3, "department": "CS" },
+    { "code": "MA202", "title": "Calculus II", "credits": 4, "department": "Math" },
+    { "code": "PH301", "title": "Quantum Mechanics", "credits": 4, "department": "Physics" }
+  ]
+}

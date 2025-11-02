@@ -1,25 +1,23 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { Title } from '@angular/platform-browser';
+
+// Import the standalone layout components
+import { NavbarComponent } from './features/navbar/navbar.component';
+import { SidebarComponent } from './features/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-root',
-  standalone: true,
-  imports: [CommonModule, RouterOutlet],
-  template: `
-    <div class="container-fluid">
-        <h1 class="mt-4 mb-4 text-primary">{{ title }}</h1>
-        <hr>
-        <router-outlet></router-outlet>
-    </div>
-  `,
-  styles: []
+  standalone: true, // Declare as standalone
+  imports: [
+    CommonModule,
+    RouterOutlet, // Required for routing functionality
+    NavbarComponent,
+    SidebarComponent
+  ],
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'TomCollege Application';
-
-  constructor(private titleService: Title) {
-    this.titleService.setTitle(this.title);
-  }
+  title = 'TomCollege Dashboard';
 }

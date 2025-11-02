@@ -1,50 +1,296 @@
-.admissions-page {
-    background-color: white;
-    padding: 50px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    max-width: 800px;
-    margin: 40px auto;
-}
-
-.admissions-page h2 {
-    color: #3498db;
-    margin-bottom: 20px;
-    border-bottom: 2px solid #ecf0f1;
-    padding-bottom: 10px;
-}
-
-.admissions-page p {
-    font-size: 1.1em;
-    color: #555;
-    margin-bottom: 30px;
-}
-
-.admissions-page ul {
-    list-style-type: none;
-    padding: 0;
-    margin-bottom: 30px;
-}
-
-.admissions-page ul li {
-    background-color: #f9f9f9;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-left: 5px solid #f1c40f; /* Gold accent */
-    font-weight: 500;
-}
-
-.btn-primary {
-    background-color: #3498db;
+/* --- Page Header/Hero --- */
+.admissions-header {
+    /* Using a dark blue gradient overlay on a generic background image for professionalism */
+    /* Note: The image path should be verified relative to your Angular project structure. */
+    background: linear-gradient(rgba(26, 35, 126, 0.8), rgba(26, 35, 126, 0.8)), url('/assets/images/admissions-bg.jpg') no-repeat center center/cover;
     color: white;
-    border: none;
-    padding: 12px 25px;
+    padding: 80px 20px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.admissions-header h1 {
+    font-size: 3em;
+    margin-bottom: 10px;
+}
+
+.admissions-header p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* --- Primary Button (Consistent gold accent button) --- */
+.btn-primary {
+    display: inline-block;
+    padding: 12px 30px;
     border-radius: 6px;
-    font-size: 1em;
+    text-decoration: none;
+    font-weight: 600;
+    background-color: #f1c40f; /* Gold accent */
+    color: #2c3e50;
+    transition: background-color 0.3s, transform 0.2s;
     cursor: pointer;
-    transition: background-color 0.3s;
 }
 
 .btn-primary:hover {
-    background-color: #2980b9;
+    background-color: #e6b800;
+    transform: translateY(-2px);
+}
+
+/* --- Application Process Section --- */
+.admissions-process-section {
+    padding: 30px 20px 60px;
+    text-align: center;
+    background-color: #f4f7f6; /* Light background for separation */
+}
+
+.admissions-process-section h2 {
+    color: #2c3e50;
+    margin-bottom: 40px;
+    font-size: 2em;
+}
+
+.process-steps {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.step {
+    flex-basis: 30%;
+    min-width: 250px;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.step-icon {
+    font-size: 40px;
+    color: #3498db; /* Blue accent */
+    margin-bottom: 10px;
+}
+
+.step h3 {
+    font-size: 1.3em;
+    margin-top: 0;
+}
+
+/* --- Deadlines & Financial Aid Section --- */
+.deadlines-section {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 50px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.deadlines-card, .quick-links-card {
+    flex: 1;
+    min-width: 300px;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: left;
+}
+
+.deadlines-card {
+    background-color: #e6f7ff;
+    border-left: 5px solid #3498db;
+}
+
+.quick-links-card {
+    background-color: #f1c40f;
+    color: #2c3e50;
+    display: flex; /* Using flex to align content */
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.deadlines-card h3, .quick-links-card h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.deadline-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.deadline-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dashed rgba(52, 152, 219, 0.3);
+}
+
+.deadline-list li:last-child {
+    border-bottom: none;
+}
+
+.deadline-list .type {
+    font-weight: 600;
+}
+
+.deadline-list .status {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: 700;
+}
+
+.deadline-list .upcoming .status {
+    background-color: #3498db;
+    color: white;
+}
+
+.deadline-list .deadline .status {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.deadline-list .open .status {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.link-more {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.link-more:hover {
+    text-decoration: underline;
+}
+
+.quick-links-card p {
+    margin-bottom: 25px;
+}
+
+/* Secondary Button (Dark button for contrast in Gold Card) */
+.btn-secondary {
+    background-color: #2c3e50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    transition: background-color 0.3s, transform 0.2s;
+    text-align: center;
+}
+
+.quick-links-card .btn-secondary:hover {
+    background-color: #3b506b;
+    transform: translateY(-2px);
+}
+
+/* --- Applicant Paths Section --- */
+.applicant-paths-section {
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.applicant-paths-section h2 {
+    color: #2c3e50;
+    margin-bottom: 40px;
+    font-size: 2em;
+}
+
+.paths-grid {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    max-width: 1200px;
+    margin: 0 auto;
+    flex-wrap: wrap;
+}
+
+.path-card {
+    flex-basis: 22%;
+    min-width: 250px;
+    padding: 30px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.path-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.path-card h3 {
+    font-size: 1.6em;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.path-card p {
+    color: #7f8c8d;
+    min-height: 70px;
+}
+
+.path-link {
+    display: inline-block;
+    font-weight: 600;
+    text-decoration: none;
+    margin-top: 15px;
+}
+
+/* Unique colors for paths */
+.path-card.undergraduate { background-color: #f7f9fc; }
+.path-card.undergraduate .path-link { color: #3498db; }
+
+.path-card.graduate { background-color: #e8f8f8; }
+.path-card.graduate .path-link { color: #1abc9c; }
+
+.path-card.transfer { background-color: #fff9e6; }
+.path-card.transfer .path-link { color: #f1c40f; }
+
+.path-card.international { background-color: #f5e6ff; }
+.path-card.international .path-link { color: #9b59b6; }
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 992px) {
+    .deadlines-section {
+        flex-direction: column;
+        align-items: center;
+    }
+    .deadlines-card, .quick-links-card {
+        min-width: 80%;
+    }
+    .paths-grid {
+        gap: 20px;
+    }
+    .path-card {
+        flex-basis: 45%; /* Two cards per row */
+        min-width: 300px;
+    }
+}
+
+@media (max-width: 600px) {
+    .admissions-header h1 {
+        font-size: 2.2em;
+    }
+    .process-steps {
+        flex-direction: column;
+    }
+    .step {
+        min-width: 100%;
+    }
+    .path-card {
+        flex-basis: 100%; /* Stack all cards */
+    }
 }

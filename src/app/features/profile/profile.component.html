@@ -1,0 +1,32 @@
+<div class="profile-page">
+  <h2>👤 User Profile</h2>
+  <p class="profile-description">Manage your account details and information.</p>
+
+  <ng-container *ngIf="profile; else loading">
+    <form class="profile-form" (ngSubmit)="saveProfile()">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input id="name" type="text" [(ngModel)]="profile.name" name="name" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input id="email" type="email" [(ngModel)]="profile.email" name="email" required>
+      </div>
+      <div class="form-group">
+        <label for="role">Role</label>
+        <input id="role" type="text" [value]="profile.role" disabled>
+      </div>
+      <div class="form-group">
+        <label for="dept">Department</label>
+        <input id="dept" type="text" [value]="profile.department" disabled>
+      </div>
+      <button type="submit" class="btn-primary">Save Changes</button>
+    </form>
+  </ng-container>
+</div>
+
+<ng-template #loading>
+  <div class="loading-message">
+    <span class="material-icons loading-spinner">loop</span> Loading profile data...
+  </div>
+</ng-template>

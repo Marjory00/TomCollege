@@ -1,5 +1,6 @@
 /* --- Global Reset and Base Styles --- */
 :host {
+    /* Ensures the component takes full height of the viewport */
     display: block;
     height: 100vh;
 }
@@ -7,16 +8,19 @@
 /* --- Main Layout Container (DASHBOARD) --- */
 .main-app-container {
     display: flex;
-    /* Shifts the entire container down by the Navbar height */
-    position: relative;
-    top: 60px;
 
-    /* Ensures the container fills the height remaining below the Navbar */
-    height: calc(100vh - 60px);
+    /* FIX APPLIED: Push the content down below the 60px fixed Navbar */
+    padding-top: 60px;
+
+    /* Ensures the container fills the entire viewport height from top to bottom */
+    height: 100vh;
+
+    /* Ensures the entire container is above other base elements */
+    position: relative;
+    z-index: 1;
 }
 
 /* --- Sidebar Navigation (Remains fixed) --- */
-
 .sidebar {
     width: 250px;
     background-color: #2c3e50;
@@ -27,7 +31,9 @@
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
     z-index: 100;
     position: fixed;
-    /* Adjust sidebar height to match the main-app-container height */
+
+    /* FIX APPLIED: Anchor the sidebar directly below the Navbar and take the remaining height */
+    top: 60px;
     height: calc(100vh - 60px);
 }
 
@@ -46,7 +52,7 @@
     font-weight: 600;
 }
 
-/* Nav Links Styling (Correctly handled in sidebar.component.css, but kept here for clarity) */
+/* Nav Links Styling */
 .nav-links {
     list-style: none;
     padding: 0;
@@ -76,7 +82,7 @@
     border-left: 5px solid #f1c40f;
 }
 
-/* --- User Footer and Logout (Layout structure remains correct) --- */
+/* --- User Footer and Logout --- */
 .user-footer {
     padding: 20px;
     text-align: center;
@@ -104,9 +110,8 @@
     background-color: #c0392b;
 }
 
-/* --- Dashboard Content Area (FIXED CLASS NAME and vertical stacking) --- */
-
-.content-area-dashboard { /* <-- FIXED CLASS NAME */
+/* --- Dashboard Content Area --- */
+.content-area-dashboard {
     /* Critical fix: Stacks content vertically */
     display: flex;
     flex-direction: column;
@@ -123,8 +128,6 @@
     /* Ensures content scrolls within this container */
     overflow-y: auto;
     overflow-x: hidden;
-
-    /* Remove padding: it's added in .router-view */
 }
 
 /* FIX: The router-view takes up the remaining vertical space */
@@ -133,8 +136,7 @@
     flex-grow: 1;
 }
 
-/* --- Public Website Layout Wrapper (FIXED FOR GLOBAL NAVBAR) --- */
-
+/* --- Public Website Layout Wrapper --- */
 .public-layout-wrapper {
     width: 100%;
     background-color: white;

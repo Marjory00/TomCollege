@@ -1,34 +1,286 @@
+/* --- Navbar Container --- */
 .navbar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 20px;
-    height: 60px;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 0 24px;
+    height: 64px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10000;
 }
 
-.navbar-brand h1 {
-    font-size: 1.2em;
-    font-weight: 400;
-    color: #555;
-}
-
-.navbar-links a {
-    text-decoration: none;
-    color: #3498db;
+/* --- Logo --- */
+.logo-link {
     display: flex;
     align-items: center;
-    padding: 8px 12px;
-    border-radius: 4px;
+    text-decoration: none;
+    color: #2c3e50;
+    font-weight: 700;
+    font-size: 1.25rem;
+    transition: color .25s ease;
+}
+
+.logo-link:hover {
+    color: #3498db;
+}
+
+.logo-img {
+    height: 48px;
+    margin-right: 10px;
+    border-radius: 6px;
+}
+
+.logo-text {
+    font-size: 1.4rem;
+}
+
+/* --- Right Elements --- */
+.nav-elements {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    height: 100%;
+}
+
+/* --- Shared Navigation Link Styling --- */
+.nav-link {
+    text-decoration: none;
+    transition: background .25s ease, color .25s ease, transform .2s ease;
+}
+
+/* --- Main Site Link Button (Reference Style) --- */
+.btn-main-site {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    color: #3498db;
+    background: #f2f8ff;
+    border-radius: 8px;
+}
+
+.btn-main-site:hover {
+    background: #d9ecff;
+    color: #1b6fbf;
+    transform: translateY(-1px);
+}
+
+/* --- Notifications Icon (Now a button) --- */
+.notifications {
+    position: relative;
+    cursor: pointer;
+    /* FIX: Added relative position to correctly anchor the absolute dropdown */
+    padding: 8px;
+    border-radius: 50%;
+    transition: background .25s ease;
+    border: none; /* Buttons often have default borders, remove them */
+    background: transparent; /* Ensure button doesn't have a background unless hovered */
+    z-index: 10; /* Ensure it's above other elements in the nav-elements flex container */
+}
+
+.notifications:hover {
+    background: #f5f7fa;
+}
+
+.notifications .material-icons {
+    font-size: 26px;
+    color: #2c3e50;
+}
+
+.badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: #e74c3c;
+    color: #fff;
+    font-size: .7rem;
+    padding: 2px 6px;
+    border-radius: 50%;
+}
+
+/* --- Profile Menu Container (Text Link) --- */
+.profile-menu {
+    display: flex;
+    align-items: center;
+}
+
+/* --- User Profile Text Link Style --- */
+.btn-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    color: #2c3e50;
+    background: transparent;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background .25s ease, color .25s ease;
+}
+
+.btn-user-profile:hover {
+    background: #f0f0f0;
+    color: #3498db;
+}
+
+.btn-user-profile .material-icons {
+    font-size: 20px;
+}
+
+
+/* --- Active Link (Angular routerLinkActive) --- */
+.btn-main-site.router-link-active {
+    background: #3498db;
+    color: #fff;
+    transform: none;
+}
+
+/* Style for active User Profile link */
+.btn-user-profile.router-link-active {
+    background: #eef2f7;
+    color: #3498db;
+}
+
+/* ---------------------------------------------------------------------- */
+/* 🔔 NEW: NOTIFICATIONS DROPDOWN STYLES (REQUIRED FIX) 🔔 */
+/* ---------------------------------------------------------------------- */
+
+.notifications-dropdown {
+    /* Absolute position relative to the parent button/div */
+    position: absolute;
+    top: 100%; /* Position below the navbar/button */
+    right: 0;
+
+    /* Style and Size */
+    width: 320px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000; /* Must be high to cover all content */
+    overflow: hidden;
+    margin-top: 10px;
+    border: 1px solid #e0e6ed;
+}
+
+.dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f2f5;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.dropdown-header .mark-read {
+    font-size: 0.85em;
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.dropdown-header .mark-read:hover {
+    color: #2980b9;
+}
+
+.notification-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.notification-item {
+    display: flex;
+    padding: 12px 15px;
+    border-bottom: 1px solid #f0f2f5;
+    cursor: pointer;
     transition: background-color 0.2s;
 }
 
-.navbar-links a:hover {
-    background-color: #f0f0f0;
+.notification-item:last-child {
+    border-bottom: none;
 }
 
-.navbar-links .material-icons {
-    margin-right: 5px;
+.notification-item:hover {
+    background-color: #f7f9fc;
+}
+
+.notification-item.unread {
+    background-color: #f2f8ff; /* Highlight unread items */
+    border-left: 3px solid #3498db;
+    padding-left: 12px;
+}
+
+.item-icon {
     font-size: 20px;
+    margin-right: 10px;
+    color: #3498db;
+}
+
+.item-content {
+    flex-grow: 1;
+}
+
+.item-text {
+    margin: 0;
+    font-size: 0.9em;
+    line-height: 1.4;
+    color: #34495e;
+}
+
+.item-time {
+    display: block;
+    font-size: 0.75em;
+    color: #95a5a6;
+    margin-top: 4px;
+}
+
+.dropdown-footer {
+    padding: 10px;
+    text-align: center;
+    border-top: 1px solid #f0f2f5;
+}
+
+.dropdown-footer a {
+    font-size: 0.9em;
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+    display: block;
+    padding: 5px;
+}
+
+.dropdown-footer a:hover {
+    background: #f7f9fc;
+    border-radius: 4px;
+}
+
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+    .logo-text {
+        font-size: 1.15rem;
+    }
+
+    .btn-main-site .link-text {
+        display: none;
+    }
+
+    /* Hide the text link for profile on mobile, keep just the icon */
+    .btn-user-profile .link-text {
+        display: none;
+    }
+
+    /* Adjust dropdown position for small screens if needed,
+       though right: 0 should keep it attached to the side */
+    .notifications-dropdown {
+        width: 280px; /* Make it slightly smaller on mobile */
+    }
 }

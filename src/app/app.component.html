@@ -1,14 +1,17 @@
 <app-navbar></app-navbar>
 
-<div *ngIf="showDashboardLayout" class="main-app-container">
+<div
+  *ngIf="showDashboardLayout"
+  class="main-app-container"
+  style="z-index: 1; position: relative;">
 
-  <app-sidebar></app-sidebar>
+    <app-sidebar></app-sidebar>
 
-  <div class="content-area-dashboard">
-    <div class="router-view">
-      <router-outlet></router-outlet>
+    <div class="content-area-dashboard">
+        <div class="router-view" style="padding-top: 60px;">
+            <router-outlet></router-outlet>
+        </div>
     </div>
-  </div>
 </div>
 
 <div *ngIf="!showDashboardLayout" class="public-layout-wrapper">

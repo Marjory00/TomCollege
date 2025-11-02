@@ -12,8 +12,8 @@
     </div>
   </header>
 
-  <section class="features-section">
-    <h2>Why Choose TomCollege?</h2>
+  <section class="features-section" aria-labelledby="why-choose-heading">
+    <h2 id="why-choose-heading">Why Choose TomCollege?</h2>
     <div class="feature-cards">
       <div class="card">
         <span class="material-icons">school</span>
@@ -26,9 +26,30 @@
         <p>Get involved in groundbreaking research that changes the world.</p>
       </div>
       <div class="card">
-        <span class="material-icons">apartment</span>
+        <span class="material-icons">groups</span>
         <h3>Vibrant Campus Life</h3>
         <p>A diverse and inclusive community with over 100 student clubs and organizations.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="stats-section" aria-label="TomCollege Achievements">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">94%</div>
+        <p class="stat-label">Graduation Employment Rate</p>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">15:1</div>
+        <p class="stat-label">Student-to-Faculty Ratio</p>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">$12M+</div>
+        <p class="stat-label">Annual Research Funding</p>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">50+</div>
+        <p class="stat-label">Countries Represented</p>
       </div>
     </div>
   </section>
@@ -38,10 +59,38 @@
       <h2>Student Life & Open House</h2>
       <p>Discover life at TomCollege! Join us for an **Open House** event to tour our state-of-the-art facilities and meet current students and faculty.</p>
       <div class="date-cta">
-          <span class="date">Next Open House: **Saturday, March 15th**</span>
-          <a routerLink="/admissions" class="btn-secondary">Register for Open House</a>
+        <span class="date">Next Open House: **Saturday, March 15th**</span>
+        <a routerLink="/admissions" class="btn-secondary">Register for Open House</a>
       </div>
     </div>
+  </section>
+
+  <section class="news-events-section" aria-labelledby="news-events-heading">
+    <h2 id="news-events-heading">Latest Campus News & Events</h2>
+    <div class="news-grid">
+      <a routerLink="/news/research-grant" class="news-card">
+        <img src="assets/images/news-research.jpg" alt="Students in a lab." class="news-img">
+        <div class="news-content">
+          <span class="news-date">October 25, 2025</span>
+          <h3 class="news-title">TomCollege awarded major grant for AI Ethics research</h3>
+        </div>
+      </a>
+      <a routerLink="/news/basketball-win" class="news-card">
+        <img src="assets/images/news-sports.jpg" alt="Basketball team cheering." class="news-img">
+        <div class="news-content">
+          <span class="news-date">October 22, 2025</span>
+          <h3 class="news-title">TomCollege Hawks win regional championship!</h3>
+        </div>
+      </a>
+      <a routerLink="/events" class="news-card">
+        <img src="assets/images/event-lecture.jpg" alt="Lecture hall with speaker." class="news-img">
+        <div class="news-content">
+          <span class="news-date">Upcoming Event</span>
+          <h3 class="news-title">Annual Distinguished Lecture Series: Dr. Jane Doe</h3>
+        </div>
+      </a>
+    </div>
+    <a routerLink="/news" class="btn-tertiary">View All News & Events →</a>
   </section>
 
 </div>

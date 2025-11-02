@@ -1,22 +1,21 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router'; // <-- FIX: Import RouterLink
 
 @Component({
   selector: 'app-admissions',
   standalone: true,
-  imports: [CommonModule],
-  template: `
-    <div class="public-page admissions-page">
-      <h2>Admissions Information</h2>
-      <p>Your journey starts here. Review our requirements and deadlines.</p>
-      <ul>
-        <li>Application Deadline: November 1st</li>
-        <li>Required Documents: Transcripts, Essays, Recommendations</li>
-        <li>Contact: admissions@tomcollege.edu</li>
-      </ul>
-      <button class="btn-primary">View Application Status</button>
-    </div>
-  `,
+  // FIX: Added RouterLink to imports
+  imports: [CommonModule, RouterLink],
+  // FIX: Replaced inline 'template' with 'templateUrl'
+  templateUrl: './admissions.component.html',
   styleUrls: ['./admissions.component.css']
 })
-export class AdmissionsComponent { }
+export class AdmissionsComponent {
+  // FIX: Re-adding the dynamic data needed for the HTML template
+  deadlines = [
+    { type: 'Early Action', date: 'November 15', status: 'Upcoming' },
+    { type: 'Regular Decision', date: 'January 15', status: 'Deadline' },
+    { type: 'Transfer', date: 'March 1', status: 'Open' }
+  ];
+}

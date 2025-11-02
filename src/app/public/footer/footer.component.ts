@@ -5,10 +5,12 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [CommonModule, RouterLink], // Use RouterLink for internal navigation
+  // Correctly uses RouterLink for internal navigation
+  imports: [CommonModule, RouterLink],
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css']
 })
 export class FooterComponent {
-  currentYear = new Date().getFullYear();
+  // Correctly calculates the current year for the copyright notice
+  currentYear: number = new Date().getFullYear();
 }

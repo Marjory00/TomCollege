@@ -1,11 +1,68 @@
-<nav class="navbar">
-  <div class="navbar-brand">
-    <h1>{{ collegeName }}</h1>
-  </div>
-  <div class="navbar-links">
-    <a href="#">
-      <span class="material-icons">account_circle</span>
-      Profile
+<nav class="navbar" role="navigation" aria-label="Main Navigation">
+  <div class="logo">
+    <a routerLink="/" routerLinkActive="active-nav" class="logo-link" aria-label="TomCollege Home">
+      <img src="/assets/images/logo-icon.jpg" alt="TomCollege Logo" class="logo-img" />
+      <span class="logo-text">TomCollege</span>
     </a>
+  </div>
+
+  <div class="nav-elements">
+    <a
+      routerLink="/"
+      routerLinkActive="active-nav"
+      class="nav-link btn-main-site"
+      title="Back to main website"
+      aria-label="Main Site">
+      <span class="material-icons" aria-hidden="true">home</span>
+      <span class="link-text">Main Site</span>
+    </a>
+
+    <button class="notifications" aria-label="Notifications" (click)="toggleNotifications()">
+      <span class="material-icons" aria-hidden="true">notifications</span>
+      <span class="badge" aria-label="3 new notifications">3</span>
+
+      <div *ngIf="notificationsOpen" class="notifications-dropdown">
+        <div class="dropdown-header">
+          <span>Notifications</span>
+          <a href="#" class="mark-read">Mark all as read</a>
+        </div>
+        <ul class="notification-list">
+          <li class="notification-item unread">
+            <span class="item-icon material-icons">assignment_turned_in</span>
+            <div class="item-content">
+              <p class="item-text">New course material posted for **Calculus I**.</p>
+              <span class="item-time">5 minutes ago</span>
+            </div>
+          </li>
+          <li class="notification-item unread">
+            <span class="item-icon material-icons">access_time</span>
+            <div class="item-content">
+              <p class="item-text">Your advisor **Dr. Smith** is available for a meeting.</p>
+              <span class="item-time">2 hours ago</span>
+            </div>
+          </li>
+          <li class="notification-item">
+            <span class="item-icon material-icons">calendar_today</span>
+            <div class="item-content">
+              <p class="item-text">Reminder: **Financial Aid** documents are due tomorrow.</p>
+              <span class="item-time">Yesterday</span>
+            </div>
+          </li>
+        </ul>
+        <div class="dropdown-footer">
+          <a routerLink="/dashboard/notifications" title="View All">View All Notifications</a>
+        </div>
+      </div>
+    </button>
+    <div class="profile-menu">
+      <a
+        routerLink="/dashboard/profile"
+        routerLinkActive="active-nav"
+        class="nav-link btn-user-profile" title="View Profile"
+        aria-label="User Profile">
+        <span class="material-icons" aria-hidden="true">person</span>
+        <span class="link-text">User Profile</span>
+      </a>
+    </div>
   </div>
 </nav>

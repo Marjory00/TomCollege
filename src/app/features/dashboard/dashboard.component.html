@@ -1,26 +1,30 @@
 <div class="dashboard-page" *ngIf="dashboardData$ | async as data else loading">
-  <h2>👋 Welcome to the TomCollege Dashboard</h2>
-  <p>Quick overview of institutional statistics and recent activity.</p>
+    <h2>👋 Welcome to the TomCollege Dashboard</h2>
+    <p class="dashboard-description">Quick overview of institutional statistics and recent activity.</p>
 
-  <section class="metrics-grid">
-    <app-card
-      *ngFor="let card of data.cardData"
-      [title]="card.title"
-      [value]="card.value"
-      [icon]="card.icon">
-    </app-card>
-  </section>
+    <section class="card-row">
+        <app-card
+            *ngFor="let card of data.cardData"
+            [title]="card.title"
+            [value]="card.value"
+            [icon]="card.icon">
+        </app-card>
+    </section>
 
-  <section class="recent-activity-section">
-    <h3>Recent Grade Submissions</h3>
-    <app-table
-      [data]="data.tableData"
-      [columns]="recentActivityColumns"
-      [keyMap]="recentActivityKeyMap">
-    </app-table>
-  </section>
+    <section class="recent-activity-section">
+        <h3>Recent Grade Submissions</h3>
+        <div class="table-container">
+            <app-table
+                [data]="data.tableData"
+                [columns]="recentActivityColumns"
+                [keyMap]="recentActivityKeyMap">
+            </app-table>
+        </div>
+    </section>
 </div>
 
 <ng-template #loading>
-  <div class="loading-message">Loading dashboard data...</div>
+    <div class="loading-message">
+        <span class="material-icons loading-spinner">loop</span> Loading dashboard data...
+        </div>
 </ng-template>

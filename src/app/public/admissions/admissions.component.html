@@ -1,0 +1,78 @@
+<div class="admissions-page-container">
+
+  <header class="page-header admissions-header">
+    <div class="header-content">
+      <h1>Your Journey Starts Here.</h1>
+      <p>TomCollege welcomes students who seek academic challenge, innovative research, and a vibrant community. Find your path below.</p>
+      <a routerLink="/admissions/apply" class="btn-primary">Start Your Application</a>
+    </div>
+  </header>
+
+  <section class="admissions-process-section" aria-labelledby="process-heading">
+    <h2 id="process-heading">The Application Process</h2>
+    <div class="process-steps">
+      <div class="step">
+        <span class="material-icons step-icon">format_list_numbered</span>
+        <h3>1. Review Requirements</h3>
+        <p>Ensure you meet the academic criteria for your chosen program, including required courses and standardized tests.</p>
+      </div>
+      <div class="step">
+        <span class="material-icons step-icon">send</span>
+        <h3>2. Submit Materials</h3>
+        <p>Complete the application form and submit all supporting documents, including transcripts and recommendation letters.</p>
+      </div>
+      <div class="step">
+        <span class="material-icons step-icon">event_available</span>
+        <h3>3. Monitor Deadline</h3>
+        <p>Track the deadline for your specific application type (Early Action, Regular Decision, or Transfer).</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="deadlines-section">
+    <div class="deadlines-card">
+        <h3>Important Deadlines</h3>
+        <ul class="deadline-list">
+            <li *ngFor="let item of deadlines" [ngClass]="item.status.toLowerCase()">
+                <span class="type">{{ item.type }}:</span>
+                <span class="date">{{ item.date }}</span>
+                <span class="status">{{ item.status }}</span>
+            </li>
+        </ul>
+        <a routerLink="/admissions/deadlines" class="link-more">Full Deadline Calendar →</a>
+    </div>
+
+    <div class="quick-links-card">
+        <h3>Financial Aid</h3>
+        <p>We are committed to making a TomCollege education accessible. Learn about our scholarships and need-based aid.</p>
+        <a routerLink="/financial-aid" class="btn-secondary">Explore Financial Aid</a>
+    </div>
+  </section>
+
+  <section class="applicant-paths-section">
+    <h2>Choose Your Applicant Path</h2>
+    <div class="paths-grid">
+      <div class="path-card undergraduate">
+        <h3>Undergraduate</h3>
+        <p>Applying from high school or seeking your first degree. Discover our 40+ majors and renowned core curriculum.</p>
+        <a routerLink="/admissions/undergraduate" class="path-link">Learn More</a>
+      </div>
+      <div class="path-card graduate">
+        <h3>Graduate Studies</h3>
+        <p>Seeking a Master’s or Ph.D. degree. Explore advanced research opportunities and professional programs.</p>
+        <a routerLink="/admissions/graduate" class="path-link">Learn More</a>
+      </div>
+      <div class="path-card transfer">
+        <h3>Transfer Students</h3>
+        <p>Ready to continue your education? We welcome applications from students currently attending other institutions.</p>
+        <a routerLink="/admissions/transfer" class="path-link">Learn More</a>
+      </div>
+      <div class="path-card international">
+        <h3>International</h3>
+        <p>We celebrate our global community. Find specific requirements for international applicants, including visa and language needs.</p>
+        <a routerLink="/admissions/international" class="path-link">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+</div>

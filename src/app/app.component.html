@@ -1,17 +1,13 @@
 @if (showDashboardLayout) {
   <div class="dashboard-layout-wrapper">
+    <app-navbar class="dashboard-navbar"></app-navbar>
 
     <app-sidebar class="dashboard-sidebar"></app-sidebar>
 
-    <div class="dashboard-content-area">
-      <app-navbar class="dashboard-navbar"></app-navbar>
-
-      <main class="router-main-content">
-        <router-outlet></router-outlet>
-      </main>
-    </div>
+    <main class="router-main-content">
+      <router-outlet></router-outlet>
+    </main>
   </div>
-
 } @else {
   <div class="public-layout-wrapper">
 

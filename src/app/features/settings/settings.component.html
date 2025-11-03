@@ -1,0 +1,50 @@
+<div class="settings-page-content">
+
+  <header class="page-header">
+    <h1><span class="material-icons">settings</span> User Settings</h1>
+    <p>Manage your preferences, appearance, and security options.</p>
+  </header>
+
+  <section class="settings-section general-settings">
+    <h2>General Preferences</h2>
+
+    <div class="setting-item">
+      <label for="theme">Theme:</label>
+      <select id="theme" [(ngModel)]="theme">
+        <option value="light">Light (Default)</option>
+        <option value="dark">Dark Mode</option>
+        <option value="system">System Preference</option>
+      </select>
+    </div>
+
+    <div class="setting-item switch-container">
+      <label for="notifications">Email Notifications:</label>
+      <input type="checkbox" id="notifications" [(ngModel)]="notificationsEnabled">
+      <span class="switch"></span>
+    </div>
+
+    <button (click)="saveSettings()" class="btn-primary">Save Preferences</button>
+  </section>
+
+  <hr class="separator">
+
+  <section class="settings-section security-settings">
+    <h2>Security & Password</h2>
+
+    <form (ngSubmit)="updatePassword()">
+      <div class="setting-item">
+        <label for="current-password">Current Password:</label>
+        <input type="password" id="current-password" [(ngModel)]="currentPassword" name="currentPassword" required>
+      </div>
+
+      <div class="setting-item">
+        <label for="new-password">New Password:</label>
+        <input type="password" id="new-password" [(ngModel)]="newPassword" name="newPassword" minlength="8" required>
+        <small>Minimum 8 characters.</small>
+      </div>
+
+      <button type="submit" class="btn-secondary">Update Password</button>
+    </form>
+  </section>
+
+</div>

@@ -1,0 +1,161 @@
+/* src/app/features/settings/settings.component.css */
+
+/* --- Page Layout and Padding (Essential for content pages) --- */
+.settings-page-content {
+    /* Re-applies padding removed from router-main-content */
+    padding: 24px;
+    background-color: #f5f7fa; /* Light content background */
+    min-height: 100%;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    color: #2c3e50;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+}
+
+.page-header .material-icons {
+    margin-right: 10px;
+    color: #3498db;
+    font-size: 30px;
+}
+
+.page-header p {
+    color: #7f8c8d;
+    margin-bottom: 30px;
+}
+
+/* --- Section Styling --- */
+.settings-section {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 25px;
+}
+
+.settings-section h2 {
+    color: #34495e;
+    font-size: 1.5rem;
+    border-bottom: 1px solid #ecf0f1;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
+
+.separator {
+    border: 0;
+    border-top: 1px solid #dcdde1;
+    margin: 40px 0;
+}
+
+/* --- Form and Input Styling --- */
+.setting-item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 10px 0;
+}
+
+.setting-item label {
+    font-weight: 600;
+    color: #2c3e50;
+    flex-basis: 30%;
+}
+
+.setting-item input[type="password"],
+.setting-item select {
+    flex-basis: 60%;
+    padding: 10px;
+    border: 1px solid #bdc3c7;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.setting-item input:focus,
+.setting-item select:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+small {
+    flex-basis: 100%;
+    margin-top: 5px;
+    color: #7f8c8d;
+    font-size: 0.85rem;
+    text-align: right;
+}
+
+/* --- Button Styling --- */
+.btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}
+
+.btn-secondary {
+    background-color: #f39c12;
+    color: white;
+    float: right;
+}
+
+.btn-secondary:hover {
+    background-color: #e67e22;
+}
+
+/* --- Switch Styling (Simple Toggle) --- */
+.switch-container {
+    padding-right: 15px; /* Adjust spacing */
+}
+
+.switch-container input[type="checkbox"] {
+    display: none;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    background-color: #bdc3c7;
+    border-radius: 34px;
+    transition: background-color 0.4s;
+    cursor: pointer;
+}
+
+.switch:before {
+    content: '';
+    position: absolute;
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: transform 0.4s;
+}
+
+.switch-container input:checked + .switch {
+    background-color: #2ecc71;
+}
+
+.switch-container input:checked + .switch:before {
+    transform: translateX(26px);
+}

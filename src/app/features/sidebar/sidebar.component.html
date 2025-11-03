@@ -10,8 +10,7 @@
             @for (item of menuItems; track item.label) {
                 <li>
                     <a
-                        [routerLink]="item.link"
-                        routerLinkActive="active"
+                        [routerLink]="item.link"  routerLinkActive="active"
                         class="sidebar-link"
                         [title]="item.label"
                         aria-label="Navigate to {{ item.label }}"

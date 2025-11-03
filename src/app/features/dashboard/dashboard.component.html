@@ -1,39 +1,54 @@
-<main class="dashboard-page">
+<div class="dashboard-layout-wrapper">
 
-    @if (dashboardData$ | async; as data) {
+    <app-navbar class="dashboard-navbar"></app-navbar>
 
-        <div class="page-header">
-            <h2>👋 Welcome to the TomCollege Dashboard</h2>
-            <p class="dashboard-description">Quick overview of institutional statistics and recent activity.</p>
-        </div>
+    <app-sidebar class="dashboard-sidebar"></app-sidebar>
 
-        <section class="card-row">
-            @for (card of data.cardData; track card.title) {
-                <app-card
-                    [title]="card.title"
-                    [value]="card.value"
-                    [icon]="card.icon">
-                </app-card>
-            }
-        </section>
+    <main class="router-main-content">
 
-        <section class="recent-activity-section">
-            <h3>Recent Grade Submissions</h3>
-            <div class="table-container">
-                <app-table
-                    [data]="data.tableData"
-                    [columns]="recentActivityColumns"
-                    >
-                </app-table>
+        <router-outlet></router-outlet>
+
+        @if (isDashboardRoot$ | async) {
+            <div class="dashboard-overview-container">
+
+                @if (dashboardData$ | async; as data) {
+
+                    <div class="page-header">
+                        <h2>👋 Welcome to the TomCollege Dashboard</h2>
+                        <p class="dashboard-description">Quick overview of institutional statistics and recent activity.</p>
+                    </div>
+
+                    <section class="card-row">
+                        @for (card of data.cardData; track card.title) {
+                            <app-card
+                                [title]="card.title"
+                                [value]="card.value"
+                                [icon]="card.icon">
+                            </app-card>
+                        }
+                    </section>
+
+                    <section class="recent-activity-section">
+                        <h3>Recent Grade Submissions</h3>
+                        <div class="table-container">
+                            <app-table
+                                [data]="data.tableData"
+                                [columns]="recentActivityColumns"
+                            >
+                            </app-table>
+                        </div>
+                    </section>
+
+                } @else {
+                    <div class="loading-overlay">
+                        <div class="loading-message">
+                            <span class="material-icons loading-spinner">loop</span> Loading dashboard data...
+                        </div>
+                    </div>
+                }
             </div>
-        </section>
+        }
 
-    } @else {
-        <div class="loading-overlay">
-            <div class="loading-message">
-                <span class="material-icons loading-spinner">loop</span> Loading dashboard data...
-            </div>
-        </div>
-    }
+    </main>
 
-</main>
+</div>

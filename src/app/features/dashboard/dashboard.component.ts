@@ -3,25 +3,32 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
+import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
+import { filter, map } from 'rxjs/operators';
 
-import { ApiService } from '../../core/services/api.service'; // Correctly imported
+// --- IMPORTS FOR CONTENT/DATA ---
+import { ApiService } from '../../core/services/api.service';
 import { TableComponent } from '../../components/table/table.component';
 import { CardComponent } from '../../components/card/card.component';
 
+// --- IMPORTS FOR LAYOUT SHELL ---
+// Note: These paths assume Sidebar is a sibling and Navbar is in the 'components' folder.
+import { SidebarComponent } from '../sidebar/sidebar.component';
+import { NavbarComponent } from '../../components/navbar/navbar.component';
+
+
+// --- INTERFACES ---
 interface TableColumn {
     key: string;
     header: string;
 }
 
-// FIX 4: Define a robust interface for the data received from the API
 interface DashboardData {
     totalStudents: number;
     activeCourses: number;
     recentEnrollments: number;
     currentGPAAverage: number;
-    // Data for the CardComponent
     cardData: { title: string; value: string; icon: string }[];
-    // Data for the TableComponent
     tableData: { id: number; name: string; course: string; grade: string }[];
 }
 
@@ -31,17 +38,24 @@ interface DashboardData {
     standalone: true,
     imports: [
         CommonModule,
+        // Content Components
         TableComponent,
-        CardComponent
+        CardComponent,
+        // Layout Shell Components
+        RouterOutlet,
+        SidebarComponent,
+        NavbarComponent
     ],
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
 
+    // --- DATA & STATE ---
     dashboardData$!: Observable<DashboardData>;
+    // FIX: Added '!' to assert that this property will be initialized in ngOnInit.
+    isDashboardRoot$!: Observable<boolean>;
 
-    // FIX 5: Define columns in the object array format required by <app-table>
     recentActivityColumns: TableColumn[] = [
         { key: 'id', header: 'Student ID' },
         { key: 'name', header: 'Student Name' },
@@ -49,11 +63,18 @@ export class DashboardComponent implements OnInit {
         { key: 'grade', header: 'Grade' }
     ];
 
+    // --- DEPENDENCY INJECTION ---
+    constructor(private apiService: ApiService, private router: Router) { }
 
-    // FIX: Correctly inject ApiService
-    constructor(private apiService: ApiService) { }
-
+    // --- LIFECYCLE HOOK ---
     ngOnInit(): void {
+        // 1. Fetch dashboard content data
         this.dashboardData$ = this.apiService.getDashboardData();
+
+        // 2. Logic to detect if the current URL is exactly '/dashboard'
+        this.isDashboardRoot$ = this.router.events.pipe(
+            filter(event => event instanceof NavigationEnd),
+            map((event: NavigationEnd) => event.urlAfterRedirects === '/dashboard' || event.urlAfterRedirects === '/dashboard/')
+        );
     }
 }

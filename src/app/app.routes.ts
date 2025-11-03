@@ -2,83 +2,60 @@
 
 import { Routes } from '@angular/router';
 
-// 1. PUBLIC COMPONENTS (KEEP)
+// 1. PUBLIC COMPONENTS
 import { HomeComponent } from './public/home/home.component';
 import { AdmissionsComponent } from './public/admissions/admissions.component';
 import { FacultyComponent } from './public/faculty/faculty.component';
 
-// 2. FEATURE COMPONENTS (KEEP)
+// FIX: Ensure the import path for the new public shell is correct
+import { LayoutComponent } from './public/layout/layout.component';
+
+// 2. FEATURE COMPONENTS
 import { LoginComponent } from './features/login/login.component';
-import { DashboardComponent } from './features/dashboard/dashboard.component'; // THIS IS NOW THE LAYOUT SHELL
+import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { StudentsComponent } from './features/students/students.component';
 import { CoursesComponent } from './features/courses/courses.component';
 import { ProfileComponent } from './features/profile/profile.component';
 import { GradesComponent } from './features/grades/grades.component';
-import { SettingsComponent } from './features/settings/settings.component'; // Assuming you have a Settings component
+import { SettingsComponent } from './features/settings/settings.component';
 
 // Guard Import
 // import { authGuard } from './core/guards/auth.guard';
 
-// REMOVED: import { DashboardLayoutComponent } from './layouts/dashboard-layout/dashboard-layout.component';
-
 export const routes: Routes = [
-    // --- PUBLIC ROUTES (KEEP) ---
-    { path: '', component: HomeComponent, title: 'TomCollege - Home' },
-    { path: 'admissions', component: AdmissionsComponent, title: 'Admissions' },
-    { path: 'faculty', component: FacultyComponent, title: 'Faculty Directory' },
-    { path: 'login', component: LoginComponent, title: 'Login' },
+    // --- PUBLIC ROUTES (Nested under Public Layout Shell) ---
+    {
+        path: '',
+        component: LayoutComponent, // The Public Layout Shell
+        children: [
+            // Base URL: /
+            { path: '', component: HomeComponent, title: 'TomCollege - Home' },
+            // Path: /admissions
+            { path: 'admissions', component: AdmissionsComponent, title: 'Admissions' },
+            // Path: /faculty
+            { path: 'faculty', component: FacultyComponent, title: 'Faculty Directory' },
+            // Path: /login
+            { path: 'login', component: LoginComponent, title: 'Login' }
+        ]
+    },
 
-    // --- SECURE/DASHBOARD ROUTES (FIXED: DashboardComponent is the shell) ---
+    // --- SECURE/DASHBOARD ROUTES (Nested under Dashboard Layout Shell) ---
     {
         path: 'dashboard',
-        component: DashboardComponent, // FIX: Using your existing DashboardComponent as the Shell
+        component: DashboardComponent, // The Secure Dashboard Shell
         // canActivate: [authGuard],
 
-        // ALL SIDEBAR LINKS ARE CHILDREN
         children: [
-            // Link: /dashboard (The base path content)
-            {
-                path: '',
-                component: GradesComponent, // NOTE: Using GradesComponent as a temporary placeholder for Dashboard Overview content
-                title: 'Dashboard Overview'
-            },
+            // Path: /dashboard (Temporary placeholder fix to stop redirects)
+            { path: '', component: ProfileComponent, title: 'Dashboard Overview' },
 
-            // Link: /dashboard/students
-            {
-                path: 'students',
-                component: StudentsComponent,
-                title: 'Student Management'
-            },
+            // Other secure paths...
+            { path: 'students', component: StudentsComponent, title: 'Student Management' },
+            { path: 'courses', component: CoursesComponent, title: 'Course Catalog' },
+            { path: 'grades', component: GradesComponent, title: 'Grade Report' },
+            { path: 'profile', component: ProfileComponent, title: 'My Profile' },
+            { path: 'settings', component: SettingsComponent, title: 'Settings' },
 
-            // Link: /dashboard/courses
-            {
-                path: 'courses',
-                component: CoursesComponent,
-                title: 'Course Catalog'
-            },
-
-            // Link: /dashboard/grades
-            {
-                path: 'grades',
-                component: GradesComponent,
-                title: 'Grade Report'
-            },
-
-            // Link: /dashboard/profile
-            {
-                path: 'profile',
-                component: ProfileComponent,
-                title: 'My Profile'
-            },
-
-            // Link: /dashboard/settings
-            {
-                path: 'settings',
-                component: SettingsComponent, // Assuming you have a SettingsComponent
-                title: 'Settings'
-            },
-
-            // OPTIONAL: Local fallback for unmatched /dashboard/xyz paths
             { path: '**', redirectTo: '' }
         ]
     },

@@ -1,0 +1,28 @@
+<div class="grades-page">
+  <h2>📈 Academic Grade Report</h2>
+  <p>View your history and current course performance.</p>
+
+  <div class="gpa-summary">
+    <h3>Current GPA: {{ (gpa$ | async) || 'N/A' }}</h3>
+  </div>
+
+  <div class="grades-table-container">
+    @if (grades$ | async; as grades) {
+      @if (grades.length > 0) {
+        <app-table
+          [data]="grades"
+          [columns]="gradeColumns"
+          class="grade-data-table">
+        </app-table>
+      } @else {
+        <div class="empty-message">
+          <p>No grades have been posted for your current academic standing.</p>
+        </div>
+      }
+    } @else {
+      <div class="loading-message">
+        <span class="material-icons spinner">sync</span> Loading grade data...
+      </div>
+    }
+  </div>
+</div>

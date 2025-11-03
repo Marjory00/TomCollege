@@ -9,15 +9,24 @@
   </div>
 
   <div class="course-list-container">
-    <app-table
-      [data]="courses$ | async"
-      [columns]="['Course Code', 'Title', 'Credits', 'Department']"
-      [keyMap]="['code', 'title', 'credits', 'department']"
-      *ngIf="courses$ | async as courses else loading">
-    </app-table>
+    @if (courses$ | async; as courses) {
 
-    <ng-template #loading>
-      <div class="loading-message">Loading course catalog...</div>
-    </ng-template>
+      @if (courses.length > 0) {
+        <app-table
+          [data]="courses"
+          [columns]="courseColumns"
+          class="course-data-table">
+          </app-table>
+      } @else {
+        <div class="empty-message">
+          <p>The course catalog is currently empty. Click "Add New Course" to begin.</p>
+        </div>
+      }
+
+    } @else {
+      <div class="loading-message">
+        <span class="material-icons spinner">sync</span> Loading course catalog...
+      </div>
+    }
   </div>
 </div>

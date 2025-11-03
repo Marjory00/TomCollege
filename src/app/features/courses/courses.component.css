@@ -1,10 +1,15 @@
+/* src/app/features/courses/courses.component.css */
+
 .courses-page {
     padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto; /* Center the content */
 }
 
 .courses-page h2 {
     color: #2c3e50;
     margin-bottom: 5px;
+    font-size: 2em;
 }
 
 .courses-page p {
@@ -12,9 +17,12 @@
     margin-bottom: 25px;
 }
 
+/* --- Header & Button --- */
+
 .header-actions {
-    margin-bottom: 20px;
-    text-align: right;
+    margin-bottom: 25px; /* Slightly more space */
+    display: flex;
+    justify-content: flex-end; /* FIX: Use flex to push button to right */
 }
 
 .btn-primary {
@@ -25,9 +33,10 @@
     border-radius: 6px;
     cursor: pointer;
     font-size: 1em;
-    font-weight: 500;
+    font-weight: 600; /* Slightly bolder */
     display: inline-flex;
     align-items: center;
+    gap: 8px; /* Use gap instead of margin-right on icon */
     transition: background-color 0.3s;
 }
 
@@ -35,14 +44,48 @@
     background-color: #2980b9;
 }
 
-.btn-primary .material-icons {
-    margin-right: 8px;
-    font-size: 20px;
+/* Removed redundant .btn-primary .material-icons style as gap is used */
+
+/* --- Course List Container & Table Styling --- */
+
+.course-list-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Soft shadow for depth */
+    overflow: hidden; /* Contains the table */
 }
 
-.loading-message {
+/* You will need specific styles for your <app-table> component if it doesn't
+   style the internal table itself (e.g., .course-data-table th, .course-data-table td) */
+
+
+/* --- State Messages (Loading/Empty) --- */
+
+.loading-message, .empty-message {
     text-align: center;
     padding: 50px;
-    color: #95a5a6;
     font-style: italic;
+    color: #95a5a6;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.empty-message {
+    border: 1px dashed #e0e0e0;
+    margin: 20px;
+    border-radius: 6px;
+    background-color: #fcfcfc;
+}
+
+.spinner {
+    font-size: 2.5em;
+    animation: spin 1.5s linear infinite;
+    color: #3498db;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

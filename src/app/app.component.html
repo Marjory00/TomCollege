@@ -1,21 +1,26 @@
-<app-navbar></app-navbar>
+@if (showDashboardLayout) {
+  <div class="dashboard-layout-wrapper">
 
-<div class="dashboard-layout-wrapper" *ngIf="showDashboardLayout">
+    <app-sidebar class="dashboard-sidebar"></app-sidebar>
 
-  <app-sidebar class="dashboard-sidebar"></app-sidebar>
+    <div class="dashboard-content-area">
+      <app-navbar class="dashboard-navbar"></app-navbar>
 
-  <div class="dashboard-content-area">
-    <main class="router-main-content">
+      <main class="router-main-content">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+  </div>
+
+} @else {
+  <div class="public-layout-wrapper">
+
+    <app-navbar class="public-navbar"></app-navbar>
+
+    <main class="router-main-content public-main">
       <router-outlet></router-outlet>
     </main>
+
+    <app-footer></app-footer>
   </div>
-</div>
-
-<div class="public-layout-wrapper" *ngIf="!showDashboardLayout">
-
-  <main class="router-main-content public-main">
-    <router-outlet></router-outlet>
-  </main>
-
-  <app-footer></app-footer>
-</div>
+}

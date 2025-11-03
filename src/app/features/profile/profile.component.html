@@ -5,58 +5,62 @@
         <p class="profile-description">Update your personal and institutional details.</p>
     </header>
 
-    <main *ngIf="profile && !isLoading; else loadingBlock">
-        <form class="profile-form-card" (ngSubmit)="saveProfile()">
+    @if (profile && !isLoading) {
+        <main>
+            <form class="profile-form-card" (ngSubmit)="saveProfile()">
 
-            <section class="form-section">
-                <h2 class="section-title">Editable Details</h2>
+                <section class="form-section">
+                    <h2 class="section-title">Editable Details</h2>
 
-                <div class="form-group">
-                    <label for="name">Full Name</label>
-                    <input id="name" type="text" [(ngModel)]="profile.name" name="name" required>
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input id="name" type="text" [(ngModel)]="profile.name" name="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input id="email" type="email" [(ngModel)]="profile.email" name="email" required>
+                    </div>
+                </section>
+
+                <section class="form-section read-only-section">
+                    <h2 class="section-title">Institutional Details (Read-Only)</h2>
+
+                    <div class="read-only-group">
+                        <label>Role</label>
+                        <p class="read-only-value">{{ profile.role }}</p>
+                    </div>
+
+                    <div class="read-only-group">
+                        <label>Department</label>
+                        <p class="read-only-value">{{ profile.department }}</p>
+                    </div>
+
+                    <div class="read-only-group">
+                        <label>User ID</label>
+                        <p class="read-only-value">{{ profile.id }}</p>
+                    </div>
+                </section>
+
+                <div class="form-actions">
+                    <button type="button" (click)="cancelEdit()" class="btn-cancel">Cancel</button>
+
+                    <button type="submit" [disabled]="isSaving" class="btn-save btn-primary">
+                        @if (isSaving) {
+                            <span class="material-icons loading-spinner">sync</span> Saving...
+                        } @else {
+                            Save Changes
+                        }
+                    </button>
                 </div>
 
-                <div class="form-group">
-                    <label for="email">Email Address</label>
-                    <input id="email" type="email" [(ngModel)]="profile.email" name="email" required>
-                </div>
-            </section>
-
-            <section class="form-section read-only-section">
-                <h2 class="section-title">Institutional Details (Read-Only)</h2>
-
-                <div class="form-group">
-                    <label for="role">Role</label>
-                    <input id="role" type="text" [ngModel]="profile.role" name="role_ro" disabled class="read-only">
-                </div>
-
-                <div class="form-group">
-                    <label for="dept">Department</label>
-                    <input id="dept" type="text" [ngModel]="profile.department" name="dept_ro" disabled class="read-only">
-                </div>
-
-                <div class="form-group">
-                    <label for="id">User ID</label>
-                    <input id="id" type="text" [ngModel]="profile.id" name="id_ro" disabled class="read-only">
-                </div>
-            </section>
-
-            <div class="form-actions">
-                <button type="button" (click)="cancelEdit()" class="btn-cancel">Cancel</button>
-                <button type="submit" [disabled]="isSaving" class="btn-save btn-primary">
-                    <span *ngIf="isSaving" class="spinner"></span>
-                    {{ isSaving ? 'Saving...' : 'Save Changes' }}
-                </button>
+            </form>
+        </main>
+    } @else {
+        <div class="loading-state">
+            <div class="loading-message">
+                <span class="material-icons loading-spinner">sync</span> Loading profile data...
             </div>
-
-        </form>
-    </main>
-</div>
-
-<ng-template #loadingBlock>
-    <div class="loading-state">
-        <div class="loading-message">
-            <span class="material-icons loading-spinner">loop</span> Loading profile data...
         </div>
-    </div>
-</ng-template>
+    }
+</div>

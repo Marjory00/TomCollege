@@ -1,23 +1,45 @@
 <div class="students-page">
-  <h2>🧑‍🎓 Student Management</h2>
+  <h2>Student Management</h2>
   <p>Overview and details of all enrolled students at TomCollege.</p>
 
   <div class="header-actions">
-    <button class="btn-primary">
-      <span class="material-icons">add_circle</span> Add New Student
+    <button class="btn-primary" aria-label="Add New Student">
+      <span class="material-icons" aria-hidden="true">add_circle</span>
+      Add New Student
     </button>
   </div>
 
   <div class="student-list-container">
-    <app-table
-      [data]="students$ | async"
-      [columns]="['ID', 'Name', 'Department', 'Email', 'Enrollment Status']"
-      [keyMap]="['id', 'name', 'department', 'email', 'status']"
-      *ngIf="students$ | async as students else loading">
-    </app-table>
-
-    <ng-template #loading>
-      <div class="loading-message">Loading student data...</div>
-    </ng-template>
+    @if (students$ | async; as students) {
+      @if (students.length > 0) {
+        <table class="student-data-table" role="table">
+          <thead>
+            <tr role="row">
+              @for (col of tableColumns; track col.key) {
+                <th role="columnheader">{{ col.header }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (student of students; track student.id) {
+              <tr role="row">
+                @for (col of tableColumns; track col.key) {
+                  <td role="cell">{{ student[col.key] }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <div class="empty-message" role="alert">
+          <p>No students found in the directory. Click "Add New Student" to begin enrollment.</p>
+        </div>
+      }
+    } @else {
+      <div class="loading-message" role="status" aria-live="polite">
+        <span class="material-icons spinner" aria-hidden="true">sync</span>
+        Loading student data...
+      </div>
+    }
   </div>
 </div>

@@ -1,7 +1,8 @@
+// src/app/features/sidebar/sidebar.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../core/services/auth.service'; // <-- 1. IMPORT AuthService
+import { AuthService } from '../../core/services/auth.service';
 
 interface MenuItem {
   label: string;
@@ -18,14 +19,13 @@ interface MenuItem {
 })
 export class SidebarComponent {
 
-  // 2. INJECT AuthService in the constructor
   constructor(private authService: AuthService) { }
 
   menuItems: MenuItem[] = [
     // Dashboard is the default entry point for the secure area
     { label: 'Dashboard', icon: 'dashboard', link: '/dashboard' },
 
-    // Updated links reflect the nested routing structure
+    // Corrected nested links (e.g., /dashboard/students)
     { label: 'Students', icon: 'person', link: '/dashboard/students' },
     { label: 'Courses', icon: 'book', link: '/dashboard/courses' },
     { label: 'Grade Report', icon: 'assessment', link: '/dashboard/grades' },
@@ -35,7 +35,6 @@ export class SidebarComponent {
     { label: 'Settings', icon: 'settings', link: '/dashboard/settings' },
   ];
 
-  // 3. IMPLEMENT the logout method used in sidebar.component.html
   logout(): void {
     this.authService.logout();
   }

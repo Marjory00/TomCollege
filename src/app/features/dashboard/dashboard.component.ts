@@ -1,47 +1,59 @@
+// src/app/features/dashboard/dashboard.component.ts
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Observable } from 'rxjs';
 
-// Import necessary components and services
-import { ApiService } from '../../core/services/api.service';
+import { ApiService } from '../../core/services/api.service'; // Correctly imported
 import { TableComponent } from '../../components/table/table.component';
 import { CardComponent } from '../../components/card/card.component';
 
-// ⚠️ NOTE: This interface should ideally be imported from the ApiService file
-// (or a separate models file) to prevent duplication.
+interface TableColumn {
+    key: string;
+    header: string;
+}
+
+// FIX 4: Define a robust interface for the data received from the API
 interface DashboardData {
     totalStudents: number;
     activeCourses: number;
     recentEnrollments: number;
     currentGPAAverage: number;
+    // Data for the CardComponent
     cardData: { title: string; value: string; icon: string }[];
+    // Data for the TableComponent
     tableData: { id: number; name: string; course: string; grade: string }[];
 }
+
 
 @Component({
     selector: 'app-dashboard',
     standalone: true,
     imports: [
         CommonModule,
-        TableComponent, // Used for recent activity
-        CardComponent  // Used for metrics
+        TableComponent,
+        CardComponent
     ],
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
 
-    // Observable to hold all dashboard data
     dashboardData$!: Observable<DashboardData>;
 
-    // Column definitions for the recent activity table
-    recentActivityColumns: string[] = ['Student ID', 'Student Name', 'Course', 'Grade'];
-    recentActivityKeyMap: string[] = ['id', 'name', 'course', 'grade'];
+    // FIX 5: Define columns in the object array format required by <app-table>
+    recentActivityColumns: TableColumn[] = [
+        { key: 'id', header: 'Student ID' },
+        { key: 'name', header: 'Student Name' },
+        { key: 'course', header: 'Course' },
+        { key: 'grade', header: 'Grade' }
+    ];
 
+
+    // FIX: Correctly inject ApiService
     constructor(private apiService: ApiService) { }
 
     ngOnInit(): void {
-        // Fetch the strongly-typed dashboard data
         this.dashboardData$ = this.apiService.getDashboardData();
     }
 }

@@ -1,3 +1,5 @@
+/* src/app/features/navbar/navbar.component.css */
+
 /* --- Navbar Container --- */
 .navbar {
     display: flex;
@@ -10,7 +12,7 @@
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 10000;
+    z-index: 1000;
 }
 
 /* --- Logo --- */
@@ -25,17 +27,23 @@
 }
 
 .logo-link:hover {
-    color: #3498db;
+    color: #2c3e50;
 }
 
 .logo-img {
     height: 48px;
     margin-right: 10px;
     border-radius: 6px;
+    vertical-align: middle;
 }
 
 .logo-text {
     font-size: 1.4rem;
+    /* FIX 1: Resetting specific vertical CSS that caused issues */
+    line-height: 1; /* Aggressive line height reset */
+    margin: 0; /* Removing any implicit vertical margins */
+    padding: 0;
+    vertical-align: middle;
 }
 
 /* --- Right Elements --- */
@@ -50,37 +58,43 @@
 .nav-link {
     text-decoration: none;
     transition: background .25s ease, color .25s ease, transform .2s ease;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 5px;
 }
 
-/* --- Main Site Link Button (Reference Style) --- */
+/* --- Main Site Link (Standard Link Style) --- */
 .btn-main-site {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 16px;
+    padding: 0;
     font-weight: 500;
-    color: #3498db;
-    background: #f2f8ff;
-    border-radius: 8px;
+    color: #555555;
+    background: transparent;
+    border-radius: 0;
 }
 
 .btn-main-site:hover {
-    background: #d9ecff;
-    color: #1b6fbf;
-    transform: translateY(-1px);
+    background: transparent;
+    color: #3498db;
+    transform: none;
+    text-decoration: none;
 }
 
-/* --- Notifications Icon (Now a button) --- */
+/* --- Notifications Icon (Button container for dropdown) --- */
 .notifications {
     position: relative;
     cursor: pointer;
-    /* FIX: Added relative position to correctly anchor the absolute dropdown */
+    display: flex;
+    align-items: center;
+    justify-content: center;
     padding: 8px;
     border-radius: 50%;
     transition: background .25s ease;
-    border: none; /* Buttons often have default borders, remove them */
-    background: transparent; /* Ensure button doesn't have a background unless hovered */
-    z-index: 10; /* Ensure it's above other elements in the nav-elements flex container */
+    border: none;
+    background: transparent;
 }
 
 .notifications:hover {
@@ -90,6 +104,10 @@
 .notifications .material-icons {
     font-size: 26px;
     color: #2c3e50;
+    /* FIX 2: Resetting specific vertical CSS */
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
 }
 
 .badge {
@@ -109,59 +127,66 @@
     align-items: center;
 }
 
-/* --- User Profile Text Link Style --- */
+/* --- User Profile Link (Standard Link Style) --- */
 .btn-user-profile {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 16px;
+    padding: 0;
     font-weight: 500;
-    color: #2c3e50;
+    color: #555555;
     background: transparent;
-    border-radius: 8px;
+    border-radius: 0;
     text-decoration: none;
     transition: background .25s ease, color .25s ease;
 }
 
 .btn-user-profile:hover {
-    background: #f0f0f0;
+    background: transparent;
     color: #3498db;
+    text-decoration: none;
 }
 
 .btn-user-profile .material-icons {
     font-size: 20px;
+    /* FIX 3: Resetting specific vertical CSS */
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
 }
 
 
 /* --- Active Link (Angular routerLinkActive) --- */
+.active-nav,
 .btn-main-site.router-link-active {
-    background: #3498db;
-    color: #fff;
+    background: transparent;
+    color: #3498db;
+    font-weight: 600;
     transform: none;
+    text-decoration: none;
 }
 
 /* Style for active User Profile link */
 .btn-user-profile.router-link-active {
-    background: #eef2f7;
+    background: transparent;
     color: #3498db;
+    font-weight: 600;
+    text-decoration: none;
 }
 
 /* ---------------------------------------------------------------------- */
-/* 🔔 NEW: NOTIFICATIONS DROPDOWN STYLES (REQUIRED FIX) 🔔 */
+/* 🔔 NOTIFICATIONS DROPDOWN STYLES 🔔 */
 /* ---------------------------------------------------------------------- */
 
 .notifications-dropdown {
-    /* Absolute position relative to the parent button/div */
     position: absolute;
-    top: 100%; /* Position below the navbar/button */
+    top: 100%;
     right: 0;
-
-    /* Style and Size */
     width: 320px;
     background: #ffffff;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    z-index: 1000; /* Must be high to cover all content */
+    z-index: 1000;
     overflow: hidden;
     margin-top: 10px;
     border: 1px solid #e0e6ed;
@@ -185,7 +210,7 @@
 }
 
 .dropdown-header .mark-read:hover {
-    color: #2980b9;
+    color: #3498db;
 }
 
 .notification-list {
@@ -213,7 +238,7 @@
 }
 
 .notification-item.unread {
-    background-color: #f2f8ff; /* Highlight unread items */
+    background-color: #f2f8ff;
     border-left: 3px solid #3498db;
     padding-left: 12px;
 }
@@ -260,6 +285,7 @@
 .dropdown-footer a:hover {
     background: #f7f9fc;
     border-radius: 4px;
+    color: #3498db;
 }
 
 
@@ -273,14 +299,11 @@
         display: none;
     }
 
-    /* Hide the text link for profile on mobile, keep just the icon */
     .btn-user-profile .link-text {
         display: none;
     }
 
-    /* Adjust dropdown position for small screens if needed,
-       though right: 0 should keep it attached to the side */
     .notifications-dropdown {
-        width: 280px; /* Make it slightly smaller on mobile */
+        width: 280px;
     }
 }

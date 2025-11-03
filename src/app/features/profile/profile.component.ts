@@ -5,9 +5,9 @@ import { CommonModule } from '@angular/common';
 import { ApiService } from '../../core/services/api.service';
 import { FormsModule } from '@angular/forms';
 import { take } from 'rxjs/operators';
-import { Router } from '@angular/router'; // 🆕 FIX: Import Router for navigation/redirection
+import { Router } from '@angular/router';
 
-// ⚠️ NOTE: This interface should ideally be imported from the ApiService file
+// NOTE: This interface should ideally be imported from the ApiService file
 // (or a separate models file) to prevent duplication.
 interface UserProfile {
   id: number;
@@ -28,9 +28,8 @@ export class ProfileComponent implements OnInit {
 
   profile: UserProfile | null = null;
   isLoading = true;
-  isSaving = false; // 🆕 FIX: Added state for Save button loading
+  isSaving = false;
 
-  // 🆕 FIX: Added Router for potential navigation after save/cancel
   constructor(private apiService: ApiService, private router: Router) { }
 
   ngOnInit(): void {
@@ -39,13 +38,13 @@ export class ProfileComponent implements OnInit {
       take(1)
     ).subscribe({
         next: (data) => {
+            // FIX 1: If data is successfully fetched, assign it to profile
             this.profile = data;
             this.isLoading = false;
         },
         error: (err) => {
             console.error('Error fetching profile:', err);
             this.isLoading = false;
-            // Handle error state in template if needed
         }
     });
   }
@@ -53,7 +52,9 @@ export class ProfileComponent implements OnInit {
   saveProfile() {
     if (this.profile) {
       this.isSaving = true;
-      // Placeholder for saving data via API (e.g., PUT request)
+      // Assume apiService has an updateProfile method
+      // this.apiService.updateProfile(this.profile).pipe(take(1)).subscribe(...);
+
       console.log('Attempting to save profile:', this.profile);
 
       // Simulate API delay for saving
@@ -67,7 +68,8 @@ export class ProfileComponent implements OnInit {
   }
 
   cancelEdit() {
-    // Simply navigate back to the dashboard home page
-    this.router.navigate(['/dashboard/home']);
+    // FIX 2: Navigate back to the main dashboard route, which is '/dashboard'
+    // according to the fixed app.routes.ts file.
+    this.router.navigate(['/dashboard']);
   }
 }

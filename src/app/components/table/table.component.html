@@ -2,24 +2,30 @@
   <table>
     <thead>
       <tr>
-        <th *ngFor="let col of columns">{{ col }}</th>
+        @for (col of columns; track col.key) {
+          <th>{{ col.header }}</th>
+        }
       </tr>
     </thead>
 
     <tbody>
-      <ng-container *ngIf="data && data.length > 0">
-        <tr *ngFor="let item of data">
-          <td *ngFor="let key of keyMap">
-            {{ item[key] }}
+      @if (data && data.length > 0) {
+        @for (item of data; track item.id) {
+          <tr>
+            @for (col of columns; track col.key) {
+              <td>
+                {{ item[col.key] }}
+              </td>
+            }
+          </tr>
+        }
+      } @else {
+        <tr>
+          <td [attr.colspan]="columns.length" class="no-data">
+            No data available.
           </td>
         </tr>
-      </ng-container>
-
-      <tr *ngIf="!data || data.length === 0">
-        <td [attr.colspan]="columns.length" class="no-data">
-          No data available.
-        </td>
-      </tr>
+      }
     </tbody>
   </table>
 </div>

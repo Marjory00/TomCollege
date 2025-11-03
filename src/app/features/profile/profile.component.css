@@ -1,19 +1,36 @@
-/* --- Page Container --- */
-/* FIX: Changed .profile-page to .profile-page-container for consistency
-    with the surrounding div in the component's HTML.
-*/
+/* src/app/features/profile/profile.component.css */
+
+/* --- Page Container (Layout Fix Applied Here) --- */
 .profile-page-container {
+    /* FIX 1: PUSH DOWN to clear the fixed Navbar (64px height) */
+    padding-top: 64px;
+
+    /* FIX 2: PUSH RIGHT to clear the fixed Sidebar (250px width) */
+    margin-left: 250px;
+
+    /* Set the container to fill the screen space allocated by the Dashboard layout */
+    min-height: 100vh;
+    width: calc(100% - 250px);
+    box-sizing: border-box;
+
+    /* Standard Padding for Content Margin around the page */
+    padding: 30px 24px 30px 24px;
+
+    background-color: #f5f7fa; /* Match dashboard background */
+}
+
+/* --- Content Wrapper (To restore the max-width and center effect) --- */
+.profile-content-wrapper {
     max-width: 800px;
     margin: 0 auto;
-    padding: 30px; /* Internal spacing for the content */
 }
 
 .profile-header {
     text-align: center;
     margin-bottom: 40px;
 }
-
-.profile-header h1 { /* Targets the h1 inside the header */
+/* ... rest of the .profile-header styles ... */
+.profile-header h1 {
     color: #2c3e50;
     margin-bottom: 5px;
     font-size: 2em;
@@ -25,7 +42,7 @@
     font-size: 1.1em;
 }
 
-/* FIX: Card around the form content */
+/* --- Form Card/Container --- */
 .profile-form-card {
     background-color: #ffffff;
     padding: 40px;
@@ -49,21 +66,19 @@
     color: #34495e;
     font-size: 1.4em;
     margin-bottom: 25px;
+    /* FIX: Ensure title spans the full width even with the grid below it */
+    grid-column: 1 / -1;
 }
 
 /* --- Form Grid Styling --- */
 .profile-form-card > section {
-    /* The grid layout should apply to the input groups within each section,
-        not the form itself, but for this simple layout, applying it to the section
-        content allows the h2 and actions to remain outside the grid flow.
-    */
+    /* Apply grid to sections (excluding the title which is pulled out) */
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 25px;
-    /* Aligns the button to the bottom */
 }
 
-
+/* Style for editable inputs */
 .form-group {
     display: flex;
     flex-direction: column;
@@ -90,17 +105,34 @@
     outline: none;
 }
 
-/* Disabled/Read-Only Fields */
-.form-group input[disabled] {
-    background-color: #f5f7fa;
-    color: #7f8c8d;
-    cursor: not-allowed;
-    border-style: dashed;
+/* --- Read-Only Data Styling (FIXED) --- */
+/* Target the new read-only container we defined in the HTML */
+.read-only-group {
+    display: flex;
+    flex-direction: column;
 }
+
+.read-only-group label {
+    font-weight: 500;
+    color: #34495e;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+.read-only-value {
+    /* Style the actual value to look like a clean, disabled input */
+    padding: 12px 15px;
+    border: 1px dashed #e2e8f0;
+    border-radius: 8px;
+    font-size: 1em;
+    color: #7f8c8d;
+    background-color: #f5f7fa;
+}
+
 
 /* --- Form Actions --- */
 .form-actions {
-    /* FIX: Ensure actions span full width of the grid */
+    /* FIX: This must span across both grid columns */
     grid-column: 1 / -1;
     display: flex;
     justify-content: flex-end;
@@ -116,14 +148,13 @@
     font-size: 1.1em;
     font-weight: 600;
     transition: background-color 0.3s, transform 0.2s;
-    /* FIX: Added display flex for the saving spinner alignment */
     display: flex;
     align-items: center;
     gap: 8px;
 }
 
-.btn-primary.btn-save { /* Targets the Save button */
-    background-color: #2ecc71; /* Use green for saving */
+.btn-primary.btn-save {
+    background-color: #2ecc71;
     color: white;
 }
 
@@ -151,7 +182,6 @@
 }
 
 /* --- Loading Message --- */
-/* FIX: Need a dedicated loading state container to center the message */
 .loading-state {
     display: flex;
     justify-content: center;
@@ -183,12 +213,18 @@
 /* --- Responsive Layout --- */
 @media (max-width: 600px) {
     .profile-page-container {
-        padding: 20px 10px;
+        /* Reset padding for the container */
+        padding: 20px 10px 20px 10px;
     }
 
     .profile-form-card > section {
         /* Stack all inputs vertically on small screens */
         grid-template-columns: 1fr;
+    }
+
+    /* Ensure the section title also spans correctly */
+    .section-title {
+        grid-column: 1 / -1;
     }
 
     .form-actions {

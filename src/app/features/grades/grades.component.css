@@ -1,32 +1,58 @@
+/* src/app/features/grades/grades.component.css */
+
 .grades-page {
-    padding: 20px 0;
+    padding: 24px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .grades-page h2 {
-    color: #2c3e50;
-    margin-bottom: 10px;
+    color: #1a237e; /* Deep Blue Heading */
+    margin-bottom: 5px;
     font-size: 1.8em;
 }
 
-.grades-page p {
-    color: #7f8c8d;
-    margin-bottom: 30px;
-}
+/* --- GPA Summary Box --- */
 
 .gpa-summary {
-    background-color: #f1c40f; /* Yellow/Gold accent from active link */
-    color: #2c3e50;
-    padding: 20px 30px;
+    background-color: #e3f2fd; /* Light blue background */
+    border: 1px solid #bbdefb;
     border-radius: 8px;
-    margin-bottom: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: inline-block; /* Wraps the container around its content */
+    padding: 15px 20px;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .gpa-summary h3 {
     margin: 0;
-    font-size: 1.6em;
+    color: #0d47a1; /* Darker blue text */
+    font-size: 1.5em;
     font-weight: 700;
 }
 
-/* The table styling is handled primarily by table.component.css and global styles */
+/* --- State Messages (Loading/Empty) --- */
+
+.loading-message, .empty-message {
+    text-align: center;
+    padding: 40px;
+    margin-top: 20px;
+    border: 1px dashed #ccc;
+    border-radius: 8px;
+    color: #7f8c8d;
+    background-color: #f8f8f8;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.spinner {
+    font-size: 2.5em;
+    animation: spin 1.5s linear infinite; /* Animates the 'sync' icon */
+    color: #3498db;
+    margin-bottom: 15px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

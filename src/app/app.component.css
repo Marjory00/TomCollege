@@ -1,200 +1,66 @@
-/* --- Global Reset and Base Styles --- */
-:host {
-    /* Ensures the component takes full height of the viewport */
-    display: block;
+/* src/app/app.component.css */
+
+/* 1. Ensure the layout wrapper fills the screen (KEEP) */
+.dashboard-layout-wrapper {
+    display: grid;
+    grid-template-rows: 64px 1fr;
+    grid-template-columns: 250px 1fr;
     height: 100vh;
+    width: 100vw;
+    overflow: hidden;
 }
 
-/* ---------------------------------------------------------------------- */
-/* 🆕 FIX: Global Navbar Styling (Assumes it's outside the *ngIf blocks) 🆕 */
-/* ---------------------------------------------------------------------- */
-/* If <app-navbar> is a direct child of <app-root> and you want it fixed: */
-app-navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
+/* 2. Position the Navbar (KEEP) */
+.dashboard-navbar {
+    grid-row: 1 / 2;
+    grid-column: 1 / -1;
+    z-index: 1000;
     width: 100%;
-    height: 60px; /* Must match the padding-top/top offset values below */
-    z-index: 1000; /* Ensure it's on top of everything */
-    /* Add background-color here if your navbar component doesn't style its host */
 }
 
-/* ---------------------------------------------------------------------- */
-/* --- Main Layout Container (DASHBOARD) --- */
-/* ---------------------------------------------------------------------- */
-/* Corresponds to the .dashboard-layout-wrapper or .main-app-container */
-.main-app-container {
-    display: flex;
-
-    /* PRESERVED SETTING: Push the content down below the 60px fixed Navbar */
-    padding-top: 60px;
-
-    /* PRESERVED SETTING: Ensures the container fills the entire viewport height from top to bottom */
-    height: 100vh;
-
-    /* PRESERVED SETTING: Ensures the entire container is above other base elements */
-    position: relative;
-    z-index: 1;
-}
-
-/* ---------------------------------------------------------------------- */
-/* --- Sidebar Navigation (Remains fixed) --- */
-/* ---------------------------------------------------------------------- */
-/* Targets the <app-sidebar> or a div inside it with class .sidebar */
-.sidebar {
-    /* PRESERVED SETTINGS: */
-    width: 250px;
-    background-color: #2c3e50;
-    color: white;
-    padding: 20px 0;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
-    z-index: 100;
-    position: fixed;
-
-    /* PRESERVED SETTINGS: Anchor the sidebar directly below the Navbar and take the remaining height */
-    top: 60px;
-    height: calc(100vh - 60px);
-}
-
-.logo {
-    /* PRESERVED SETTINGS: */
-    padding: 0 20px;
-    margin-bottom: 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-    padding-bottom: 15px;
-    display: flex;
-    align-items: center;
-}
-
-.logo h3 {
-    /* PRESERVED SETTINGS: */
-    margin: 0;
-    font-size: 1.4rem;
-    font-weight: 600;
-}
-
-/* Nav Links Styling */
-.nav-links {
-    /* PRESERVED SETTINGS: */
-    list-style: none;
-    padding: 0;
-    flex-grow: 1;
-}
-
-.nav-links li a {
-    /* PRESERVED SETTINGS: */
-    display: flex;
-    align-items: center;
-    padding: 12px 20px;
-    text-decoration: none;
-    color: #ecf0f1;
-    transition: background-color 0.3s, color 0.3s;
-    font-weight: 500;
-}
-
-.nav-links li a:hover {
-    /* PRESERVED SETTINGS: */
-    background-color: #3b506b;
-    color: white;
-}
-
-.nav-links li a.active {
-    /* PRESERVED SETTINGS: */
-    background-color: #3498db;
-    color: white;
-    font-weight: bold;
-    box-shadow: none;
-    border-left: 5px solid #f1c40f;
-}
-
-/* --- User Footer and Logout --- */
-.user-footer {
-    /* PRESERVED SETTINGS: */
-    padding: 20px;
-    text-align: center;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    margin-top: 20px;
-}
-
-.user-footer p {
-    /* PRESERVED SETTINGS: */
-    margin: 0 0 10px 0;
-    font-size: 0.9rem;
-}
-
-.btn-logout {
-    /* PRESERVED SETTINGS: */
-    background-color: #e74c3c;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    cursor: pointer;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    transition: background-color 0.3s;
-}
-
-.btn-logout:hover {
-    /* PRESERVED SETTINGS: */
-    background-color: #c0392b;
-}
-
-/* ---------------------------------------------------------------------- */
-/* --- Dashboard Content Area --- */
-/* ---------------------------------------------------------------------- */
-.content-area-dashboard {
-    /* PRESERVED SETTINGS: */
-    display: flex;
-    flex-direction: column;
-
-    /* PRESERVED SETTING: Offset for fixed sidebar */
-    margin-left: 250px;
-
-    /* PRESERVED SETTINGS: */
-    flex-grow: 1;
-    background-color: #f4f7f6;
+/* 3. Position the Sidebar (KEEP) */
+.dashboard-sidebar {
+    grid-row: 2 / 3;
+    grid-column: 1 / 2;
+    z-index: 900;
     overflow-y: auto;
-    overflow-x: hidden;
 }
 
-.router-view {
-    /* PRESERVED SETTINGS: */
-    padding: 30px;
-    flex-grow: 1;
+/* 4. Position the Content Area (KEEP) */
+.dashboard-content-area {
+    grid-row: 2 / 3;
+    grid-column: 2 / 3;
 }
 
-/* ---------------------------------------------------------------------- */
-/* --- Public Website Layout Wrapper (for non-dashboard pages) --- */
-/* ---------------------------------------------------------------------- */
+/* 5. Main Content (The router-outlet area) */
+.router-main-content {
+    /* FIX: Remove generic padding so full-width elements can span the entire grid cell. */
+    padding: 0;
+
+    overflow-y: auto;
+    height: 100%;
+    box-sizing: border-box;
+    /* Optional: background-color: #f5f7fa; if you want a base color */
+}
+
+
+/* --- Public Layout Styles (KEEP) --- */
 .public-layout-wrapper {
-    /* PRESERVED SETTINGS: */
-    width: 100%;
-    background-color: white;
-
-    /* PRESERVED SETTING: Shifts content down below the fixed global navbar */
-    margin-top: 60px;
-
-    /* PRESERVED SETTING: Ensures the content container is at least the remaining height of the viewport */
-    min-height: calc(100vh - 60px);
-
-    /* FIX: Add display:flex to enable footer sticking to the bottom */
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
 }
 
-/* The actual content (router-outlet) needs to stretch to push the footer down */
-/* 🆕 FIX: Target the main content area (router-view) in the public layout. */
-.public-layout-wrapper .router-view {
+.public-navbar {
+    min-height: 64px;
+    width: 100%;
+    z-index: 1000;
+}
+
+.public-main {
     flex-grow: 1;
-}
+    /* FIX: Remove generic padding here too for public pages. */
+    padding: 0;
 
-/* ... existing public-layout-wrapper app-login styles ... */
-.public-layout-wrapper app-login {
-    /* PRESERVED SETTINGS: */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(100vh - 60px); /* Adjust height for navbar */
+    overflow-y: auto;
 }

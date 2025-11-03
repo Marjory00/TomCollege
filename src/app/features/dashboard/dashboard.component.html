@@ -1,36 +1,39 @@
-<main class="dashboard-page" *ngIf="dashboardData$ | async as data; else loading">
+<main class="dashboard-page">
 
-    <div class="page-header">
-        <h2>👋 Welcome to the TomCollege Dashboard</h2>
-        <p class="dashboard-description">Quick overview of institutional statistics and recent activity.</p>
-    </div>
+    @if (dashboardData$ | async; as data) {
 
-    <section class="card-row">
-        <app-card
-            *ngFor="let card of data.cardData"
-            [title]="card.title"
-            [value]="card.value"
-            [icon]="card.icon">
-        </app-card>
-    </section>
-
-    <section class="recent-activity-section">
-        <h3>Recent Grade Submissions</h3>
-        <div class="table-container">
-            <app-table
-                [data]="data.tableData"
-                [columns]="recentActivityColumns"
-                [keyMap]="recentActivityKeyMap">
-            </app-table>
+        <div class="page-header">
+            <h2>👋 Welcome to the TomCollege Dashboard</h2>
+            <p class="dashboard-description">Quick overview of institutional statistics and recent activity.</p>
         </div>
-    </section>
 
-    </main>
+        <section class="card-row">
+            @for (card of data.cardData; track card.title) {
+                <app-card
+                    [title]="card.title"
+                    [value]="card.value"
+                    [icon]="card.icon">
+                </app-card>
+            }
+        </section>
 
-<ng-template #loading>
-    <div class="dashboard-page loading-state">
-        <div class="loading-message">
-            <span class="material-icons loading-spinner">loop</span> Loading dashboard data...
+        <section class="recent-activity-section">
+            <h3>Recent Grade Submissions</h3>
+            <div class="table-container">
+                <app-table
+                    [data]="data.tableData"
+                    [columns]="recentActivityColumns"
+                    >
+                </app-table>
+            </div>
+        </section>
+
+    } @else {
+        <div class="loading-overlay">
+            <div class="loading-message">
+                <span class="material-icons loading-spinner">loop</span> Loading dashboard data...
+            </div>
         </div>
-    </div>
-</ng-template>
+    }
+
+</main>

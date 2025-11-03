@@ -1,24 +1,31 @@
+/* src/app/features/sidebar/sidebar.component.css */
+
+/* --- Main Sidebar Layout --- */
 .sidebar {
     /* Layout and Positioning */
     width: 250px;
     min-width: 250px;
-    height: 100vh;
-    position: fixed; /* Use 'fixed' to keep it locked on the screen */
-    top: 0;
+    position: fixed;
+    left: 0;
+
+    /* FIX: Push sidebar down below the 64px tall Navbar */
+    top: 64px;
+
+    /* FIX: Calculate remaining height to avoid vertical scrollbar */
+    height: calc(100vh - 64px);
 
     /* Styling */
     background-color: #2c3e50; /* Darker Navy/Slate Blue */
     color: #ecf0f1;
-    padding: 20px 0; /* Adjusted padding to accommodate content */
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+    padding: 20px 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
-    z-index: 100;
+    z-index: 900;
 }
 
-/* --- Logo Section --- */
-
-.logo {
+/* --- Logo Section (Moved contents to align with new 'top' setting) --- */
+.sidebar-header.logo {
     display: flex;
     align-items: center;
     padding: 0 20px;
@@ -29,26 +36,30 @@
 
 .logo-icon {
     margin-right: 10px;
-    color: #f1c40f; /* Use the Gold/Yellow accent color for the icon */
+    color: #f1c40f; /* Gold/Yellow accent color */
     font-size: 32px;
 }
 
-.logo h3 {
+.sidebar-header h3 {
     margin: 0;
     font-size: 1.4rem;
     font-weight: 600;
 }
 
-/* --- Navigation Links --- */
+/* --- Navigation Links Container --- */
+.sidebar-nav {
+    flex-grow: 1;
+    overflow-y: auto;
+}
 
 .nav-links {
     list-style: none;
     padding: 0;
-    flex-grow: 1; /* Allows links section to take up available vertical space */
+    margin: 0;
 }
 
-/* Selector for the link element (a) which uses the routerLink */
-.nav-links li a {
+/* --- Navigation Link (The <a> tag) --- */
+.nav-links li .sidebar-link {
     display: flex;
     align-items: center;
     padding: 12px 20px;
@@ -58,31 +69,31 @@
     font-weight: 500;
 }
 
-.nav-links li a:hover {
+.nav-links li .sidebar-link:hover {
     background-color: #3b506b;
     color: white;
 }
 
-/* Active State for the link element (a) */
-.nav-links li a.active {
+/* Active State */
+.nav-links li .sidebar-link.active {
     background-color: #3498db; /* Primary Blue accent color */
     color: white;
     font-weight: bold;
     border-left: 5px solid #f1c40f; /* New accent color (Gold/Yellow) */
 }
 
-.nav-links li a .material-icons {
+.nav-links li .sidebar-link .material-icons {
     margin-right: 15px;
     font-size: 22px;
 }
 
-/* --- User Footer and Logout (Existing from previous CSS) --- */
+/* --- User Footer and Logout --- */
 
 .user-footer {
     padding: 20px;
     text-align: center;
     border-top: 1px solid rgba(255, 255, 255, 0.2);
-    margin-top: 20px;
+    margin-top: auto;
 }
 
 .user-footer p {

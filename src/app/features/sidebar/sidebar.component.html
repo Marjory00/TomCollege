@@ -1,25 +1,36 @@
 <aside class="sidebar">
-  <div class="logo">
-    <span class="material-icons logo-icon">school</span>
-    <h3 class="logo-text">TomCollege</h3>
-  </div>
 
-  <ul class="nav-links">
-    <li *ngFor="let item of menuItems">
-      <a
-        [routerLink]="item.link"
-        routerLinkActive="active"
-        class="nav-item">
-        <span class="material-icons">{{ item.icon }}</span>
-        <span class="nav-label">{{ item.label }}</span>
-      </a>
-    </li>
-  </ul>
+    <div class="sidebar-header logo">
+        <span class="material-icons logo-icon" aria-hidden="true">school</span>
+        <h3>TomCollege Portal</h3>
+    </div>
 
-  <div class="user-footer">
-    <p>Logged in as Student</p>
-    <button class="btn-logout" (click)="logout()">
-        <span class="material-icons">logout</span> Logout
-    </button>
-  </div>
+    <nav class="sidebar-nav">
+        <ul class="nav-links">
+            @for (item of menuItems; track item.label) {
+                <li>
+                    <a
+                        [routerLink]="item.link"
+                        routerLinkActive="active"
+                        class="sidebar-link"
+                        [title]="item.label"
+                        aria-label="Navigate to {{ item.label }}"
+
+                        [routerLinkActiveOptions]="{ exact: item.link === '/dashboard' }"
+                    >
+                        <span class="material-icons" aria-hidden="true">{{ item.icon }}</span>
+                        <span class="link-text">{{ item.label }}</span>
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+
+    <div class="user-footer">
+        <p>Logged in as: John Doe</p>
+        <button class="btn-logout" (click)="logout()" aria-label="Sign out">
+            <span class="material-icons" aria-hidden="true">logout</span>
+            Log Out
+        </button>
+    </div>
 </aside>

@@ -1,18 +1,66 @@
+/* src/app/shared/components/table/table.component.css */
+
 .table-container {
-    overflow-x: auto; /* Ensures table is scrollable on small screens */
+    /* Ensures table is scrollable horizontally on small screens */
+    overflow-x: auto;
     width: 100%;
+    /* Add a subtle visual boundary around the table */
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #fff;
+    background-color: #ffffff;
+    font-size: 0.95em;
 }
 
-th, td {
-    white-space: nowrap; /* Prevents text wrap in table cells */
+/* --- Table Headers (th) --- */
+thead {
+    background-color: #f5f7fa; /* Light background for header row */
+    border-bottom: 2px solid #e0e0e0;
+}
+
+th {
+    white-space: nowrap;
     text-align: left;
     padding: 12px 15px;
+    color: #495057; /* Darker text color for headers */
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85em;
 }
 
-/* Basic styling defined in styles.css handles the rest (headers, borders, etc.) */
+/* --- Table Data Cells (td) --- */
+td {
+    white-space: nowrap;
+    text-align: left;
+    padding: 12px 15px;
+    color: #343a40;
+    /* Add a light bottom border for row separation */
+    border-bottom: 1px solid #f0f0f0;
+}
+
+/* --- Table Body Rows (tr) --- */
+tbody tr {
+    transition: background-color 0.2s ease;
+}
+
+tbody tr:last-child td {
+    border-bottom: none; /* Remove border from the last row */
+}
+
+tbody tr:hover {
+    background-color: #e9ecef; /* Subtle hover effect for better UX */
+}
+
+/* --- No Data Message --- */
+.no-data {
+    text-align: center;
+    padding: 20px;
+    font-style: italic;
+    color: #888;
+    background-color: #fcfcfc;
+}

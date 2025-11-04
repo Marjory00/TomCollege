@@ -1,4 +1,3 @@
-
 // src/app/core/models/faculty.model.ts
 
 export interface FacultyMember {

@@ -74,6 +74,8 @@ backend/package-lock.json
 backend/server.js/
 backend/node_modules/
 server.js
+// backend/src/config/db.js
+// backend/src/config/
 
 # Frontend specific
 /frontend/dist

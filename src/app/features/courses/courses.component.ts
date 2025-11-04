@@ -9,14 +9,13 @@ import { ApiService } from '../../core/services/api.service';
 import { TableComponent } from '../../components/table/table.component';
 
 // Define a simple interface for the course model
-interface Course {
+export interface Course {
   code: string;
   title: string;
   credits: number;
   department: string;
 }
 
-// FIX 1: Define a strongly-typed interface for the table columns
 interface CourseTableColumn {
     key: keyof Course;
     header: string;
@@ -30,10 +29,9 @@ interface CourseTableColumn {
   styleUrls: ['./courses.component.css']
 })
 export class CoursesComponent implements OnInit {
-  // Observable to hold the list of courses
+
   courses$!: Observable<Course[]>;
 
-  // FIX 2: Add the required columns property for the <app-table> component
   courseColumns: CourseTableColumn[] = [
     { key: 'code', header: 'Course Code' },
     { key: 'title', header: 'Title' },
@@ -44,7 +42,13 @@ export class CoursesComponent implements OnInit {
   constructor(private apiService: ApiService) { }
 
   ngOnInit(): void {
-    // Fetch the courses data from the API service
-    this.courses$ = this.apiService.getCourses();
+    this.courses$ = this.apiService.getCourses() as Observable<Course[]>;
+  }
+
+  // FIX: Added the missing method definition
+  addNewCourse(): void {
+    // This is where you would implement logic to open a modal or navigate to a creation form
+    console.log('Action: Adding a new course...');
+    alert('Placeholder: New Course Form/Modal will open here.');
   }
 }

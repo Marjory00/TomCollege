@@ -2,21 +2,24 @@
 
 /** Interface defining the structure of a Student object. */
 export interface Student {
-  /** Unique identifier for the student */
-  id: number;
+    /** Unique identifier for the student */
+    id: number;
 
-  /** Student's first name */
-  firstName: string;
+    /** Student's full name (for list/table views) */
+    name: string; // 👈 FIX: Added 'name' to align with mock data table structure
 
-  /** Student's last name */
-  lastName: string;
+    /** Student's first name */
+    firstName: string;
 
-  /** Declared academic major */
-  major: string;
+    /** Student's last name */
+    lastName: string;
 
-  /** Enrollment date in ISO format (YYYY-MM-DD) */
-  enrollmentDate: string;
+    /** Declared academic major */
+    major: string;
 
-  /** Current academic status */
-  status: 'Active' | 'On Leave' | 'Graduated';
+    /** Enrollment date in ISO format (YYYY-MM-DD) */
+    enrollmentDate: string;
+
+    /** Current academic status */
+    status: 'Active' | 'On Leave' | 'Graduated';
 }

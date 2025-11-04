@@ -8,7 +8,7 @@
 
 .courses-page h2 {
     color: #2c3e50;
-    margin-bottom: 5px;
+    margin: 0; /* Reset margin for h2 within the flex container */
     font-size: 2em;
 }
 
@@ -17,13 +17,23 @@
     margin-bottom: 25px;
 }
 
-/* --- Header & Button --- */
+/* --- Header & Button FIX --- */
 
-.header-actions {
-    margin-bottom: 25px; /* Slightly more space */
+/* NEW/FIXED Container for the Title and the Button */
+.page-header-row {
+    margin-bottom: 25px;
     display: flex;
-    justify-content: flex-end; /* FIX: Use flex to push button to right */
+    /* FIX: Space between title (implicit) and button */
+    justify-content: space-between;
+    align-items: center; /* Vertically align title and button */
 }
+
+/* Ensure the h2 and description remain separate */
+.page-header-row h2 {
+    /* Keep h2 styles, but remove bottom margin if needed */
+    margin-bottom: 0;
+}
+
 
 .btn-primary {
     background-color: #3498db;
@@ -33,10 +43,10 @@
     border-radius: 6px;
     cursor: pointer;
     font-size: 1em;
-    font-weight: 600; /* Slightly bolder */
+    font-weight: 600;
     display: inline-flex;
     align-items: center;
-    gap: 8px; /* Use gap instead of margin-right on icon */
+    gap: 8px;
     transition: background-color 0.3s;
 }
 
@@ -44,19 +54,14 @@
     background-color: #2980b9;
 }
 
-/* Removed redundant .btn-primary .material-icons style as gap is used */
-
 /* --- Course List Container & Table Styling --- */
 
 .course-list-container {
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Soft shadow for depth */
-    overflow: hidden; /* Contains the table */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
 }
-
-/* You will need specific styles for your <app-table> component if it doesn't
-   style the internal table itself (e.g., .course-data-table th, .course-data-table td) */
 
 
 /* --- State Messages (Loading/Empty) --- */

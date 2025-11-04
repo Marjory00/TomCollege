@@ -85,14 +85,6 @@ The primary goal of this project is to demonstrate **modern Angular standalone c
 The project uses a combined monorepo-style structure, with the Angular application in the root and the Express server in a dedicated `backend` folder.
 
 
-
-```
-
-TomCollege-Project-Root/ ├── backend/                      (The Express API Server) │   ├── node_modules/             (Backend dependencies) │   ├── package.json              (Express, Nodemon, CORS) │   ├── server.js                 (Main application entry point) │   ├── .env                      (PORT=3000, CLIENT_URL=http://localhost:4200) │   └── src/                      (Source code directory) │       ├── config/               (Placeholder for db.js connection) │       ├── routes/ │       │   └── api.js            (API endpoint definitions, imports MockData.js) │       └── MockData.js           (Mock data source for all endpoints) 👈 CURRENT LOCATION │ ├── tomcollege-app/               (The Angular Frontend directory - current focus) │   ├── node_modules/             (Frontend dependencies) │   ├── src/ │   │   ├── app/                  (Application root) │   │   │   ├── core/             (App-wide services, models, guards) │   │   │   │   ├── models/       (Corrected Student, Course, Faculty interfaces) │   │   │   │   └── services/     (ApiService configured for http://localhost:3000/api) │   │   │   └── features/         (All feature components) │   │   └── ... │   └── ... │ └── README.md
-
-```
-
-
 ```
 TomCollege-Project-Root/
 ├── backend/                      (The backend server directory)
@@ -187,7 +179,8 @@ npm start
 ng serve
 # The frontend will run on http://localhost:4200
 
-📚 API Documentation
+```
+### 📚 API Documentation
 
 The mock backend exposes the following REST endpoints using the data.json file:
 Method	Endpoint	Description	Status
@@ -198,13 +191,42 @@ GET	/api/profile	Returns the mock user profile data.	Implemented
 GET	/api/grades/report	Returns the user's detailed grade report.	Implemented
 GET	/api/grades/gpa	Returns the current GPA score.	Implemented
 
-📖 Case Study
+### 📖 Case Study
 
 The TomCollege Portal & Dashboard project successfully solves the challenge of distinguishing between public marketing content and secure user-specific data within a single-page application framework. By implementing a conditional layout in app.component.ts driven by the Angular Router, the application can switch between the simple, public view (for visitors) and the complex, sidebar/navbar-equipped dashboard view (for logged-in users) without needing separate root modules. This technique provides a clean, maintainable, and highly efficient solution for dual-purpose web portals, a critical pattern for real-world enterprise applications like school management systems.
 
-🖼️ Screenshots
 
-(Add your screenshots of the Home Page, Login Screen, and Dashboard here)
+---
+
+## 🖼️ Screenshots
+
+The following screenshots demonstrate the core features and dual architecture of the TomCollege application:
+
+## 📸 Screenshots
+
+### 🏠 Home Page
+![Home Page](./screenshots/home-page.png)
+
+### 🎓 Student Dashboard
+![Student Dashboard](./screenshots/student-dashboard.png)
+
+### 📚 Courses Page
+![Courses Page](./screenshots/courses-page.png)
+
+### 👨‍🏫 Faculty Page
+![Faculty Page](./screenshots/faculty-page.png)
+
+### 🧠 API Test (Postman / Browser)
+![API Test](./screenshots/api-test.png)
+
+
+| Feature | Image |
+| :--- | :--- |
+| **Public Home Page** |  |
+| **Login Screen** | ![Login Screen Description](./docs/screenshots/login-screen.png) |
+| **Dashboard Overview** | ![Dashboard Overview Description](./docs/screenshots/dashboard-overview.png) |
+
+---
 
 🤝 Contributing
 

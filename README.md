@@ -74,13 +74,23 @@ The primary goal of this project is to demonstrate **modern Angular standalone c
 |-------------|----------|
 | **Node.js** | Runtime environment for the API |
 | **Express.js** | Minimalist web framework for creating mock REST API |
-| **Static Data (`data.json`)** | JSON file serving as the mock database |
+| **CORS** | Middleware to allow cross-origin requests from Angular frontend |
+| **Dotenv** | Manages environment variables for port and API origin |
+| **Mock Data (`MockData.js`)** | JavaScript file serving as the temporary data source |
 
 ---
 
 ## 📁 Project Structure
 
 The project uses a combined monorepo-style structure, with the Angular application in the root and the Express server in a dedicated `backend` folder.
+
+
+
+```
+
+TomCollege-Project-Root/ ├── backend/                      (The Express API Server) │   ├── node_modules/             (Backend dependencies) │   ├── package.json              (Express, Nodemon, CORS) │   ├── server.js                 (Main application entry point) │   ├── .env                      (PORT=3000, CLIENT_URL=http://localhost:4200) │   └── src/                      (Source code directory) │       ├── config/               (Placeholder for db.js connection) │       ├── routes/ │       │   └── api.js            (API endpoint definitions, imports MockData.js) │       └── MockData.js           (Mock data source for all endpoints) 👈 CURRENT LOCATION │ ├── tomcollege-app/               (The Angular Frontend directory - current focus) │   ├── node_modules/             (Frontend dependencies) │   ├── src/ │   │   ├── app/                  (Application root) │   │   │   ├── core/             (App-wide services, models, guards) │   │   │   │   ├── models/       (Corrected Student, Course, Faculty interfaces) │   │   │   │   └── services/     (ApiService configured for http://localhost:3000/api) │   │   │   └── features/         (All feature components) │   │   └── ... │   └── ... │ └── README.md
+
+```
 
 
 ```

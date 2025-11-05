@@ -203,11 +203,17 @@ The TomCollege Portal & Dashboard project successfully solves the challenge of d
 
 The following screenshots demonstrate the core features and dual architecture of the TomCollege application:
 
+---
+
 ### 🏠 Home Page
 
 Main Page 
 
 ![Home Page](./screenshots/Home.png)
+
+
+---
+
 
 ### 🎓 Student Dashboard
 
@@ -215,17 +221,29 @@ Students Dashboard Page
 
 ![Student Dashboard](./screenshots/Dashboard.png)
 
+
+---
+
+
 ### 📚 Courses Page
 
 Courses Page
 
 ![Courses Page](./screenshots/Courses.png)
 
+
+---
+
+
 ### 👨‍🏫 Admissions Page
 
 Admissions Page
 
 ![Faculty Page](./screenshots/Admissions.png)
+
+
+---
+
 
 ### 👨‍🏫 User-Profile
 
@@ -234,11 +252,18 @@ User Profile
 ![API Test](./screenshots/Profile.png)
 
 
+---
+
+
 ### 📚 Notificstions Dashboard Page
 
 Notifications Icon
 
 ![Courses Page](./screenshots/Notifications.png)
+
+
+---
+
 
 ### 👨‍🏫 Settings Page
 
@@ -246,11 +271,18 @@ Settings Page
 
 ![Faculty Page](./screenshots/Settings.png)
 
-### 👨‍🏫 User-Profile
 
-User Profile 
+---
 
-![API Test](./screenshots/api-test.png)
+
+### 👨‍🏫 Students Management
+
+Students Management Page
+
+![API Test](./screenshots/Student-Management.png)
+
+
+---
 
 
 | Feature | Image |

@@ -19,6 +19,7 @@ A comprehensive **web-based college portal** and administrative dashboard for ma
 - [Features Implemented](#-features-implemented)
 - [Technologies Used](#-technologies-used)
 - [Project Structure](#-project-structure)
+- [Screenshots](#-Screenshots)
 - [Installation and Usage](#-installation-and-usage)
 - [API Documentation](#-api-documentation)
 - [Case Study](#-case-study)
@@ -201,8 +202,6 @@ The TomCollege Portal & Dashboard project successfully solves the challenge of d
 ## 🖼️ Screenshots
 
 The following screenshots demonstrate the core features and dual architecture of the TomCollege application:
-
-## 📸 Screenshots
 
 ### 🏠 Home Page
 ![Home Page](./screenshots/Home.png)

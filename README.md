@@ -205,10 +205,10 @@ The following screenshots demonstrate the core features and dual architecture of
 ## 📸 Screenshots
 
 ### 🏠 Home Page
-![Home Page](./screenshots/home-page.png)
+![Home Page](./screenshots/Home.png)
 
 ### 🎓 Student Dashboard
-![Student Dashboard](./screenshots/student-dashboard.png)
+![Student Dashboard](./screenshots/Dashboard.png)
 
 ### 📚 Courses Page
 ![Courses Page](./screenshots/courses-page.png)
